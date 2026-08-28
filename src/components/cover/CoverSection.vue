@@ -79,6 +79,12 @@ const fitCouple = useFitText()
  * toolbars, so the derived width lands short of the screen and leaves a gutter down
  * both sides. Filling the width and letting `.cover` crop the extra height keeps the
  * scene full-bleed.
+ *
+ * The desktop column (430px, App.vue) gets the SAME rule, not a `min()` clamp against
+ * the column width. This frame is 596 x 1183 — narrower per unit of height than the
+ * column — so clamping left it ~47px short of the viewport and the water plate stopped
+ * partway down the screen. Filling the height and cropping ~11px off each side instead
+ * costs nothing: the composition is centred and its edges are open water.
  */
 .cover__frame {
   container-type: inline-size;
@@ -89,18 +95,6 @@ const fitCouple = useFitText()
   width: max(100%, calc(100dvh * 596 / 1183));
   aspect-ratio: 596 / 1183;
   background: var(--water);
-}
-
-/*
- * Desktop hosts the cover in a fixed 430px column (App.vue), so a width derived purely
- * from viewport height overshoots it and the composition is cropped down both sides.
- * Phones have no such column, so the fill-the-screen rule above still holds there and
- * only this case is clamped.
- */
-@media (min-width: 768px) {
-  .cover__frame {
-    width: min(100%, calc(100dvh * 596 / 1183));
-  }
 }
 
 .cover__frame > * {
