@@ -22,6 +22,20 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 `SLICING.md`, its `src/components/sections/*.vue` and the worked exception tables in its
 `scripts/gen_band.py` when a rule here needs an example.
 
+## Picking this up in a new session
+
+- **State:** cover sliced and scored (1.29); body frame not dumped. Working tree clean,
+  three commits, no remote. `npm install` is done; dev server is `npm run dev` on 5179.
+- **Scratch renders** live in `.figma-tmp/` (gitignored, still on disk): the cover's 1x
+  and 2x frame renders, `parts27/*.png` before webp conversion, and the fit shots.
+  `.figma-ref/` is the tracked dump — read that, not Figma, for anything already sliced.
+- **`save_screenshots` writes only inside the MCP server's own working directory.** From a
+  session rooted elsewhere it refuses the path outright; the cover's exports had to be
+  written into the other template's `.figma-tmp` and moved. Run the Figma work from a
+  session rooted in THIS directory, or expect the same detour.
+- **Its `result` echoes the node's declared bounds, not the file it wrote.** Measure the
+  PNG on disk — that is the only way to see what Figma clipped. See the cover findings.
+
 ## What this repo already has
 
 | Path | What it is |
