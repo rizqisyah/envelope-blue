@@ -1,0 +1,101 @@
+/* Placeholder families until the design's real faces are known. Trim what this
+   design does not use — every import here is a font request. */
+@import "@fontsource/playball/400.css";
+@import "@fontsource/ibarra-real-nova/500-italic.css";
+@import "@fontsource/jost/400.css";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "./style/tokens.css";
+
+/*
+ * Self-hosted faces go here: drop the file in src/assets/fonts/ and add an @font-face
+ * block pointing at it. Record the license in a comment beside it — several of the
+ * faces these templates use are demo cuts that are personal-use only.
+ */
+
+/*
+ * Every band of the body frame is the same shape: sliced art from BandArt.vue, and live
+ * copy positioned over it in design px. These rules are global rather than repeated in
+ * each band's scoped block — a section's own stylesheet then carries nothing but its
+ * nodes' coordinates, which is the only part that differs.
+ *
+ * `> *:not(.band-art)` rather than a class per node: BandArt's images are the only
+ * children a band does not place itself, and they set their own z inline.
+ */
+.band {
+  position: relative;
+}
+
+.band > *:not(.band-art) {
+  /* Above every sliced layer. BandArt sets z inline, which beats a rule. */
+  z-index: 900;
+  position: absolute;
+  margin: 0;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(calc(24 * var(--px)));
+  transition:
+    opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0ms),
+    transform 1600ms cubic-bezier(0.16, 1, 0.28, 1) var(--delay, 0ms);
+}
+
+.band.is-in > *:not(.band-art) {
+  opacity: 1;
+  transform: none;
+}
+
+/*
+ * Motion this large is exactly what a vestibular disorder cannot tolerate, so the
+ * reduced-motion path is not a shortened version of it — it is no movement at all.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .band > *:not(.band-art) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+/* While the cover owns the screen nothing scrolls — see App.vue's `isLocked`. */
+html.is-cover-locked,
+html.is-cover-locked body {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--paper);
+  font-family: system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

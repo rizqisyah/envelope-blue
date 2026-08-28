@@ -1,0 +1,37 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Local dev overrides (VITE_API_PROXY_TARGET, VITE_DEFAULT_SLUG).
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Playwright screenshots + Figma scratch renders. `.figma-ref` holds the Figma node
+# map the slicing depends on and stays tracked; only the scratch dir is ignored.
+.figma-tmp/
+
+# Python bytecode from the slicing scripts.
+__pycache__/
+*.pyc

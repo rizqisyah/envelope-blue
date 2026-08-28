@@ -1,0 +1,26 @@
+:root {
+  /* Theme hooks — useWedding() overwrites these from the API's theme_config. */
+  --maroon-title: #ad2124;
+  --maroon-text: #790707;
+  --gold: #ac6f28;
+  --bg-body: #f2ece1;
+
+  /* colors — sample these off the design's own text fills once it is sliced. */
+  --paper: #f2ece1; /* the ground the sheet sits on */
+
+  /*
+   * fonts — placeholders from @fontsource until the design's real faces are known.
+   * Self-hosted faces go in src/assets/fonts/ with an @font-face in style.css.
+   */
+  --font-script: "Playball", cursive;
+  --font-display: "Ibarra Real Nova", serif; /* couple name */
+  --font-serif: "Ibarra Real Nova", serif; /* guest block */
+  --font-sans: "Jost", system-ui, sans-serif; /* UI labels */
+  --font-body: "Cormorant Garamond", serif; /* body copy */
+
+  /* design frame reference — set these from the Figma frames. */
+  --frame-w: 375;
+  --frame-h: 725;
+  --body-h: 0;
+  --card-max: 430px;
+}

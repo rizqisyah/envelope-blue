@@ -1,0 +1,54 @@
+import { onUnmounted, ref, type ComponentPublicInstance, type Ref } from "vue";
+
+/**
+ * Flips `shown` the first time the element scrolls into view.
+ * Section entrance animations are gated on this so each one fires on scroll,
+ * not all at load.
+ *
+ * `el` is a callback ref, not a `ref()` holding the node: a plain ref would have
+ * to be bound as `ref="el"`, which `noUnusedLocals` reads as never used.
+ *
+ *   const { el, shown } = useReveal()
+ *   <section :ref="el" :class="{ 'is-in': shown }">
+ */
+export function useReveal(
+  threshold = 0,
+  // A band can be 500+ design px tall, so a plain threshold fires while its top
+  // edge is still below the fold and the whole reveal plays where nobody is
+  // looking. Requiring it to reach a quarter up the viewport fixes that; a band
+  // taller than the viewport would never satisfy a percentage threshold anyway.
+  // Trimmed from -25% once the entrances got longer: the band has to start assembling
+  // earlier, or the reader arrives while its copy is still half-transparent.
+  rootMargin = "0px 0px -12% 0px"
+): {
+  el: (node: Element | ComponentPublicInstance | null) => void;
+  shown: Ref<boolean>;
+} {
+  const shown = ref(false);
+  let obs: IntersectionObserver | null = null;
+
+  function disconnect(): void {
+    obs?.disconnect();
+    obs = null;
+  }
+
+  function el(node: Element | ComponentPublicInstance | null): void {
+    disconnect();
+    if (!(node instanceof Element) || shown.value) return;
+
+    obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          shown.value = true;
+          disconnect();
+        }
+      },
+      { threshold, rootMargin }
+    );
+    obs.observe(node);
+  }
+
+  onUnmounted(disconnect);
+
+  return { el, shown };
+}
