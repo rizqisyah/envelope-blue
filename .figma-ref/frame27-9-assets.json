@@ -1,0 +1,35 @@
+{
+  "frame": "27:9",
+  "name": "Frame 2 — cover",
+  "size": [596, 1183],
+  "fill": "#e9faff",
+  "scale": 2,
+  "assetDir": "src/assets/opening/parts/",
+  "nodes": {
+    "27:218": {
+      "asset": "27-218.webp",
+      "figmaName": "27362795676b99ed949d686670634b4e 1",
+      "reported": { "x": -41.95, "y": 0, "w": 681, "h": 1211 },
+      "export": [1192, 2366],
+      "placed": { "x": 0, "y": 0, "w": 596, "h": 1183 },
+      "why": "export is the frame doubled, so Figma clipped it on both edges; the clip rule gives it the whole frame"
+    },
+    "27:216": {
+      "asset": "27-216.webp",
+      "figmaName": "Open (17) 1",
+      "reported": { "x": 61.05, "y": 302, "w": 474, "h": 488 },
+      "export": [948, 976],
+      "placed": { "x": 61, "y": 302, "w": 474, "h": 488 },
+      "why": "export is exactly 2x the declared box — nothing clipped, nothing expanded"
+    }
+  },
+  "text": {
+    "32:462": { "chars": "The Wedding Of", "box": [112.05, 154, 392, 92], "font": "Roben Elegante 24/74", "fill": "#65839d", "align": "CENTER" },
+    "28:222": { "chars": "Ahmad & Salma", "box": [102.05, 206, 392, 92], "font": "Roben Elegante 40/74", "fill": "#65839d", "align": "CENTER" },
+    "28:223": { "chars": "kepada Yth.", "box": [112.05, 842, 373, 62], "font": "Cormorant Infant 28/62", "fill": "#65839d", "align": "CENTER", "parent": "32:461" },
+    "32:460": { "chars": "Nama Tamu", "box": [112.05, 884, 373, 62], "font": "Cormorant Infant 28/62", "fill": "#65839d", "align": "CENTER", "parent": "32:461" }
+  },
+  "dropped": {
+    "32:461": "Frame 7 — a bare auto-layout wrapper around the two guest lines; it paints nothing, and its children are placed directly"
+  }
+}

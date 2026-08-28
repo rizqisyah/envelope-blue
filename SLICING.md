@@ -1,8 +1,22 @@
 # Slicing notes — template 6
 
-Nothing has been sliced yet. This file carries the **method** the earlier templates
-arrived at, with every template-specific measurement stripped out. Fill the tables in as
-the frames are cut; keep the traps — every one of them cost real time to find.
+The cover is sliced; the body frame is not. This file carries the **method** the earlier
+templates arrived at plus this template's own measurements. Fill the rest in as the
+frames are cut; keep the traps — every one of them cost real time to find.
+
+## The frames
+
+| Frame | Node | Size | State |
+|---|---|---|---|
+| Frame 2 — cover | `27:9` | 596 x 1183 | sliced → `src/components/cover/CoverSection.vue`, layer table in `src/lib/coverLayers.ts` |
+| body | — | — | **not dumped yet** |
+
+`.figma-ref/frame27-9-assets.json` is the cover's full child list with a verdict per
+node, its text metrics, and why the one dropped node was dropped. Work from that rather
+than re-querying Figma.
+
+**This design frame is 596 wide, not 375.** Every coordinate in the cover is in 596-px
+design space and `--px` is `100cqw / 596`; the numbers do not transfer from templates 2-5.
 
 `../slicing-wedding-template-5` is the finished reference implementation. Read its
 `SLICING.md`, its `src/components/sections/*.vue` and the worked exception tables in its
@@ -13,26 +27,44 @@ the frames are cut; keep the traps — every one of them cost real time to find.
 | Path | What it is |
 |---|---|
 | `src/App.vue` | Desktop split layout (left panel + 430px column), cover→body reveal, document-level scroll lock |
-| `src/components/cover/CoverSection.vue` | **Placeholder.** Replace with the sliced cover; keep the props and the `open` event |
+| `src/components/cover/CoverSection.vue` | **Sliced** from Frame 2. Layer table in `src/lib/coverLayers.ts` |
 | `src/components/invite/InviteBody.vue` | **Placeholder.** The sheet: declares `--px` and lists the bands |
 | `src/components/invite/BandArt.vue` | Renders a `BandLayer[]` table with per-layer entrances. Design-agnostic |
 | `src/lib/bandLayer.ts` / `bandAssets.ts` | The layer type, and the glob that turns `src/assets/<band>/parts/*.webp` into urls |
 | `src/lib/api.ts` / `composables/useWedding.ts` | Live data + `DESIGN_MODE`. Every band's copy is data-driven |
 | `src/composables/useReveal.ts` / `useFitText.ts` / `usePreloadAssets.ts` | Scroll reveal, text fitting, asset preload (glob-driven, no edit needed) |
-| `src/style.css` | The `.band` entrance rules (design-agnostic) and the font imports (**placeholders**) |
-| `src/style/tokens.css` | Colour + font tokens. **Placeholders** — resample from the design |
+| `src/style.css` | The `.band` entrance rules (design-agnostic), the font imports, and the self-hosted `@font-face` |
+| `src/style/tokens.css` | Colour + font tokens. Sampled off Frame 2; `--body-h` still to come |
 | `scripts/` | The slicing toolchain, below |
 
 Dev server runs on **5179** (template-5 is on 5178, template-4 on 5176) so they can run
 side by side.
 
-## Fill these in first
+## Palette (sampled off Frame 2's own fills)
 
-1. The two frames (cover + body), their node ids and sizes.
-2. `--body-h`, `--frame-w`, `--frame-h` in `tokens.css`.
-3. The palette, sampled off the design's own text fills.
-4. The font table: which family each node uses, and which are substituted.
-5. `scripts/build_refs.py`'s `BANDS` y-range table, plus its `SHEET_PLATES` and `EMPTY`.
+| Token | Value | Where |
+|---|---|---|
+| `--water` / `--paper` | `#e9faff` | the frame's own fill, and the pale edge of the water plate |
+| `--ink-blue` | `#65839d` | every text node on the cover |
+
+`--paper` is the water blue, not a cream: the water plate is full-bleed, so any other
+value flashes at the seams while it decodes.
+
+## Fonts
+
+| Figma face | Token | Shipping as |
+|---|---|---|
+| Roben Elegante Script | `--font-script`, `--font-display` | **the real file**, self-hosted from `src/assets/fonts/`. Demo cut, personal-use only |
+| Cormorant Infant | `--font-serif`, `--font-body` | fontsource, as authored |
+
+Both cover faces are the design's own, so no size compensation is carried anywhere — every
+number in `CoverSection.vue` is Figma's. Retiring a substitute later means re-measuring;
+there is nothing to re-measure yet.
+
+## Still to fill in
+
+1. The body frame's node id, size and `--body-h`.
+2. `scripts/build_refs.py`'s `BANDS` y-range table, plus its `SHEET_PLATES` and `EMPTY`.
 6. `.figma-ref/frame<N>-{zorder,assets}.json` — generate these once and work from them
    rather than re-querying Figma.
 7. `solve_alpha.py`'s `GROUND` — the flat CSS plates `InviteBody.vue` paints under the
@@ -71,8 +103,13 @@ BODY_FRAME=<n> python3 scripts/sheet-score.py                     # every band, 
 BAND_REF=<1x body render.png> python3 scripts/band-diff.py <y0> <y1>   # one band, 3-up
 LOCATE_REF=<1x frame render.png> python3 scripts/locate.py <asset.webp>
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/place_plate.py <id> <x0> <y0> <x1> <y1>
-node scripts/shot.mjs 5179                                        # eyeball at 3 viewports
+node scripts/shot.mjs 5179                                         # eyeball at 3 viewports
+node scripts/cover-shot.mjs 5179                                  # cover at 1:1, + open check
 ```
+
+`cover-shot.mjs` shoots `.cover__frame` at the frame's own width and
+`deviceScaleFactor: 1`, so it diffs against the scale-1 render with no resampling — the
+same rule `sheet-shot.mjs` follows for the body.
 
 The loop is: `gen_band` (raw geometry) → `solve_alpha` (refine) → `gen_band` (bake) →
 `sheet-shot` → `sheet-score`. `solve_alpha` persists ABSOLUTE positions, so running it
@@ -249,7 +286,27 @@ lands against a zero-size box — the band renders blank. Use `<template v-for>`
 scrolls at >=768px; below that the bands never reveal, which reads as a blank sheet rather
 than a scroll bug.
 
-## Cover-specific traps
+## Cover-specific findings
+
+**The export size is the only honest report of what Figma clipped.** `save_screenshots`
+echoes the node's DECLARED bounds in its result, not the file it wrote — measure the PNG
+itself. The water plate `27:218` declares 681 x 1211 at x -41.95 and writes 1192 x 2366,
+which is the frame's own 596 x 1183 doubled: clipped on both edges, so the clip rule
+gives it the whole frame at 0,0. The envelope `27:216` writes exactly 2x its declared
+box, so its bounds stand as reported. Everything here exports at **2x**.
+
+**A bare auto-layout wrapper is not a layer.** `32:461` ("Frame 7") holds the two guest
+lines and paints nothing; its children report coordinates relative to IT, so their frame
+coordinates are the wrapper's origin plus their own (842 + 0 and 842 + 42). Placed
+directly, the wrapper disappears with no change to the render.
+
+**The two heading boxes are not concentric.** "The Wedding Of" sits at x 112 and the
+couple name at x 102, both 392 wide, so the eyebrow renders 10px right of the name's
+centre. That is the design, not a rounding slip — reproduce it.
+
+**This design prints no "click to open" label.** So the whole card is the hit plate and
+the envelope carries the affordance: it breathes on a slow loop and lifts on hover and
+focus. The button keeps an `sr-only` label since there is no visible text to point at.
 
 **Export first, decide after — the frame's node list is not the layer list.** Flat
 rectangles become CSS backgrounds, fully-buried nodes paint nothing, and some nodes export
@@ -284,6 +341,12 @@ bands, not an absolute fidelity score: it carries every deliberate deviation fro
 — substitute fonts, the live countdown where the design bakes a static plate, the live wish
 list and gallery where it bakes rasters of mock content.
 
+Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
+`.figma-tmp/frame27-9-1x.png`. Per channel, 0-255, unmasked.
+
 | band | delta | band | delta |
 |---|---|---|---|
-| — | — | — | — |
+| **cover (Frame 2, whole frame)** | **1.29** | body | — |
+
+Every text ink box on the cover matches the render to 1px (headings, both guest lines),
+so what is left in that number is glyph hinting and webp loss, not placement.

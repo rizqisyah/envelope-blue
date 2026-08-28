@@ -3,24 +3,31 @@
   --maroon-title: #ad2124;
   --maroon-text: #790707;
   --gold: #ac6f28;
-  --bg-body: #f2ece1;
+  --bg-body: #e9faff;
 
-  /* colors — sample these off the design's own text fills once it is sliced. */
-  --paper: #f2ece1; /* the ground the sheet sits on */
+  /* colours — sampled off Frame 2 (27:9)'s own fills */
+  --water: #e9faff; /* the frame's fill, and the pale edge of the water texture */
+  --ink-blue: #65839d; /* every text node on the cover */
+  /*
+   * The ground for <body>, the desktop column and the cover box. The water plate is
+   * full-bleed, so any other value flashes at the seams while it decodes.
+   */
+  --paper: #e9faff;
 
   /*
-   * fonts — placeholders from @fontsource until the design's real faces are known.
-   * Self-hosted faces go in src/assets/fonts/ with an @font-face in style.css.
+   * fonts — the cover's two faces. Roben Elegante is self-hosted (see the @font-face
+   * in style.css); Cormorant Infant is the design's own face and ships from fontsource.
+   * The body frame's faces join here when it is sliced.
    */
-  --font-script: "Playball", cursive;
-  --font-display: "Ibarra Real Nova", serif; /* couple name */
-  --font-serif: "Ibarra Real Nova", serif; /* guest block */
+  --font-script: "Roben Elegante", cursive; /* "The Wedding Of" */
+  --font-display: "Roben Elegante", cursive; /* couple name */
+  --font-serif: "Cormorant Infant", serif; /* guest block */
+  --font-body: "Cormorant Infant", serif; /* body copy */
   --font-sans: "Jost", system-ui, sans-serif; /* UI labels */
-  --font-body: "Cormorant Garamond", serif; /* body copy */
 
-  /* design frame reference — set these from the Figma frames. */
-  --frame-w: 375;
-  --frame-h: 725;
+  /* design frame reference (Figma Frame 2 cover = 27:9; body frame still to come) */
+  --frame-w: 596;
+  --frame-h: 1183;
   --body-h: 0;
   --card-max: 430px;
 }
