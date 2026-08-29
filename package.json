@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@fontsource/cormorant-infant": "5.3.0",
+    "@fontsource/ibarra-real-nova": "5.3.0",
     "@fontsource/jost": "5.3.0",
     "@fontsource/lancelot": "5.3.0",
+    "@fontsource/pinyon-script": "5.3.0",
     "vue": "^3.5.39"
   },
   "devDependencies": {

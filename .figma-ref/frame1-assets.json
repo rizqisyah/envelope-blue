@@ -3,6 +3,14 @@
  "scale": 2,
  "assetDir": "src/assets/",
  "nodes": {
+  "40:91": {
+   "asset": "countdown/parts/40-91.webp",
+   "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 3",
+   "x": -19,
+   "y": 1308,
+   "w": 653,
+   "h": 866
+  },
   "40:88": {
    "asset": "hero/parts/40-88.webp",
    "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 1",
@@ -26,6 +34,14 @@
    "y": 131,
    "w": 384,
    "h": 172
+  },
+  "26:8": {
+   "asset": "countdown/parts/26-8.webp",
+   "figmaName": "Open (16) 1",
+   "x": -23,
+   "y": 1108,
+   "w": 641,
+   "h": 641
   },
   "18:502": {
    "asset": "hero/parts/18-502.webp",
@@ -194,6 +210,54 @@
    "y": 310,
    "w": 125,
    "h": 156
+  },
+  "16:397": {
+   "asset": "countdown/parts/16-397.webp",
+   "figmaName": "image 19",
+   "x": 116,
+   "y": 1626,
+   "w": 191,
+   "h": 562
+  },
+  "16:398": {
+   "asset": "countdown/parts/16-398.webp",
+   "figmaName": "image 20",
+   "x": 480,
+   "y": 1626,
+   "w": 191,
+   "h": 562
+  },
+  "16:491": {
+   "asset": "countdown/parts/16-491.webp",
+   "figmaName": "image 23",
+   "x": -146,
+   "y": 1239.01,
+   "w": 297.08,
+   "h": 219.59
+  },
+  "16:493": {
+   "asset": "countdown/parts/16-493.webp",
+   "figmaName": "image 24",
+   "x": 739.81,
+   "y": 1239.01,
+   "w": 297.08,
+   "h": 219.59
+  },
+  "20:599": {
+   "asset": "countdown/parts/20-599.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 5",
+   "x": -126,
+   "y": 1552,
+   "w": 199,
+   "h": 243
+  },
+  "20:598": {
+   "asset": "countdown/parts/20-598.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 4",
+   "x": 729,
+   "y": 1552,
+   "w": 199,
+   "h": 243
   },
   "31:321": {
    "asset": "hero/parts/31-321.webp",

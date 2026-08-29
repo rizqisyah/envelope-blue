@@ -3,14 +3,16 @@
 // each band positions its own children relative to its own top, so inserting a band
 // never renumbers the others. Band map and asset inventory: ../../../SLICING.md
 //
-// Sliced so far: hero (y 0..1108). The rest of Frame 1 is still to cut — add each
-// band's component here in Figma order as it lands.
+// Sliced so far: hero (y 0..1108), countdown (y 1108..1802). The rest of Frame 1 is
+// still to cut — add each band's component here in Figma order as it lands.
 import HeroSection from '../sections/HeroSection.vue'
+import CountdownSection from '../sections/CountdownSection.vue'
 </script>
 
 <template>
   <div class="sheet">
     <HeroSection />
+    <CountdownSection />
   </div>
 </template>
 
