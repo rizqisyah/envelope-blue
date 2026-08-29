@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/amiri": "5.3.0",
     "@fontsource/cormorant-infant": "5.3.0",
     "@fontsource/ibarra-real-nova": "5.3.0",
     "@fontsource/jost": "5.3.0",
