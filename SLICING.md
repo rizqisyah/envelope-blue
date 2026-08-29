@@ -1,15 +1,21 @@
 # Slicing notes — template 6
 
-The cover is sliced; the body frame is not. This file carries the **method** the earlier
-templates arrived at plus this template's own measurements. Fill the rest in as the
-frames are cut; keep the traps — every one of them cost real time to find.
+The cover is sliced, and the body frame's first band with it. This file carries the
+**method** the earlier templates arrived at plus this template's own measurements. Fill
+the rest in as the frames are cut; keep the traps — every one of them cost real time to
+find.
 
 ## The frames
 
 | Frame | Node | Size | State |
 |---|---|---|---|
 | Frame 2 — cover | `27:9` | 596 x 1183 | sliced → `src/components/cover/CoverSection.vue`, layer table in `src/lib/coverLayers.ts` |
-| body | — | — | **not dumped yet** |
+| Frame 1 — body | `1:3` | 596 x 12818 | dumped; **hero band sliced** (y 0..1108) → `src/components/sections/HeroSection.vue` |
+
+The body frame flattens to **290 leaves** across 14 bands. `.figma-ref/frame1-zorder.json`
+carries all of them with a band hint each; `.figma-ref/frame1-assets.json` carries the 29
+that are exported so far (the hero's). Its own fill is `#e7f9fe`, which is the sheet's
+ground — see the palette below.
 
 `.figma-ref/frame27-9-assets.json` is the cover's full child list with a verdict per
 node, its text metrics, and why the one dropped node was dropped. Work from that rather
@@ -24,8 +30,13 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 
 ## Picking this up in a new session
 
-- **State:** cover sliced and scored (1.29); body frame not dumped. Working tree clean,
-  three commits, no remote. `npm install` is done; dev server is `npm run dev` on 5179.
+- **State:** cover sliced and scored (1.29); body frame dumped and its hero band sliced
+  and scored (1.720). Twelve of the 14 remaining bands have nothing but a provisional
+  y-range. `npm install` is done; dev server is `npm run dev` on 5179.
+- **Every script call needs the frame env**, or they silently run against templates 2-5's
+  375-px assumptions: `BODY_FRAME=1 BODY_H=12818 FRAME_W=596 BODY_FRAME_ID=1:3`.
+- **`.figma-tmp/exports1/frame1-full.png` is the reference render** (scale 1, so 1px == 1
+  design px). It is `locate.py`'s `LOCATE_REF` default and `sheet-score.py`'s `BAND_REF`.
 - **Scratch renders** live in `.figma-tmp/` (gitignored, still on disk): the cover's 1x
   and 2x frame renders, `parts27/*.png` before webp conversion, and the fit shots.
   `.figma-ref/` is the tracked dump — read that, not Figma, for anything already sliced.
@@ -42,7 +53,8 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 |---|---|
 | `src/App.vue` | Desktop split layout (left panel + 430px column), cover→body reveal, document-level scroll lock |
 | `src/components/cover/CoverSection.vue` | **Sliced** from Frame 2. Layer table in `src/lib/coverLayers.ts` |
-| `src/components/invite/InviteBody.vue` | **Placeholder.** The sheet: declares `--px` and lists the bands |
+| `src/components/invite/InviteBody.vue` | The sheet: declares `--px` and lists the bands. Renders `HeroSection` |
+| `src/components/sections/HeroSection.vue` | **Sliced** from Frame 1 y 0..1108. Layer table in `src/lib/bands/hero.ts` |
 | `src/components/invite/BandArt.vue` | Renders a `BandLayer[]` table with per-layer entrances. Design-agnostic |
 | `src/lib/bandLayer.ts` / `bandAssets.ts` | The layer type, and the glob that turns `src/assets/<band>/parts/*.webp` into urls |
 | `src/lib/api.ts` / `composables/useWedding.ts` | Live data + `DESIGN_MODE`. Every band's copy is data-driven |
@@ -58,8 +70,14 @@ side by side.
 
 | Token | Value | Where |
 |---|---|---|
-| `--water` / `--paper` | `#e9faff` | the frame's own fill, and the pale edge of the water plate |
-| `--ink-blue` | `#65839d` | every text node on the cover |
+| `--water` / `--paper` | `#e9faff` | the COVER frame's own fill, and the pale edge of the water plate |
+| `--sheet` | `#e7f9fe` | the BODY frame's own fill — the invitation sheet's ground |
+| `--ink-blue` | `#65839d` | every text node on the cover, and the hero's couple name |
+| `--ink-deep-blue` | `#3d78a2` | the hero's eyebrow and hashtag |
+
+`--paper` and `--sheet` are two counts per channel apart and look identical. Keep them
+apart anyway: `solve_alpha.py` composites bands over `--sheet`, and fitting opacities
+against the cover's value biases every one of them.
 
 `--paper` is the water blue, not a cream: the water plate is full-bleed, so any other
 value flashes at the seams while it decodes.
@@ -70,6 +88,12 @@ value flashes at the seams while it decodes.
 |---|---|---|
 | Roben Elegante Script | `--font-script`, `--font-display` | **the real file**, self-hosted from `src/assets/fonts/`. Demo cut, personal-use only |
 | Cormorant Infant | `--font-serif`, `--font-body` | fontsource, as authored |
+| Lancelot | `--font-lancelot` | fontsource, as authored — the hero's eyebrow and hashtag |
+
+The body frame uses **21 faces** in all (`Ibarra Real Nova` 33 nodes, `Roben Elegante` 14,
+`Bellefair` 13, then a long tail). Only the hero's two are wired up. Most of the rest are
+on fontsource; `Kaleagnetta`, `Cavilenny`, `Activists` and `Comtic Hiden` are not, and will
+need the same self-hosted treatment — and the same re-measure — as Roben Elegante.
 
 Both cover faces are the design's own, so no size compensation is carried anywhere — every
 number in `CoverSection.vue` is Figma's. Retiring a substitute later means re-measuring;
@@ -77,13 +101,18 @@ there is nothing to re-measure yet.
 
 ## Still to fill in
 
-1. The body frame's node id, size and `--body-h`.
-2. `scripts/build_refs.py`'s `BANDS` y-range table, plus its `SHEET_PLATES` and `EMPTY`.
-6. `.figma-ref/frame<N>-{zorder,assets}.json` — generate these once and work from them
-   rather than re-querying Figma.
-7. `solve_alpha.py`'s `GROUND` — the flat CSS plates `InviteBody.vue` paints under the
-   bands. An empty `GROUND` composites every band over black and every alpha it solves
-   comes back wrong.
+1. ~~The body frame's node id, size and `--body-h`.~~ Frame 1 (`1:3`), 596 x 12818.
+2. `scripts/build_refs.py`'s `BANDS` — filled, but **only the hero/countdown boundary at
+   1108 is verified** (it is the top of `26:8`, the ornate countdown frame, and the
+   render's own seam). The twelve entries below it were read off heading positions in the
+   frame render and must be re-measured as each band is cut. `SHEET_PLATES` and `EMPTY`
+   are both correctly empty: the frame paints its ground with its own fill, and every
+   hero export carries ink.
+3. ~~`.figma-ref/frame1-{zorder,assets}.json`~~ — generated. Work from them, not Figma.
+4. ~~`solve_alpha.py`'s `GROUND`~~ — `[(0, FRAME_H, (231, 249, 254))]`, the frame's own
+   `#e7f9fe` fill. Note this is NOT `--paper` (`#e9faff`), which was sampled off the
+   *cover* frame; the two differ by a couple of counts per channel, and compositing a
+   band over the wrong one biases every opacity the solver fits.
 
 ## The thing that will bite you: exported bounds are not node bounds
 
@@ -104,6 +133,12 @@ derived from the clip/expansion rule. Regenerate rather than nudging numbers by 
 
 ## Toolchain
 
+All of these need the frame env. Export it once per shell:
+
+```sh
+export BODY_FRAME=1 BODY_H=12818 FRAME_W=596 BODY_FRAME_ID=1:3
+```
+
 ```sh
 python3 scripts/flatten_frame.py <raw node json> <flat json>      # once per Figma re-dump
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/build_refs.py           # zorder + assets + webp
@@ -120,6 +155,14 @@ BODY_FRAME=<n> BODY_H=<h> python3 scripts/place_plate.py <id> <x0> <y0> <x1> <y1
 node scripts/shot.mjs 5179                                         # eyeball at 3 viewports
 node scripts/cover-shot.mjs 5179                                  # cover at 1:1, + open check
 ```
+
+**Two scripts were carried over from template 5 and lied quietly until they were used.**
+`fit-text.mjs` and `sweep-text.mjs` still opened a 375-px viewport, so every design px they
+measured came back scaled by 375/596; and `sweep-text.mjs` clicked `.opening__envelope`
+while `shot.mjs` asserted on `.opening` — neither class exists in this template, so the
+sweep could not run at all and the "cover removed" guard was vacuously true. All four are
+fixed. **Anything not exercised while slicing the hero should be assumed to carry the same
+two faults** until it is run once.
 
 `cover-shot.mjs` shoots `.cover__frame` at the frame's own width and
 `deviceScaleFactor: 1`, so it diffs against the scale-1 render with no resampling — the
@@ -270,6 +313,13 @@ A live list is a flow, not N plates — but where the art has a fixed number of 
 past the last plate. And a `Show more` that reveals nothing is worse than no button: the
 design fallback needs one more item than the design draws.
 
+**One `<h1>` per breakpoint, and the sheet owns it.** The invitation's real title is the
+couple name on the band; the desktop side panel only reprints it and is `display: none`
+below 768px. Leaving an `<h1>` in the panel made two on desktop and — once the cover
+unmounted — none at all on mobile, where a screen-reader user then met an `<h2>` with
+nothing above it. The panel's copy is a `<p>`; the cover's `<h1>` hands off to the hero's
+when it unmounts.
+
 Record the license beside every self-hosted `@font-face` in `style.css`. Several of the
 faces these templates use are demo cuts that are personal-use only.
 
@@ -299,6 +349,86 @@ lands against a zero-size box — the band renders blank. Use `<template v-for>`
 **Scroll the window, not `.desktop-right-column`,** when screenshotting. That column only
 scrolls at >=768px; below that the bands never reveal, which reads as a blank sheet rather
 than a scroll bug.
+
+## Body-frame findings (from the hero)
+
+**`flatten_frame.py` had the GROUP coordinate space wrong, and it was silent.** A GROUP's
+children report coordinates in the GROUP's OWN space — which is its nearest FRAME
+ancestor's, not the root frame's. The old walk reset the offset to `(0, 0)` for every
+group, which is right only for a group sitting at the top level; nested inside a frame it
+dropped that frame's offset and parked the whole subtree at the top of the sheet. Six
+leaves landed in the hero that belong 8000px down. It reads as a plausible layout, so
+nothing catches it but a trace. **`../slicing-wedding-template-5` carries the same bug** —
+leave it alone unless that template is re-cut.
+
+**Every 375 in the toolchain was a template-2-5 assumption.** `gen_band.py`'s `FRAME_W`
+default, `solve_alpha.py` and `solve_band.py`'s constants, `sheet-score.py` and
+`band-diff.py`'s crop widths and width assertions, `ink-box.py`'s default `x1`, and
+`sheet-shot.mjs`'s viewport are now all `FRAME_W`, defaulting to 596. `shot.mjs` keeps 375
+for its two *device* viewports — those are real phones, not the design frame — but its
+1:1 sheet page is 596. `InviteBody.vue`'s `--px` and `BandArt.vue`'s `FRAME_W` are the two
+in `src/`; a 375-derived `--px` renders the whole sheet at 63% and diffs as garbage.
+
+**`--px` is `calc(100cqw / 596)`, not a rounded decimal.** `0.167785cqw` leaves the built
+sheet 1107.98px against `--body-h`'s 1108, and `sheet-shot.mjs` exists to catch exactly
+that.
+
+**webp quality is the last lever on a band like this.** Measured on the hero: q88 → 1.956,
+q92 → 1.819, q95 → 1.720, for 2.3M / 2.2M / 2.6M of art. Nearly all of what is left in the
+score is compression on the toile's high-contrast edges, not placement. `build_refs.py`
+ships q95; **q92 beats q88 on both axes**, so drop to 92 rather than 88 if page weight ever
+matters more. Note the whole sheet at this rate would be ~35MB — worth revisiting once
+more bands land.
+
+**The solver deleted a flower and scored better for it.** `15:192`, the right-edge calla
+lily, exports wider than its node (a blur), so the re-centre rule put it at x 545;
+`solve_alpha` then "improved" that by sliding it to 565 and fading it to 0.12 multiply —
+i.e. by removing something the render plainly draws. `MOVE_GAIN` and friends did not catch
+it. A fine scan over the neighbourhood has a sharp minimum at (471, 600): 52.55 there
+against 57.38 one pixel right. It is now in `PIN_X`/`PIN_Y`/`PIN_A`/`PIN_B` and in
+`solve_alpha`'s `NO_SOLVE`. **A sharp minimum, not a low one, is the evidence** — a white
+lily on a near-white wash never scores low anywhere.
+
+**Text ink lands 1px high in the browser.** All three hero text nodes, measured by
+exporting the node's glyph ink from Figma and template-matching it into both the frame
+render and the live shot, came back dx 0 / dy **-1**. The CSS line box centres glyphs one
+pixel higher inside the same `line-height` than Figma does. Pay it back through `top`
+(Figma's y + 1) and leave `font-size` and `line-height` at the design's own numbers. This
+is per-face: re-measure when a face is swapped.
+
+**`ink-box.py` is useless on the toile.** It thresholds each crop against its own most
+common colour, and a blue-on-cream wallpaper pattern reads as ink everywhere — every
+window it was given returned the window's own bounds. The export-the-glyphs-and-locate
+method above is what to use on a busy ground.
+
+## The first band is not scroll-gated, and finding that out took a while
+
+Two separate things kept the hero invisible for the first three seconds after the cover
+was tapped, and the reduced-motion screenshots could not show either — the reduced-motion
+CSS forces every band visible regardless of `.is-in`, so the 1:1 sheet diff was already
+scoring 1.72 while a real viewer saw an empty blue screen.
+
+- **The scroll lock clips the sheet.** `html.is-cover-locked` and `.is-locked` both set
+  `overflow: hidden`, and the lock was held until the cover's `@after-leave`. The cover is
+  a full screen tall, so the sheet sat below the fold and was clipped clean out of the
+  viewport; `useReveal`'s IntersectionObserver cannot fire on a clipped element no matter
+  what `rootMargin` says. Released in `openInvitation()` instead: the lock's job is to stop
+  a stray wheel event while the cover OWNS the screen, and once tapped it does not.
+- **The leaving cover held the flow.** In flow for its whole 2.4s leave, it pushed the
+  sheet to ~852px in an 812px viewport, so the invitation snapped up when the cover
+  unmounted rather than rising into it. `.splash-leave-active` is now
+  `position: absolute` (and `.desktop-right-column` is `position: relative` at every
+  breakpoint, not just >= 768px, or that resolves against the viewport).
+
+With both fixed the hero still needs `useReveal(0, '0px 0px 100% 0px')`: during the leave
+its top is a viewport-height below the fold, and the default `-12%` bottom margin makes it
+later, not earlier. **A band that is on screen when the sheet opens should not wait for a
+scroll it will never get.**
+
+**Check the reveal with motion ON.** `shot.mjs`'s `hero reveal fired` line is the only
+thing in the toolchain that can see this class of bug; its `false` was real, and its
+timing (2.2s after the click) is what caught it. The other bands' `false` lines are just
+bands that do not exist yet.
 
 ## Cover-specific findings
 
@@ -360,7 +490,20 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 
 | band | delta | band | delta |
 |---|---|---|---|
-| **cover (Frame 2, whole frame)** | **1.29** | body | — |
+| **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.720** |
+| countdown | — | bismillah | — |
+| bride | — | groom | — |
+| quote | — | akad | — |
+| resepsi | — | dresscode | — |
+| gallery | — | gift | — |
+| wishes | — | rsvp | — |
+| closing | — | | |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
+
+The hero's three text nodes match the render to **0px in both axes** (measured by locating
+their exported glyph ink in both images), and the amplified difference map shows no
+doubled edge or offset silhouette anywhere in the band — what is left in 1.720 is webp
+compression on the toile and the botanicals. It is a busier band than the cover by 29
+layers, which is most of the gap between the two numbers.

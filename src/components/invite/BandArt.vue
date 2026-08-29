@@ -14,7 +14,7 @@ const props = withDefaults(
   { skip: () => [], shown: true, step: 150 },
 )
 
-const FRAME_W = 375
+const FRAME_W = 596 // the body frame's own width — see SLICING.md
 
 /*
  * Each layer gets its own entrance, derived from where it sits and how big it is,
@@ -120,7 +120,7 @@ const stagger = () => Math.min(props.step, MAX_STAGGER / Math.max(1, visible().l
  */
 .band-art {
   position: absolute;
-  max-width: none; /* several layers are authored wider than the 375px frame */
+  max-width: none; /* several layers are authored wider than the frame */
   visibility: hidden;
   opacity: var(--a, 1);
   will-change: transform, opacity;

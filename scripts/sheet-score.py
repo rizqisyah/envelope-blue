@@ -21,12 +21,14 @@ FRAME = os.environ.get("BODY_FRAME", "")
 if not FRAME:
     sys.exit("set BODY_FRAME=<body frame number, e.g. 253 for template 5>")
 REF = os.environ.get("BAND_REF") or f".figma-tmp/exports{FRAME}/frame{FRAME}-full.png"
+# The design frame width. Template 6 is 596 wide, not the 375 templates 2-5 used.
+FRAME_W = int(os.environ.get("FRAME_W", "596"))
 LIVE = ".figma-tmp/web-sheet-1x.png"
 
 ref = Image.open(REF).convert("RGB")
 live = Image.open(LIVE).convert("RGB")
-if live.width != 375:
-    sys.exit(f"{LIVE} is {live.width} wide, not 375 -- shoot it with scripts/sheet-shot.mjs")
+if live.width != FRAME_W:
+    sys.exit(f"{LIVE} is {live.width} wide, not {FRAME_W} -- shoot it with scripts/sheet-shot.mjs")
 
 bands = []
 for f in sorted(os.listdir("src/lib/bands")):
@@ -40,8 +42,8 @@ bands.sort(key=lambda b: b[1])
 
 total = 0
 for name, y0, y1 in bands:
-    d = ImageChops.difference(ref.crop((0, y0, 375, y1)), live.crop((0, y0, 375, y1)))
-    m = sum(i * n for i, n in enumerate(d.convert("L").histogram())) / (375 * (y1 - y0))
+    d = ImageChops.difference(ref.crop((0, y0, FRAME_W, y1)), live.crop((0, y0, FRAME_W, y1)))
+    m = sum(i * n for i, n in enumerate(d.convert("L").histogram())) / (FRAME_W * (y1 - y0))
     total += m * (y1 - y0)
     print(f"{name:9} {y0:5}-{y1:<5} {m:7.3f}")
 print(f"{'SHEET':9} {bands[0][1]:5}-{bands[-1][2]:<5} {total / bands[-1][2]:7.3f}")

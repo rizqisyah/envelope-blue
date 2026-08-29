@@ -17,7 +17,10 @@ const [port = '5179', selector = '.divider__and', cx = '40', cy = '1930', cw = '
 const OUT = '.figma-tmp'
 
 const browser = await chromium.launch()
-const page = await browser.newPage({ viewport: { width: 375, height: 900 }, reducedMotion: 'reduce' })
+// The design frame's own width. At 375 the sheet's --px is 375/596 ≈ 0.63, so every
+// number this measures comes back scaled by that and reads as a placement error.
+const FRAME_W = Number(process.env.FRAME_W || 596)
+const page = await browser.newPage({ viewport: { width: FRAME_W, height: 900 }, reducedMotion: 'reduce' })
 await page.goto(`http://localhost:${port}/?to=A`, { waitUntil: 'networkidle' })
 await page.click('.cover__hit')
 await page.waitForTimeout(2500)

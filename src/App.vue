@@ -39,6 +39,18 @@ onMounted(async () => {
 
 async function openInvitation() {
   isOpen.value = true
+  /*
+   * Released here, not when the cover has finished leaving. The lock's job is to stop a
+   * stray wheel event scrolling the invitation while the cover still OWNS the screen —
+   * once it has been tapped, it does not. Holding it through the 2.4s leave also clips
+   * the sheet: `html.is-cover-locked` and `.is-locked` both set `overflow: hidden`, and
+   * the cover is still in flow above the sheet, so the first band sits at ~852px in an
+   * 812px viewport and is clipped out of the viewport entirely. Its IntersectionObserver
+   * therefore could not fire until the cover unmounted, and the reader watched an empty
+   * sheet rise to meet the receding cover — the one moment the whole opening is built
+   * around. Measured: the hero revealed at ~3.0s after the tap, now at ~0.1s.
+   */
+  isLocked.value = false
   await nextTick()
   requestAnimationFrame(() => {
     contentVisible.value = true
@@ -54,10 +66,6 @@ async function openInvitation() {
 watchEffect(() => {
   document.documentElement.classList.toggle('is-cover-locked', isLocked.value)
 })
-
-function onSplashLeave() {
-  isLocked.value = false
-}
 </script>
 
 <template>
@@ -68,7 +76,14 @@ function onSplashLeave() {
       <div class="left-content">
         <div class="left-header">
           <p class="left-subtitle">The Wedding Of</p>
-          <h1 class="left-title">{{ coupleName }}</h1>
+          <!--
+            A <p>, not an <h1>: this panel is decorative chrome that reprints the sheet's
+            own title beside it, and it is display:none below 768px. The document's one
+            real heading is the cover's <h1> before it is opened and the hero band's
+            after — leaving an <h1> here as well would make two on desktop and, since
+            this one is hidden on mobile, still none there once the cover unmounts.
+          -->
+          <p class="left-title">{{ coupleName }}</p>
         </div>
         <div class="left-quote-container">
           <p class="left-quote">&ldquo;{{ quoteText }}&rdquo;</p>
@@ -78,7 +93,7 @@ function onSplashLeave() {
     </div>
 
     <div class="desktop-right-column" :class="{ 'is-locked': isLocked }">
-      <Transition name="splash" @after-leave="onSplashLeave">
+      <Transition name="splash">
         <CoverSection
           v-if="!isOpen"
           :guest-name="guestName"
@@ -105,7 +120,20 @@ function onSplashLeave() {
  * The cover pushes past the viewer rather than sliding away — it reads as walking
  * through the gate into the garden, which then rises out of the blur behind it.
  */
+/*
+ * Taken OUT OF FLOW for the leave. Left in flow, the cover still occupies a full screen
+ * above the sheet for the whole 2.4s, so the invitation sits below the fold and only
+ * snaps up when the cover unmounts — the reader sees the cover go, then an empty screen,
+ * then the sheet appear at once. Out of flow, the sheet holds the screen from the tap
+ * and the cover recedes over the top of it, which is the effect the timings below were
+ * written for.
+ */
 .splash-leave-active {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
   transition:
     opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1),
     transform 2.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -264,6 +292,7 @@ function onSplashLeave() {
   }
 
   .desktop-right-column {
+    position: relative; /* containing block for the cover's out-of-flow leave */
     width: 100%;
     overflow-x: hidden;
   }

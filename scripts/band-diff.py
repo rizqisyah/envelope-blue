@@ -25,13 +25,14 @@ OUT = '.figma-tmp/band-live-3up.png'
 
 y0, y1 = int(sys.argv[1]), int(sys.argv[2])
 x0 = int(sys.argv[3]) if len(sys.argv) > 3 else 0
-x1 = int(sys.argv[4]) if len(sys.argv) > 4 else 375
+FRAME_W = int(os.environ.get('FRAME_W', '596'))  # template 6's design frame is 596 wide
+x1 = int(sys.argv[4]) if len(sys.argv) > 4 else FRAME_W
 
 ref = Image.open(REF).convert('RGB')
 live = Image.open(LIVE).convert('RGB')
 # Refuse to resample rather than quietly report a softened, inflated number.
-if live.width != 375:
-    sys.exit(f'{LIVE} is {live.width} wide, not 375 -- shoot it with scripts/sheet-shot.mjs')
+if live.width != FRAME_W:
+    sys.exit(f'{LIVE} is {live.width} wide, not {FRAME_W} -- shoot it with scripts/sheet-shot.mjs')
 
 a, b = ref.crop((x0, y0, x1, y1)), live.crop((x0, y0, x1, y1))
 d = ImageChops.difference(a, b)

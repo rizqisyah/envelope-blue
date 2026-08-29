@@ -50,13 +50,16 @@ REF = os.environ.get("LOCATE_REF") or f".figma-tmp/exports{FRAME}/frame{FRAME}-f
 ALPHA_FILE = f".figma-ref/frame{FRAME}-alpha.json"
 PLACE_FILE = f".figma-ref/frame{FRAME}-place.json"
 BLEND_FILE = f".figma-ref/frame{FRAME}-blend.json"
-FRAME_W = 375
+FRAME_W = int(os.environ.get("FRAME_W", "596"))  # this template's frame, not the 375 of 2-5
 SCALE = 2
 # The CSS plates in InviteBody.vue: (top, bottom, colour), painted in this order.
 # PER DESIGN -- read them off the sheet's own stylesheet, e.g.
 # [(0, FRAME_H, (247, 248, 238)), (0, 3881, (83, 9, 21))] for a cream sheet with a
 # wine block over its top half.
-GROUND = []
+# Frame 1 paints one flat ground: the frame's OWN fill, #e7f9fe. Note this is not
+# --paper (#e9faff) -- that was sampled off the cover frame, and the two differ by a
+# couple of counts per channel. Compositing over the cover's value biases every alpha.
+GROUND = [(0, FRAME_H, (231, 249, 254))]
 if not GROUND:
     sys.exit("fill in GROUND from InviteBody.vue's CSS plates -- see the docstring")
 # 1.0 first so a layer that is already right is never traded for a marginal gain.
@@ -90,7 +93,9 @@ MODES = ["normal", "screen", "multiply", "lighten", "darken"]
 # protects their alpha, and a hand-placed layer is exactly the kind the solver got wrong
 # in the first place: a big plate sitting 200px from home is only made to score by fading
 # it to nothing. Every id pinned in gen_band.py belongs here too. Per design, starts empty.
-NO_SOLVE = set()
+# 15:192 -- hand-measured in gen_band.py's PIN_X/PIN_Y. Left solvable, the search
+# refits it 94px away at 0.12 multiply and the lily disappears.
+NO_SOLVE = {'15:192'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every

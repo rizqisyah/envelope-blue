@@ -21,8 +21,12 @@ def walk(node, ox=0, oy=0):
         b = c["bounds"]
         x, y = b["x"] + ox, b["y"] + oy
         if c.get("children"):
-            # FRAME children are frame-relative; GROUP children are already absolute.
-            walk(c, *(x, y) if c["type"] == "FRAME" else (0, 0))
+            # A FRAME opens a new coordinate space for its descendants; a GROUP does not
+            # -- a group's children report coordinates in the group's OWN space, which is
+            # its nearest FRAME ancestor's. Resetting to (0, 0) for a GROUP is only right
+            # when the group sits at the top level; nested inside a frame it silently
+            # drops that frame's offset and lands the subtree at the top of the sheet.
+            walk(c, *((x, y) if c["type"] == "FRAME" else (ox, oy)))
             continue
         flat.append(
             dict(z=len(flat) + 1, id=c["id"], name=c["name"], type=c["type"],

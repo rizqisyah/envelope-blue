@@ -164,6 +164,14 @@ export function useWedding() {
       // render lines up with the design.
       'Di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda kebesaran Allah bagi kaum yang berpikir.',
   )
+  /*
+   * The hero's hashtag. Not read off `theme_override`: the API sends that as a JSON
+   * STRING as often as an object (see applyTheme), so a dotted read there silently
+   * never matches. Frame 1 prints "#AhmadSALMAnya", so an unconfigured render matches
+   * the design.
+   */
+  const hashtag = computed(() => wedding.value?.hashtag || '#AhmadSALMAnya')
+
   const quoteVerse = computed(() => wedding.value?.theme_override?.quote?.verse || 'QS Ar-Rum 21')
   const quoteArabic = computed(
     () =>
@@ -188,6 +196,7 @@ export function useWedding() {
     groom,
     bride,
     coupleNickname,
+    hashtag,
     quoteText,
     quoteVerse,
     quoteArabic,

@@ -52,7 +52,7 @@ BX0, BY0, BX1, BY1 = (int(v) for v in sys.argv[2:6])
 # How far outside the scoring box a candidate may sit. A plate usually overhangs the
 # thing it explains, so the default is generous; narrow it when the search wanders.
 MARGIN = int(os.environ.get("MARGIN", "260"))
-# A full-width plate has almost no horizontal freedom -- 375 wide in a 375 frame -- and
+# A full-width plate has almost no horizontal freedom -- frame-wide in a frame -- and
 # giving it 260px of it turns a 3-minute search into a 30-minute one for no gain.
 X_MARGIN = int(os.environ.get("X_MARGIN", str(MARGIN)))
 EXTRA = json.loads(os.environ.get("EXTRA", "{}"))

@@ -1,0 +1,239 @@
+{
+ "frame": "1:3",
+ "scale": 2,
+ "assetDir": "src/assets/",
+ "nodes": {
+  "40:88": {
+   "asset": "hero/parts/40-88.webp",
+   "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 1",
+   "x": -12,
+   "y": -8,
+   "w": 630,
+   "h": 837
+  },
+  "54:21": {
+   "asset": "hero/parts/54-21.webp",
+   "figmaName": "njnjk 3",
+   "x": -65.95,
+   "y": 555,
+   "w": 706,
+   "h": 455
+  },
+  "40:89": {
+   "asset": "hero/parts/40-89.webp",
+   "figmaName": "Ellipse 10",
+   "x": 111,
+   "y": 131,
+   "w": 384,
+   "h": 172
+  },
+  "18:502": {
+   "asset": "hero/parts/18-502.webp",
+   "figmaName": "fdbn gb 1",
+   "x": -205,
+   "y": 623,
+   "w": 1009.5,
+   "h": 673
+  },
+  "15:194": {
+   "asset": "hero/parts/15-194.webp",
+   "figmaName": "image 15",
+   "x": -229,
+   "y": 518.19,
+   "w": 351,
+   "h": 528
+  },
+  "15:196": {
+   "asset": "hero/parts/15-196.webp",
+   "figmaName": "image 16",
+   "x": 821.55,
+   "y": 518.19,
+   "w": 351,
+   "h": 528
+  },
+  "15:91": {
+   "asset": "hero/parts/15-91.webp",
+   "figmaName": "Vector 1",
+   "x": 80,
+   "y": 409,
+   "w": 437,
+   "h": 688
+  },
+  "15:94": {
+   "asset": "hero/parts/15-94.webp",
+   "figmaName": "Vector 2",
+   "x": 80,
+   "y": 409,
+   "w": 437,
+   "h": 688
+  },
+  "15:95": {
+   "asset": "hero/parts/15-95.webp",
+   "figmaName": "Vector 3",
+   "x": 80,
+   "y": 409,
+   "w": 437,
+   "h": 688
+  },
+  "20:647": {
+   "asset": "hero/parts/20-647.webp",
+   "figmaName": "Open (9) 1",
+   "x": -48,
+   "y": 409,
+   "w": 699,
+   "h": 699
+  },
+  "15:190": {
+   "asset": "hero/parts/15-190.webp",
+   "figmaName": "image 13",
+   "x": 41.39,
+   "y": 600,
+   "w": 80,
+   "h": 156.33
+  },
+  "15:192": {
+   "asset": "hero/parts/15-192.webp",
+   "figmaName": "image 14",
+   "x": 550.75,
+   "y": 600,
+   "w": 80,
+   "h": 156.33
+  },
+  "15:82": {
+   "asset": "hero/parts/15-82.webp",
+   "figmaName": "image 3",
+   "x": 109,
+   "y": 691,
+   "w": 84,
+   "h": 314.5
+  },
+  "15:96": {
+   "asset": "hero/parts/15-96.webp",
+   "figmaName": "image 5",
+   "x": 491,
+   "y": 690,
+   "w": 84,
+   "h": 314.5
+  },
+  "15:85": {
+   "asset": "hero/parts/15-85.webp",
+   "figmaName": "image 4",
+   "x": 31,
+   "y": 797,
+   "w": 110,
+   "h": 209
+  },
+  "15:97": {
+   "asset": "hero/parts/15-97.webp",
+   "figmaName": "image 6",
+   "x": 569,
+   "y": 796,
+   "w": 110,
+   "h": 209
+  },
+  "15:176": {
+   "asset": "hero/parts/15-176.webp",
+   "figmaName": "image 7",
+   "x": -163,
+   "y": 269,
+   "w": 393,
+   "h": 290.5
+  },
+  "15:185": {
+   "asset": "hero/parts/15-185.webp",
+   "figmaName": "image 10",
+   "x": 771,
+   "y": 265,
+   "w": 393,
+   "h": 290.5
+  },
+  "15:179": {
+   "asset": "hero/parts/15-179.webp",
+   "figmaName": "image 8",
+   "x": 19.62,
+   "y": 209,
+   "w": 104.41,
+   "h": 139.21
+  },
+  "15:186": {
+   "asset": "hero/parts/15-186.webp",
+   "figmaName": "image 11",
+   "x": 588.38,
+   "y": 205,
+   "w": 104.41,
+   "h": 139.21
+  },
+  "15:182": {
+   "asset": "hero/parts/15-182.webp",
+   "figmaName": "image 9",
+   "x": -134,
+   "y": 258,
+   "w": 220,
+   "h": 335
+  },
+  "15:187": {
+   "asset": "hero/parts/15-187.webp",
+   "figmaName": "image 12",
+   "x": 742,
+   "y": 254,
+   "w": 220,
+   "h": 335
+  },
+  "15:184": {
+   "asset": "hero/parts/15-184.webp",
+   "figmaName": "9c8283ed-3b7a-4f5c-9eb8-b1a99fc825b9-Photoroom 1",
+   "x": 66.66,
+   "y": 314,
+   "w": 125,
+   "h": 156
+  },
+  "15:188": {
+   "asset": "hero/parts/15-188.webp",
+   "figmaName": "9c8283ed-3b7a-4f5c-9eb8-b1a99fc825b9-Photoroom 2",
+   "x": 541.34,
+   "y": 310,
+   "w": 125,
+   "h": 156
+  },
+  "31:321": {
+   "asset": "hero/parts/31-321.webp",
+   "figmaName": "Open (19) 2",
+   "x": -124.24,
+   "y": 226.74,
+   "w": 611,
+   "h": 250
+  },
+  "31:322": {
+   "asset": "hero/parts/31-322.webp",
+   "figmaName": "Open (19) 3",
+   "x": 250,
+   "y": 14.91,
+   "w": 611,
+   "h": 250
+  },
+  "32:459": {
+   "asset": "hero/parts/32-459.webp",
+   "figmaName": "Open (21) 1",
+   "x": 244,
+   "y": 347,
+   "w": 124,
+   "h": 124
+  },
+  "52:10": {
+   "asset": "hero/parts/52-10.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 8",
+   "x": 723.05,
+   "y": 980,
+   "w": 255,
+   "h": 255
+  },
+  "52:9": {
+   "asset": "hero/parts/52-9.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 7",
+   "x": -126.95,
+   "y": 980,
+   "w": 255,
+   "h": 255
+  }
+ }
+}

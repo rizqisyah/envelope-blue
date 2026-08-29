@@ -3,36 +3,35 @@
 // each band positions its own children relative to its own top, so inserting a band
 // never renumbers the others. Band map and asset inventory: ../../../SLICING.md
 //
-// No bands sliced yet — import them from ../sections/ and list them in the template.
+// Sliced so far: hero (y 0..1108). The rest of Frame 1 is still to cut — add each
+// band's component here in Figma order as it lands.
+import HeroSection from '../sections/HeroSection.vue'
 </script>
 
 <template>
   <div class="sheet">
-    <p class="sheet__empty">No bands sliced yet.</p>
+    <HeroSection />
   </div>
 </template>
 
 <style scoped>
 /*
- * One design pixel = 1cqw / 3.75, the same unit CoverSection uses. Declared once here
- * so every band inherits it and can place children in raw Figma coordinates.
+ * One design pixel = 100cqw / 596, the same unit CoverSection uses. This frame is 596
+ * wide, NOT the 375 of templates 2-5 — every coordinate in every band table is in that
+ * space, so a 375-derived --px renders the whole sheet at 63%.
+ *
+ * Declared once here so every band inherits it and can place children in raw Figma
+ * coordinates.
  */
 .sheet {
   container-type: inline-size;
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: var(--paper);
+  background: var(--sheet);
 }
 
 .sheet > * {
-  --px: 0.26667cqw;
-}
-
-.sheet__empty {
-  padding: 80px 24px;
-  font-family: var(--font-sans);
-  text-align: center;
-  opacity: 0.5;
+  --px: calc(100cqw / 596); /* exact — a rounded decimal leaves the sheet 0.02px short of --body-h */
 }
 </style>

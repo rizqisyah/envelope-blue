@@ -38,7 +38,7 @@ from PIL import Image, ImageChops, ImageDraw
 # scale 1, so 1px == 1 design px
 REF = os.environ.get("BAND_REF") or sys.exit("set BAND_REF=<1x body frame render png>")
 SCALE = 2
-FRAME_W = 375
+FRAME_W = int(os.environ.get("FRAME_W", "596"))
 PASSES = 3
 
 

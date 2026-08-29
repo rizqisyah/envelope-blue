@@ -15,7 +15,10 @@
 import { chromium } from 'playwright'
 import { writeFileSync } from 'node:fs'
 
-const [sel, prop, from, to, y0, y1, x0 = 0, x1 = 375] = process.argv.slice(2)
+// The design frame's own width -- see fit-text.mjs. A 375 viewport scales every
+// swept design px by 375/596.
+const FRAME_W = Number(process.env.FRAME_W || 596)
+const [sel, prop, from, to, y0, y1, x0 = 0, x1 = FRAME_W] = process.argv.slice(2)
 if (!sel || !prop || from === undefined) {
   console.error('usage: node scripts/sweep-text.mjs <selector> <prop> <from> <to> <y0> <y1> [x0] [x1]')
   process.exit(1)
@@ -26,13 +29,13 @@ const OUT = '.figma-tmp'
 const browser = await chromium.launch()
 // deviceScaleFactor 1 so the shot is 1:1 with the scale-1 frame render.
 const page = await browser.newPage({
-  viewport: { width: 375, height: 900 },
+  viewport: { width: FRAME_W, height: 900 },
   deviceScaleFactor: 1,
   reducedMotion: 'reduce',
 })
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' })
 await page.waitForTimeout(600)
-await page.click('.opening__envelope')
+await page.click('.cover__hit')  // template 6's cover is one hit plate, not an envelope
 await page.waitForTimeout(2400)
 
 // Every band is viewport-gated, so walk the whole sheet before shooting any of it.

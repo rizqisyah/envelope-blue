@@ -7,7 +7,7 @@ const PORT = process.argv[2] || 5179
 const URL = `http://localhost:${PORT}/?to=Ahmad%20%26%20Salma`
 const OUT = '.figma-tmp'
 const VIEWPORTS = [
-  ['mobile', 375, 725], // the Figma frame itself
+  ['mobile', 375, 725], // a narrow phone (the design frame is 596 — see the sheet page below)
   ['phone812', 375, 812], // a real phone
   ['desktop', 1440, 900],
 ]
@@ -50,14 +50,16 @@ await page.waitForTimeout(1000)
 await page.click('.cover__hit')
 await page.waitForTimeout(3000)
 const opened = await page.locator('#invite').isVisible()
-const coverGone = (await page.locator('.opening').count()) === 0
+// `.cover`, not template 5's `.opening`: that class does not exist in this template, so
+// the check was vacuously true and could not have caught the cover failing to unmount.
+const coverGone = (await page.locator('.cover').count()) === 0
 await page.screenshot({ path: `${OUT}/web-opened.png` })
 await page.close()
 
-// The invitation sheet at exactly 375 CSS px wide, so it lines up 1:1 with the
+// The invitation sheet at exactly the design frame width, so it lines up 1:1 with the
 // Figma frame render for a pixel diff. Reduced motion pins every reveal open.
 const sheet = await browser.newPage({
-  viewport: { width: 375, height: 900 },
+  viewport: { width: 596, height: 900 },
   deviceScaleFactor: 2,
   reducedMotion: 'reduce',
 })

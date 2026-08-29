@@ -22,14 +22,14 @@ from PIL import Image
 
 Image.MAX_IMAGE_PIXELS = None
 
-FRAME = os.environ.get("BODY_FRAME", "253")
+FRAME = os.environ.get("BODY_FRAME", "1")
 REF = os.environ.get("BAND_REF") or f".figma-tmp/exports{FRAME}/frame{FRAME}-full.png"
 LIVE = ".figma-tmp/web-sheet-1x.png"
 THRESHOLD = 45
 
 y0, y1 = int(sys.argv[1]), int(sys.argv[2])
 x0 = int(sys.argv[3]) if len(sys.argv) > 3 else 0
-x1 = int(sys.argv[4]) if len(sys.argv) > 4 else 375
+x1 = int(sys.argv[4]) if len(sys.argv) > 4 else int(os.environ.get("FRAME_W", "596"))
 
 
 def ink(im):

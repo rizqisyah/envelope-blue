@@ -13,6 +13,13 @@
    * full-bleed, so any other value flashes at the seams while it decodes.
    */
   --paper: #e9faff;
+  /*
+   * The BODY frame's own fill. Two counts per channel off --paper, which was sampled on
+   * the cover frame — close enough to look identical, far enough that compositing a band
+   * over the wrong one biases every opacity scripts/solve_alpha.py fits. Keep them apart.
+   */
+  --sheet: #e7f9fe;
+  --ink-deep-blue: #3d78a2; /* the hero's eyebrow and hashtag */
 
   /*
    * fonts — the cover's two faces. Roben Elegante is self-hosted (see the @font-face
@@ -24,10 +31,13 @@
   --font-serif: "Cormorant Infant", serif; /* guest block */
   --font-body: "Cormorant Infant", serif; /* body copy */
   --font-sans: "Jost", system-ui, sans-serif; /* UI labels */
+  --font-lancelot: "Lancelot", serif; /* hero eyebrow + hashtag */
 
-  /* design frame reference (Figma Frame 2 cover = 27:9; body frame still to come) */
+  /* design frame reference — cover = Frame 2 (27:9); body = Frame 1 (1:3) */
   --frame-w: 596;
   --frame-h: 1183;
-  --body-h: 0;
+
+  /* body frame — Figma Frame 1 (1:3), 596 x 12818 */
+  --body-h: 12818;
   --card-max: 430px;
 }

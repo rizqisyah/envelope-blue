@@ -1,4 +1,5 @@
-// Shoot the whole invitation sheet at exactly 375 CSS px and deviceScaleFactor 1, so
+// Shoot the whole invitation sheet at exactly the design frame width (596 for this
+// template, not the 375 of templates 2-5) and deviceScaleFactor 1, so
 // it lines up 1:1 with the scale-1 Figma frame render and needs no resampling.
 //
 // scripts/shot.mjs also writes a sheet shot, but at deviceScaleFactor 2 for eyeballing.
@@ -11,11 +12,12 @@
 import { chromium } from 'playwright'
 
 const PORT = process.argv[2] || 5179
+const FRAME_W = Number(process.env.FRAME_W || 596)
 const OUT = '.figma-tmp/web-sheet-1x.png'
 
 const browser = await chromium.launch()
 const page = await browser.newPage({
-  viewport: { width: 375, height: 900 },
+  viewport: { width: FRAME_W, height: 900 },
   deviceScaleFactor: 1,
   // Pins every reveal open, so the shot is deterministic. It also hides a missing fade
   // -- that is what the per-band checks' no-preference pass is for.

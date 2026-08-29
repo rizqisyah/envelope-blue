@@ -43,13 +43,33 @@ FLAT = json.load(open(f'.figma-tmp/frame{FRAME}-flat.json'))
 
 # Band tops, in design px. A node lands in the last band whose top is <= its y.
 # Derived by eye from the frame render's headings, then refined by gen_band.py.
+# Only the hero/countdown boundary is VERIFIED: 1108 is the top of `26:8`, the ornate
+# countdown frame, and the render's own seam. Everything below it is provisional -- read
+# off heading positions in the frame render, good enough to keep the nodes in roughly the
+# right buckets, and to be re-measured when each band is actually cut.
 BANDS = [
-    # ('hero', 0), ('quote', 700), ...
+    ('hero', 0),          # verified
+    ('countdown', 1108),  # verified -- 26:8 "Open (16) 1"
+    ('bismillah', 1700),
+    ('bride', 2150),
+    ('groom', 3150),
+    ('quote', 4000),
+    ('akad', 4800),
+    ('resepsi', 5900),
+    ('dresscode', 6900),
+    ('gallery', 7700),
+    ('gift', 8800),
+    ('wishes', 9550),
+    ('rsvp', 10700),
+    ('closing', 11450),
 ]
 
 # Full-sheet flat-colour plates: CSS on the sheet in InviteBody.vue, not images.
+# Frame 1 paints its ground with its own #e7f9fe fill and no flat rectangle, so this
+# stays empty; the sheet's `background: var(--sheet)` is that fill.
 SHEET_PLATES = set()
-# Exports that came back fully transparent.
+# Exports that came back fully transparent. Every hero export carries ink -- the sparsest
+# is 20:647 at 7.4% opaque, which is the light wash over the portrait, not an empty file.
 EMPTY = set()
 
 if not BANDS:
@@ -81,7 +101,12 @@ for f in FLAT:
     out_dir = f"src/assets/{sec}/parts"
     os.makedirs(out_dir, exist_ok=True)
     out = f"{out_dir}/{f['id'].replace(':', '-')}.webp"
-    subprocess.run(['cwebp', '-quiet', '-q', '88', '-alpha_q', '100', src, '-o', out], check=True)
+    # q95, not the 88 templates 2-5 used. Measured on this band: 88 -> 1.956, 92 -> 1.819,
+    # 95 -> 1.720 mean abs delta, for 2.3M / 2.2M / 2.6M of hero art. Nearly all of what
+    # is left in the score is compression on the toile's high-contrast edges, so quality
+    # is the only lever still moving it. Drop to 92 if page weight ever matters more --
+    # it beats 88 on both axes.
+    subprocess.run(['cwebp', '-quiet', '-q', '95', '-alpha_q', '100', src, '-o', out], check=True)
     nodes[f['id']] = dict(asset=f"{sec}/parts/{f['id'].replace(':', '-')}.webp",
                           figmaName=f['name'], x=f['x'], y=f['y'], w=f['w'], h=f['h'])
 

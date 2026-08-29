@@ -41,7 +41,7 @@ os.environ.setdefault("LOCATE_REF", f".figma-tmp/exports{FRAME}/frame{FRAME}-ful
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import locate  # noqa: E402  -- must follow the LOCATE_REF default above
 
-FRAME_W = int(os.environ.get("FRAME_W", "375"))
+FRAME_W = int(os.environ.get("FRAME_W", "596"))
 # The sheet height is the one number no default can guess -- it is per design.
 FRAME_H = int(os.environ.get("BODY_H", "0"))
 if not FRAME_H:
@@ -88,15 +88,26 @@ TRUST_CLIP = set()
 # pins it to the wrong side, stacking it on its own mirror), and a rotated node whose
 # reported box is off-frame entirely. Use scripts/place_plate.py, with a FIXED scoring
 # box over the thing the layer is supposed to explain.
-PIN_X = {}
-PIN_Y = {}
+# 15:192 is the right-edge calla lily. Its export grew (a blur), so the re-centre rule
+# put it at x 545; solve_alpha then "improved" that by sliding it to 565 and fading it to
+# 0.12 multiply -- i.e. by deleting a flower the render plainly draws, which is exactly
+# the failure the gain gates exist to prevent and did not catch here. A fine scan over
+# x 440..530, y 585..615 has a sharp, unambiguous minimum at (471, 600): 52.55 there
+# against 57.38 one pixel right. Its mirror twin 15:190 scans the same way to (29, 600),
+# which gen_band already had. The absolute error is high on both because the asset is a
+# white lily on the near-white portrait wash -- a sharp minimum, not a low one, is the
+# evidence here.
+PIN_X = {'15:192': 471}
+PIN_Y = {'15:192': 600}
 
 # Opacity and blend mode for the layers whose POSITION is pinned above. solve_alpha
 # fitted their alpha against a composite in which they sat hundreds of pixels from home,
 # and the only way to make a plate in the wrong place score well is to fade it out. Add
 # the same ids to solve_alpha's NO_SOLVE so the next run does not refit them.
-PIN_A = {}
-PIN_B = {}
+# 15:192's alpha came from fitting it 94px from home, where the only way to score is to
+# fade out. At its measured position it paints at full strength, stacked normally.
+PIN_A = {'15:192': 1.0}
+PIN_B = {'15:192': 'normal'}
 
 # A layer paints in the band its own y lands in, not the band Figma filed it under.
 # Left in the wrong band it renders fine and REVEALS wrong: useReveal gates a band's
@@ -145,7 +156,7 @@ def _scorer(path):
 def rescue(path, hint_y, span=700, step=8):
     """Search the whole frame width for a layer whose reported box is off-frame.
 
-    A node reported wholly outside the 375px frame is rotated, so its bounds are
+    A node reported wholly outside the frame (FRAME_W px) is rotated, so its bounds are
     fiction -- but Figma still exported pixels for it, which means it renders
     SOMEWHERE. Most are mirrored decorations that land back inside the frame.
     A few are buried under later layers and never show at all; those must be
