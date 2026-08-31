@@ -126,6 +126,27 @@ export function formatEventTime(raw?: string | null): string {
 }
 
 /*
+ * "09 June 2025, 09:00" — the wishes band's card timestamps. Neither `formatEventDate`
+ * nor `relativeTime` produces it: a zero-padded day, the English month, and a 24-hour
+ * clock after a comma. Frame 1 prints exactly that string, so it is the shape a live
+ * `created_at` has to take.
+ */
+export function formatWishStamp(value?: string | Date | null): string {
+  if (!value) return ''
+  // The API sends MySQL-style "2026-07-28 10:00:00"; WebKit returns NaN for that, so
+  // normalise before parsing. Same reason as relativeTime below.
+  const at =
+    value instanceof Date
+      ? value
+      : new Date(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(value) ? value.replace(' ', 'T') : value)
+  if (Number.isNaN(at.getTime())) return ''
+  const day = String(at.getDate()).padStart(2, '0')
+  const month = at.toLocaleDateString('en-GB', { month: 'long' })
+  const time = at.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+  return `${day} ${month} ${at.getFullYear()}, ${time}`
+}
+
+/*
  * "2 hari lalu" — the wish list's timestamps. The design prints Indonesian relative
  * time, and unlike the dates above it does not switch to English.
  */

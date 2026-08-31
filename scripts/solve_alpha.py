@@ -116,7 +116,9 @@ NO_MOVE = {'54:33', '54:42',
            '45:9', '29:235', '31:287', '31:289', '52:6', '52:8',
            '31:295', '31:301', '31:304', '31:314', '31:315',
            # The gift band's pins.
-           '45:12', '31:417', '31:423', '32:457'}
+           '45:12', '31:417', '31:423', '32:457',
+           # The wishes band's pins.
+           '31:424', '31:426'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every
@@ -208,6 +210,23 @@ def paste(canvas, im, x, y, alpha, mode="normal"):
     canvas.alpha_composite(mixed, (px, py))
 
 
+# Rectangles a band DRAWS ITSELF that are in no node table at all -- reconstructed chrome
+# whose Figma frames the flatten never emitted. `text_mask` can key CSS_SHAPES off "in the
+# z-order with no asset", but these have no node to key on, so they are listed by hand:
+# (x0, y0, x1, y1) in frame coordinates. Without them the composite scores plain ground
+# where the render has a white field or a solid pill -- the wishes band's four came to
+# 3.562 against the live sheet's 1.582. It changed no verdict there, but a faded layer
+# whose search box overlaps one of these would be refitted to pay for the phantom.
+DRAWN_BOXES = [
+    (92, 9742, 516, 9796),    # wishes: the name field
+    (92, 9812, 516, 9900),    # wishes: the message field
+    (91, 9915, 517, 9969),    # wishes: the Send pill
+    (85, 10344, 511, 10398),  # wishes: the Show more pill
+    (252, 9250, 344, 9291),   # gift: the Copy pill, card 1
+    (252, 9454, 344, 9495),   # gift: the Copy pill, card 2
+]
+
+
 def text_mask(y0, y1):
     """White where the render carries something the composite cannot draw.
 
@@ -231,6 +250,8 @@ def text_mask(y0, y1):
         # 4px of slack: several faces overshoot their Figma box by a pixel or two.
         d.rectangle([c["x"] - 4, c["y"] - y0 - 4, c["x"] + c["w"] + 4, c["y"] - y0 + c["h"] + 4],
                     fill=255)
+    for bx0, by0, bx1, by1 in DRAWN_BOXES:
+        d.rectangle([bx0 - 4, by0 - y0 - 4, bx1 + 4, by1 - y0 + 4], fill=255)
     return mask
 
 

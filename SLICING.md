@@ -31,17 +31,20 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom, quote, akad, resepsi, dresscode, gallery and gift sliced** (1.710 / 1.822 / 4.929 /
-  1.402 / 1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 / **0.898**), covering y 0..9565
-  of 12818. Three bands remain, each with nothing but a provisional y-range. The countdown and bismillah were cut once by an
+  groom, quote, akad, resepsi, dresscode, gallery, gift and wishes sliced** (1.710 / 1.822 /
+  4.929 / 1.402 / 1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 / **0.898** / 1.554),
+  covering y 0..10763 of 12818. Two bands remain, each with nothing but a provisional
+  y-range. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
-- **Wishes (y 9565..) is next.** Eighteen nodes and the frame's biggest live surface: a
-  name field, a message field, a Send button (`33:478` / `33:481` / `33:484`) and two baked
-  wish cards with a "Show more" (`33:524`). `useWedding` already has `wishes` and
-  `sendWish`, so this band is mostly form work rather than slicing — only five of its nodes
-  are art.
+- **RSVP (y 10763..) is next.** Sixteen nodes and the same shape as wishes: a heading in
+  an `ELLIPSE` (`39:7`, check its fill before reaching for `CSS_SHAPES`), three labelled
+  fields (`40:16` Nama, `40:28` No Hp, `40:39` "Will you be joining us?", `40:41` "Number of
+  Guests:") and a Send (`40:36`). Its field plates will be missing from the dump the same
+  way the wishes band's were — measure them off the render and add them to `solve_alpha`'s
+  `DRAWN_BOXES`. No `sendRsvp` exists in `useWedding` yet; check `api.ts` before assuming
+  one.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -131,7 +134,8 @@ there is nothing to re-measure yet.
    node begins, and 6970 is where `29:242` (the resepsi card frame) ends. The six entries
    below it were read off heading positions in the frame render and must be re-measured as
    each band is cut — 7750 and 8865 are verified too, where `31:316` / `29:235` open the
-   gallery, `45:12` / `45:11` open the gift band and `32:456` / `32:454` open wishes. Note
+   gallery, `45:12` / `45:11` open the gift band, `32:456` / `32:454` open wishes and
+   `35:534` opens rsvp. Note
    the resepsi band still *derives* 5907..7034: nothing sits in the 64px of plain ground
    between the card and the dresscode heading, so the gap falls to resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
    fill. `EMPTY` holds `54:35` and `54:41`, 1x1 transparent files declaring the same box and
@@ -781,6 +785,45 @@ What did NOT transfer: the y offsets. The cartouche is 1061px below akad's, the 
 1063, the text block 1048. The band is a flip, not a translation — do not try to derive
 positions from the akad band arithmetically the way the bride/groom mirror allowed.
 
+## A band's own chrome is invisible to every script in the toolchain
+
+The wishes band draws four things that are in no node table at all — the two white fields,
+the Send pill and the Show more pill, all auto-layout frames `flatten_frame.py` never
+emitted. Measured off the render:
+
+| what | box | fill |
+|---|---|---|
+| name field | (92, 9742) 424 x 54 | `#ffffff`, radius 8 |
+| message field | (92, 9812) 424 x 88 | `#ffffff`, radius 8 |
+| Send | (91, 9915) 426 x 54 | `#b2d3e2`, fully rounded |
+| Show more | (85, 10344) 426 x 54 | `#b2d3e2`, fully rounded |
+
+All four land 0px on all four edges once drawn from those numbers. **The trap is what
+happens next:** `solve_alpha` composites nodes, so where the render has a white field it
+composites plain ground and scores the difference as error. The wishes band's offline
+number was **3.562** against a live sheet score of 1.582 — the gap is almost entirely those
+four rectangles. `text_mask` can find a `CSS_SHAPES` node by "in the z-order with no asset",
+but reconstructed chrome has no node to find, so `solve_alpha` now carries **`DRAWN_BOXES`**,
+a hand-listed set of frame-space rectangles a band draws itself. It changed no verdict here
+(0.627 for gift, down from 1.456 unmasked) but a faded layer whose search box overlaps one
+of these would have been refitted to pay for the phantom.
+
+**Every band that reconstructs chrome has to add its boxes there.** The rsvp band below has
+the same form shape and will need the same entries.
+
+## A repeated sprite can rescue onto its SIBLING, not just confuse `locate`
+
+The twins guard was already in the `locate` branch and in the off-frame rescue. It was
+missing from the third one — the clip branch's rescue — and the wishes band found it:
+`31:424` and `31:426` are byte-identical to the gift band's `31:427` and `31:428`, and they
+rescued straight onto them at **err 5.6, 414px from home**, beating a clip rule that was
+already right. Both bands now look correct only because the pins overrule it. The guard is
+in all three branches now.
+
+The lesson generalises past this repo: **a confident low error from a search is evidence
+that the ASSET is somewhere, never that this NODE is there.** Only the geometry ties an
+error to an id.
+
 ## Figma's MCP does not report `textCase` either
 
 `31:390` and `31:432`, the gift band's bank lines, come back as `characters: "Bank Bca
@@ -1023,7 +1066,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
-| wishes | — | rsvp | — |
+| **wishes** (9565..10763) | **1.554** | rsvp | — |
 | closing | — | | |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
@@ -1149,3 +1192,36 @@ that offset.
 `shot.mjs` grew a second interaction assertion with this band: it clicks Copy, confirms the
 label changes and confirms it reverts. The page context now grants `clipboard-write`, without
 which the handler throws and a working button reads as broken.
+
+The wishes band brought two more of the design's own faces, both on fontsource and neither
+substituted: **Bellefair** (the form, the timestamps and the message copy) and **Abhaya
+Libre ExtraBold** (the card names). Every text node and all four plates land 0px, but three
+of them needed a nudge and they do not agree with each other — Abhaya's line box sits 1px
+LOW at this size and Bellefair's sits 1px HIGH at both 18 and 20, and the two pills want
+their labels centred in 56 rather than the plate's 54. Same per-(face, size) rule as
+Ibarra's +1 in the akad band; it is never safe to carry one node's offset to the next.
+
+`33:510`'s size is the odd one: Abhaya Libre ExtraBold sets "Satrio & Istri" **113 x 13** at
+Figma's declared 20 where the render has **104 x 12** — the same 0.92 on BOTH axes, which is
+a uniform scale rather than the width-vs-height trade every substitute face has forced so
+far. One number (18.4) fixes both. Weight 700 renders identically to 800 in this family, so
+it is not a weight mismatch; the design's node is simply scaled.
+
+**The cards are a flow, not absolute boxes.** A live message is any number of lines and the
+Show more button has to move with them, so the list is one positioned block at `33:510`'s
+origin holding cards in normal flow: 147 of copy, a 27 gap, and the button 27 below the
+last card. That reproduces the render's rows exactly and still grows. Note the design
+itself puts card 2 one pixel right of card 1 (91/91/90 against 92/92/91) — that is
+designer noise, not a pattern, and it is deliberately NOT reproduced.
+
+One behaviour bug this band exposed, worth knowing for rsvp: in **design mode** `sendWish`
+answers locally, so `wishes` only ever holds rows this visitor just posted. A plain
+`live.length ? live : DESIGN` therefore *empties* the guest book the moment someone tries
+the form — the default deploy IS design mode, so that is what most people would have seen.
+The section keeps the design's cards underneath a locally-posted wish and never mixes them
+into live data.
+
+`shot.mjs` now carries three interaction assertions — the gallery carousel, the gift Copy
+button and the wish form. The wish check runs **after** the `.sheet` screenshot on purpose:
+design mode has no way to un-post a wish, so run earlier it would leave its own test card in
+the artifact every later band is eyeballed against.

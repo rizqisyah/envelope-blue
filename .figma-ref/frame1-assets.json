@@ -3,6 +3,22 @@
  "scale": 2,
  "assetDir": "src/assets/",
  "nodes": {
+  "61:614": {
+   "asset": "wishes/parts/61-614.webp",
+   "figmaName": "fxdbvg 2",
+   "x": -1.95,
+   "y": 10666,
+   "w": 616,
+   "h": 308
+  },
+  "61:603": {
+   "asset": "wishes/parts/61-603.webp",
+   "figmaName": "zeniaraustri_99855_Magical_royal_luxury_garden_arch_straight_fr_28822d90-4b23-4179-b0bd-5d358f0a922a-Photoroom 1",
+   "x": -18.95,
+   "y": 10543,
+   "w": 633,
+   "h": 477
+  },
   "54:18": {
    "asset": "groom/parts/54-18.webp",
    "figmaName": "njnjk 2",
@@ -1123,6 +1139,14 @@
    "w": 374,
    "h": 277
   },
+  "31:424": {
+   "asset": "wishes/parts/31-424.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 16",
+   "x": 108,
+   "y": 9664,
+   "w": 194,
+   "h": 238
+  },
   "31:427": {
    "asset": "gift/parts/31-427.webp",
    "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 18",
@@ -1136,6 +1160,14 @@
    "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 20",
    "x": 78,
    "y": 9109,
+   "w": 194,
+   "h": 238
+  },
+  "31:426": {
+   "asset": "wishes/parts/31-426.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 17",
+   "x": 488,
+   "y": 9664,
    "w": 194,
    "h": 238
   },
@@ -1178,6 +1210,22 @@
    "y": 6252,
    "w": 161,
    "h": 196
+  },
+  "32:454": {
+   "asset": "wishes/parts/32-454.webp",
+   "figmaName": "image 62",
+   "x": 530,
+   "y": 9565,
+   "w": 148,
+   "h": 176
+  },
+  "32:456": {
+   "asset": "wishes/parts/32-456.webp",
+   "figmaName": "image 63",
+   "x": 66,
+   "y": 9565,
+   "w": 148,
+   "h": 176
   },
   "32:458": {
    "asset": "gift/parts/32-458.webp",
@@ -1258,6 +1306,14 @@
    "y": 5618,
    "w": 620,
    "h": 310
+  },
+  "61:615": {
+   "asset": "wishes/parts/61-615.webp",
+   "figmaName": "dd394a56-c64d-424d-a92b-31fe52e64004-Photoroom 1",
+   "x": 265.05,
+   "y": 10517,
+   "w": 65,
+   "h": 82
   },
   "54:20": {
    "asset": "akad/parts/54-20.webp",

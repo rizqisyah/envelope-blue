@@ -135,6 +135,33 @@ const copyBtn = await sheet.evaluate(async () => {
 await sheet.evaluate(() => window.scrollTo(0, 0))
 await sheet.waitForTimeout(400)
 await sheet.locator('.sheet').screenshot({ path: `${OUT}/web-sheet.png` })
+
+/*
+ * The wish form is the third stateful control, and the only one that writes: in design
+ * mode `sendWish` answers locally, so a submitted wish must appear at the top of the list
+ * with the guest's name on it. A silent failure here looks exactly like a working form.
+ */
+const wishForm = await sheet.evaluate(async () => {
+  const setValue = (el, v) => {
+    const proto = Object.getPrototypeOf(el)
+    Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, v)
+    el.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+  const name = document.querySelector('.wishes__name')
+  const msg = document.querySelector('.wishes__message')
+  const form = document.querySelector('.wishes__form')
+  if (!name || !msg || !form) return 'no wish form'
+  const before = document.querySelectorAll('.wishes__card').length
+  setValue(name, 'Playwright')
+  setValue(msg, 'shot.mjs was here')
+  form.requestSubmit()
+  await new Promise((r) => setTimeout(r, 600))
+  const first = document.querySelector('.wishes__card .wishes__from')?.textContent.trim()
+  const after = document.querySelectorAll('.wishes__card').length
+  if (first !== 'Playwright') return `wish not at top (${first})`
+  return after >= before ? 'ok' : 'list shrank'
+})
+
 await sheet.close()
 await browser.close()
 
@@ -144,6 +171,14 @@ console.log(`hero reveal fired: ${revealed}`)
 for (const b of bands) console.log(`${b.name} reveal fired on scroll: ${b.shown}`)
 console.log(`gallery carousel advances: ${carousel}`)
 console.log(`gift copy button confirms: ${copyBtn}`)
+console.log(`wish form posts: ${wishForm}`)
 if (errors.length) console.log(errors.join('\n'))
-if (!opened || !revealed || bands.some((b) => !b.shown) || carousel !== 'ok' || copyBtn !== 'ok')
+if (
+  !opened ||
+  !revealed ||
+  bands.some((b) => !b.shown) ||
+  carousel !== 'ok' ||
+  copyBtn !== 'ok' ||
+  wishForm !== 'ok'
+)
   process.exitCode = 1

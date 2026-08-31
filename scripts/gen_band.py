@@ -177,7 +177,8 @@ PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '2
          '29:248': 0, '29:243': 456, '29:246': 429, '29:249': 0, '29:274': 0, '54:42': 62,
          '45:9': 0, '29:235': 10, '31:287': 78, '31:289': 152, '52:6': 17, '52:8': 293,
          '31:295': 146, '31:301': 255, '31:304': 364, '31:314': 140, '31:315': 457,
-         '45:12': 0, '31:417': 0, '31:423': 0, '32:457': 0}
+         '45:12': 0, '31:417': 0, '31:423': 0, '32:457': 0,
+         '31:424': 0, '31:426': 488}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
          '23:882': 4071, '20:762': 4323, '20:763': 4329,
@@ -188,7 +189,7 @@ PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 
          '29:274': 6004, '54:42': 6688,
          '29:235': 7750, '31:289': 8062, '52:6': 8155, '52:8': 8155,
          '31:295': 8478, '31:301': 8478, '31:304': 8478, '31:314': 8262, '31:315': 8262,
-         '32:457': 9109}
+         '32:457': 9109, '31:424': 9664, '31:426': 9664}
 
 # The gift band is the cleanest demonstration of the right-edge rule in the frame: every
 # LEFT-side node declares its right edge and every RIGHT-side node declares its left one.
@@ -523,9 +524,15 @@ def main():
                 # A full-width search always finds SOME least-bad spot, and for a big
                 # mostly-transparent layer that spot is often nowhere near the truth.
                 # It has to beat where the clip rule already put it, clearly.
+                # `c["id"] not in twins` matters here as much as it does in the branch
+                # above: a repeated sprite's rescue lands on a SIBLING's copy and reports a
+                # tiny error for it. The wishes band's 31:424 / 31:426 are byte-identical to
+                # the gift band's 31:427 / 31:428 and rescued onto them at err 5.6, 414px
+                # from home, beating a clip that was already right.
                 if (
                     hit
                     and c["id"] not in TRUST_CLIP
+                    and c["id"] not in twins
                     and hit[2] < SURE_ERR
                     and hit[2] < clip_err - 3
                 ):
