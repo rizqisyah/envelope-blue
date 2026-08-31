@@ -63,15 +63,21 @@ const TITLE = 'Save \nThe Date'
 }
 
 /*
- * `top`s are Figma's box y (band-local) PLUS 1 — same measured line-box offset as the
- * hero's text nodes. The design's font-size/line-height are left untouched.
+ * `top`s are Figma's box y (band-local) EXACTLY — no offset.
+ *
+ * The hero pays its text back +1px, and that number was copied here; measuring showed it
+ * over-corrects. The line-box offset is PER FACE, not per project: the hero's Lancelot and
+ * Roben Elegante sit 1px high in the browser, Pinyon Script and Ibarra Real Nova do not.
+ * All six of this band's nodes, measured by locating their Figma glyph ink in both the
+ * frame render and the live shot, came back dx 0 / dy +1 against the +1 tops — i.e. the
+ * raw Figma y is right. Re-measure per face; never carry another band's compensation.
  */
 
 /* 16:498 — Pinyon Script 32/38, #700f06, centred in a 199 box at x 202. */
 .countdown__title {
   --delay: 60ms;
   z-index: 62;
-  top: calc(215 * var(--px)); /* box y 214 + 1 */
+  top: calc(214 * var(--px)); /* 16:498 box y */
   left: calc(202 * var(--px));
   width: calc(199 * var(--px));
   font-family: var(--font-script-date);
@@ -110,52 +116,52 @@ const TITLE = 'Save \nThe Date'
 
 .countdown__n--days {
   z-index: 83;
-  top: calc(291 * var(--px)); /* box y 290 + 1 */
+  top: calc(290 * var(--px)); /* 16:454 box y */
   left: calc(236 * var(--px));
 }
 
 .countdown__n--hours {
   z-index: 85;
-  top: calc(291 * var(--px)); /* box y 290 + 1 */
+  top: calc(290 * var(--px)); /* 16:461 box y */
   left: calc(330 * var(--px));
 }
 
 .countdown__n--minutes {
   z-index: 87;
-  top: calc(385 * var(--px)); /* box y 383.93 + 1 */
+  top: calc(383.93 * var(--px)); /* 16:468 box y */
   left: calc(236 * var(--px));
 }
 
 .countdown__n--seconds {
   z-index: 89;
-  top: calc(385 * var(--px)); /* box y 383.93 + 1 */
+  top: calc(383.93 * var(--px)); /* 16:475 box y */
   left: calc(330 * var(--px));
 }
 
 .countdown__l--days {
   z-index: 84;
-  top: calc(359 * var(--px)); /* box y 358 + 1 */
+  top: calc(358 * var(--px)); /* 16:457 box y */
   left: calc(230 * var(--px));
   width: calc(41 * var(--px));
 }
 
 .countdown__l--hours {
   z-index: 86;
-  top: calc(359 * var(--px)); /* box y 358 + 1 */
+  top: calc(358 * var(--px)); /* 16:464 box y */
   left: calc(318.5 * var(--px));
   width: calc(52 * var(--px));
 }
 
 .countdown__l--minutes {
   z-index: 88;
-  top: calc(453 * var(--px)); /* box y 451.93 + 1 */
+  top: calc(451.93 * var(--px)); /* 16:471 box y */
   left: calc(216 * var(--px));
   width: calc(69 * var(--px));
 }
 
 .countdown__l--seconds {
   z-index: 90;
-  top: calc(453 * var(--px)); /* box y 451.93 + 1 */
+  top: calc(451.93 * var(--px)); /* 16:478 box y */
   left: calc(310 * var(--px));
   width: calc(69 * var(--px));
 }

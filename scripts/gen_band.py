@@ -97,17 +97,48 @@ TRUST_CLIP = set()
 # which gen_band already had. The absolute error is high on both because the asset is a
 # white lily on the near-white portrait wash -- a sharp minimum, not a low one, is the
 # evidence here.
-PIN_X = {'15:192': 471}
-PIN_Y = {'15:192': 600}
+# 16:397 and 16:493 are both cases the reconcile chain structurally cannot reach, and
+# both were found by reading the EXPORT'S EDGE ALPHA rather than by any search:
+#
+#   16:397 declares x 116 w 191 -- inside the frame on both sides -- yet exports 116 wide.
+#   reconcile() only clips a node whose REPORTED box bleeds, so neither branch fires and it
+#   falls through to round(116). Its export's left column carries the plate's maximum alpha
+#   (212) against 90 on the right: the ink is cut off flat at the left, so the node really
+#   bleeds 75px past x 0 and its reported x is fiction. x -> 0. Its mirror 16:398 has the
+#   profile the other way round (L 90, R 212) and its reported 480 is right.
+#
+#   16:493 reports x 739.8 -- wholly off-frame -- so it took the rescue path, which landed
+#   it at 288 in open ground. Its final x and y are NOT from the edge-alpha rule: see the
+#   ink-crop measurement under PIN_A below, which settles both it and its mirror 16:491.
+#
+# locate.py cannot settle either one: all three of 40:91, 16:397 and 16:398 have NO pixel
+# above alpha 240, so opaque_points() returns nothing and every search scores them blind.
+#
+# 16:397 needs no PIN_A/PIN_B: once its x is right it paints at the default full strength,
+# and the stale 0.2/screen the earlier pass had fitted for it is gone from frame1-alpha.json.
+# Only the pair below needed their paint pinned as well as their position.
+PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0}
+PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984}
 
 # Opacity and blend mode for the layers whose POSITION is pinned above. solve_alpha
 # fitted their alpha against a composite in which they sat hundreds of pixels from home,
 # and the only way to make a plate in the wrong place score well is to fade it out. Add
 # the same ids to solve_alpha's NO_SOLVE so the next run does not refit them.
+#
+# 16:491 / 16:493 are ORDINARY OPAQUE ART -- a mirrored pair of white sweet-pea sprigs --
+# and the solver's 0.3 screen / 0.12 lighten was hiding a placement error, not describing
+# a light leak. Their export grew 219.6 -> 368 tall, but Figma grew it upward rather than
+# around the centre, so reconcile()'s re-centre put them 181px low; at that position the
+# only way to score is to fade them out, and a symmetric sweep still preferred screen
+# because every variant was choosing between two wrong pictures. Cropping each asset to
+# its own alpha bbox and locating THAT lands both at y 984 -- independently, and at INK x
+# 0 and 431, which is a perfect mirror in a 596 frame. Those are ink positions; each layer's
+# own x is the ink position less its ink's offset inside the export, giving PIN_X 0 and 396.
+# At y 984 they paint at full strength, stacked normally, and the band goes 3.20 -> 1.82.
 # 15:192's alpha came from fitting it 94px from home, where the only way to score is to
 # fade out. At its measured position it paints at full strength, stacked normally.
-PIN_A = {'15:192': 1.0}
-PIN_B = {'15:192': 'normal'}
+PIN_A = {'15:192': 1.0, '16:491': 1.0, '16:493': 1.0}
+PIN_B = {'15:192': 'normal', '16:491': 'normal', '16:493': 'normal'}
 
 # A layer paints in the band its own y lands in, not the band Figma filed it under.
 # Left in the wrong band it renders fine and REVEALS wrong: useReveal gates a band's

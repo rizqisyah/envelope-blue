@@ -30,9 +30,11 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 
 ## Picking this up in a new session
 
-- **State:** cover sliced and scored (1.29); body frame dumped and its hero band sliced
-  and scored (1.720). Twelve of the 14 remaining bands have nothing but a provisional
-  y-range. `npm install` is done; dev server is `npm run dev` on 5179.
+- **State:** cover sliced (1.29); body frame dumped; **hero, countdown and bismillah
+  sliced** (1.710 / 1.822 / 4.884), covering y 0..2161 of 12818. Eleven bands remain, each
+  with nothing but a provisional y-range. The countdown and bismillah were cut once by an
+  earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
+  from that rework, and all of them apply to the bands still to come. `npm install` is done; dev server is `npm run dev` on 5179.
 - **Every script call needs the frame env**, or they silently run against templates 2-5's
   375-px assumptions: `BODY_FRAME=1 BODY_H=12818 FRAME_W=596 BODY_FRAME_ID=1:3`.
 - **`.figma-tmp/exports1/frame1-full.png` is the reference render** (scale 1, so 1px == 1
@@ -55,6 +57,9 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 | `src/components/cover/CoverSection.vue` | **Sliced** from Frame 2. Layer table in `src/lib/coverLayers.ts` |
 | `src/components/invite/InviteBody.vue` | The sheet: declares `--px` and lists the bands. Renders `HeroSection` |
 | `src/components/sections/HeroSection.vue` | **Sliced** from Frame 1 y 0..1108. Layer table in `src/lib/bands/hero.ts` |
+| `src/components/sections/CountdownSection.vue` | **Sliced** from Frame 1 y 1108..1802 |
+| `src/components/sections/BismillahSection.vue` | **Sliced** from Frame 1 y 1802..2161. Three substituted faces |
+| `scripts/text-ink.mjs` | Isolates a band's LIVE text ink by difference; prints computed font sizes |
 | `src/components/invite/BandArt.vue` | Renders a `BandLayer[]` table with per-layer entrances. Design-agnostic |
 | `src/lib/bandLayer.ts` / `bandAssets.ts` | The layer type, and the glob that turns `src/assets/<band>/parts/*.webp` into urls |
 | `src/lib/api.ts` / `composables/useWedding.ts` | Live data + `DESIGN_MODE`. Every band's copy is data-driven |
@@ -149,6 +154,7 @@ BODY_FRAME=<n> BODY_H=<h> python3 scripts/solve_alpha.py          # opacity/blen
 npm run dev &                                                     # port 5179
 node scripts/sheet-shot.mjs 5179                                  # 1:1 sheet shot
 BODY_FRAME=<n> python3 scripts/sheet-score.py                     # every band, one pass
+FRAME_W=596 node scripts/text-ink.mjs 5179 "<sel>,<sel>"          # live text ink, by difference
 BAND_REF=<1x body render.png> python3 scripts/band-diff.py <y0> <y1>   # one band, 3-up
 LOCATE_REF=<1x frame render.png> python3 scripts/locate.py <asset.webp>
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/place_plate.py <id> <x0> <y0> <x1> <y1>
@@ -401,6 +407,134 @@ common colour, and a blue-on-cream wallpaper pattern reads as ink everywhere —
 window it was given returned the window's own bounds. The export-the-glyphs-and-locate
 method above is what to use on a busy ground.
 
+## Read the export's EDGE ALPHA to find which edge Figma cut
+
+This is the single most useful measurement in the toolchain and it is not in any script
+yet — it is what unblocked the countdown band after `locate` and the solver both failed.
+
+An export whose pixel size is smaller than its node's declared size was clipped, and the
+edge that clipped it is the one whose **alpha runs right up to the boundary**. Compare the
+first and last column (or row) of the export's alpha channel against the plate's own
+maximum:
+
+| node | declared | export | L alpha | R alpha | verdict |
+|---|---|---|---|---|---|
+| `16:397` | 191 wide at x 116 | 116 | **212** (its max) | 90 | cut at the LEFT -> x 0 |
+| `16:398` | 191 wide at x 480 | 116 | 90 | **212** | cut at the RIGHT -> x 480 |
+| `40:91` | 653 wide at x -19 | 596 | **102** (its max) | **102** | cut BOTH -> full bleed, x 0 |
+
+`16:397` is the case that matters: its reported box, x 116..307, is comfortably inside a
+596 frame, so **neither branch of `reconcile()` fires** — it only clips a node whose
+REPORTED box bleeds — and the value falls straight through to `round(116)`. Nothing in the
+chain can catch it, and the render is 75px wrong with no warning. Its edge alpha says the
+node really bleeds past x 0 and its reported x is fiction.
+
+## `locate.py` is blind to translucent plates
+
+`opaque_points()` keeps only pixels above alpha **240**. Three of the countdown band's
+eight layers — `40:91`, `16:397`, `16:398` — have no such pixel anywhere, so it returns an
+empty list and every search scores them at random. That is why `gen_band` reported only 4
+of 8 matched, and why the solver's answers for them were noise.
+
+**A layer that `locate` cannot see is not a layer the solver can place.** Use the edge-alpha
+rule above for those, and settle the rest by A/B against the live band.
+
+## A faded or screened plate is usually a MISPLACED plate
+
+The countdown's `16:491`/`16:493` came out of the other agent's pass as light-leak plates —
+0.3 screen and 0.12 lighten. They are nothing of the kind: they are a mirrored pair of
+opaque white sweet-pea sprigs, sitting **181px too low**.
+
+Two things hid it, and both are worth knowing:
+
+- **Figma grew the export asymmetrically.** The node declares 219.6 tall and exports 368.
+  `reconcile()` assumes a blur or rotation grows the bbox around the node's CENTRE and
+  re-centres accordingly, landing on y 1165. Figma had grown it upward instead; the true
+  top is y 984. The re-centre rule is an assumption, not a law.
+- **The solver cannot reach 181px.** `SEARCH` is 40. Every position it could try was wrong,
+  so the only way to improve the score was to fade the plate out — and a symmetric sweep
+  over the whole alpha/blend ladder still preferred `screen`, because it was choosing
+  between two wrong pictures. The sweep looked like evidence and was not.
+
+**The fix that works: crop the asset to its OWN alpha bbox and locate that.** A big plate is
+mostly empty, so a search over the whole export scores mostly transparent pixels; the ink
+crop is what the render actually shows. Both mirrors then landed at y 984 independently, at
+x 0 and x 431 — a perfect mirror, which is the corroboration that makes it safe to pin.
+At full strength, stacked normally, the band went 3.20 -> 1.82.
+
+So: **settle position before paint, and distrust any opacity under ~0.5 on a layer that
+looks like ordinary art.** Every one of the three found so far — the hero's lily, and this
+pair — was a placement error wearing an opacity.
+
+## The line-box offset is per FACE, never per project
+
+The hero pays its text back **+1px** and that number was copied to the countdown and the
+bismillah. It is wrong for both. Measured the same way — export the node's glyph ink from
+Figma, template-match it into the frame render and into the live shot, take the delta —
+all six countdown nodes come back **dy +1 against the +1 tops**, i.e. Pinyon Script and
+Ibarra Real Nova want Figma's y with **no** offset at all.
+
+| face | offset |
+|---|---|
+| Lancelot, Roben Elegante (hero) | Figma y **+1** |
+| Pinyon Script, Ibarra Real Nova (countdown) | Figma y **+0** |
+
+Re-measure per face. Carrying another band's compensation is not a shortcut, it is a bug.
+
+## Measuring text on a busy ground
+
+Both of the obvious methods fail on this design:
+
+- `ink-box.py` thresholds a crop against its own most common colour — the toile wallpaper
+  defeats it, and every window returns the window's own bounds.
+- Keying on the node's fill colour fails too, because the greeting's dark green `#2c4b34`
+  IS the foliage's green.
+
+Two that work:
+
+- **`scripts/text-ink.mjs`** shoots the sheet twice, once normally and once with the text
+  nodes `visibility: hidden`, and differences them. That isolates the live glyph ink
+  exactly, whatever it is sitting on. It also prints each node's COMPUTED font-size, which
+  is how you catch a rule that silently failed to apply.
+- **`Range.getClientRects()`** in the browser gives exact per-line advance widths with no
+  image processing at all. Pair it with the Figma side, where a TEXT node's **export is its
+  render bounds** — so the export's own pixel size IS the ink extent.
+
+**A text export's origin is NOT the node box's origin.** Figma exports a TEXT node at its
+render bounds, so the export tells you the ink's SIZE but not where it starts. For a
+centred node, derive the ink's x from the box centre and the ink width; do not add the
+export's bbox to the node's x.
+
+## The Vue newline trap bites twice
+
+SLICING.md already says an authored newline cannot survive the template. The bismillah's
+greeting was written as two indented source lines with `white-space: pre-line`, and Vue
+folded the newline to a space — so the sentence wrapped wherever it happened to fit.
+
+The second-order damage is the part worth remembering: **every width measured off a wrapped
+line is a measurement of the wrap point, not of the design's line.** Three rounds of
+font-size compensation were fitted against it and all three were meaningless — the numbers
+even moved the wrong way when the size changed, which is the tell. Put the break in a
+script constant, confirm the rendered line contents, and only then measure.
+
+## Read the render, not the string
+
+`19:569`'s characters are the lowercase `"journey together"` and its face is `Activists`.
+The render draws **wide-spaced CAPITALS** — Activists puts cap-height forms on its
+lowercase, the case-pair trap this file already warns about, seen from the other side. The
+first pass set it in a script face and reproduced the characters instead of the design.
+
+When a face is unavailable, the render is the specification. Here that means uppercase with
+tracking, and the substitute chosen by measurement: at the design's own 22px, Ibarra sets
+the greeting 446.5 wide, Lancelot 437.1, EB Garamond 475.5 and Cormorant Infant 482,
+against the render's 372 — so Ibarra needs the least distortion and keeps the design's size
+closest.
+
+**Match the WIDTH and record the height as a deviation.** Activists is condensed enough that
+no loaded face reaches its 24px cap height at its 227.5px measure; width-matched, Cormorant
+Infant's caps land ~14px. That gap is the floor for the node until the real face is
+licensed, and it is a recorded deviation rather than a placement error.
+
 ## The first band is not scroll-gated, and finding that out took a while
 
 Two separate things kept the hero invisible for the first three seconds after the cover
@@ -490,17 +624,29 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 
 | band | delta | band | delta |
 |---|---|---|---|
-| **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.720** |
-| countdown | — | bismillah | — |
+| **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
+| **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.884** |
 | bride | — | groom | — |
 | quote | — | akad | — |
 | resepsi | — | dresscode | — |
+| | | | |
 | gallery | — | gift | — |
 | wishes | — | rsvp | — |
 | closing | — | | |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
+
+The countdown was cut by another pass at **5.542** and the bismillah at **20.202**; the
+numbers above are after the rework described in the findings sections. Both bands now carry
+**no opacity or blend override at all** — every layer paints at full strength, stacked
+normally, which is what the design does. The five overrides the earlier pass carried were
+each compensating for a placement error.
+
+The bismillah's 4.884 is **not** comparable to the other bands: all three of its faces are
+substitutes (Perpetua, Activists and an Arabic fallback Figma reached for when Alex Brush
+could not set the Basmala). Its art diffs clean; effectively the whole number is glyph
+shape, and it is the floor until those faces are licensed.
 
 The hero's three text nodes match the render to **0px in both axes** (measured by locating
 their exported glyph ink in both images), and the amplified difference map shows no
