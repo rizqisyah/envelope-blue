@@ -824,6 +824,15 @@ The lesson generalises past this repo: **a confident low error from a search is 
 that the ASSET is somewhere, never that this NODE is there.** Only the geometry ties an
 error to an id.
 
+There is a scheduling corollary. **The twins set GROWS as later bands are cut**, so a node
+`locate` placed correctly can silently lose `locate` on a later regenerate. `31:427` was
+matched by `locate` at err 5.5 when the gift band was cut, because its byte-twin `31:424`
+did not exist yet; once the wishes band's assets landed both became twins and `locate` is
+skipped for them. It still lands at 0 — `reconcile` reads the declared 108 as a right edge
+and the clip rule is deterministic — but that was luck, not design. **Read the `route`
+column in `GEN_TRACE`, not just the position**: a layer whose only evidence is `locate` is
+a layer that can change answer when a later band is dumped.
+
 ## Figma's MCP does not report `textCase` either
 
 `31:390` and `31:432`, the gift band's bank lines, come back as `characters: "Bank Bca
