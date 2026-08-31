@@ -35,6 +35,22 @@
    "w": 355,
    "h": 355
   },
+  "45:11": {
+   "asset": "gift/parts/45-11.webp",
+   "figmaName": "Open (19) 9",
+   "x": 460.05,
+   "y": 8865,
+   "w": 280,
+   "h": 280
+  },
+  "45:12": {
+   "asset": "gift/parts/45-12.webp",
+   "figmaName": "Open (19) 10",
+   "x": 140.05,
+   "y": 8865,
+   "w": 280,
+   "h": 280
+  },
   "40:91": {
    "asset": "countdown/parts/40-91.webp",
    "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 3",
@@ -1059,6 +1075,78 @@
    "w": 634,
    "h": 188
   },
+  "31:417": {
+   "asset": "gift/parts/31-417.webp",
+   "figmaName": "Open (20) 2",
+   "x": 225,
+   "y": 8885,
+   "w": 466,
+   "h": 466
+  },
+  "31:422": {
+   "asset": "gift/parts/31-422.webp",
+   "figmaName": "Open (20) 4",
+   "x": 361,
+   "y": 9332,
+   "w": 466,
+   "h": 466
+  },
+  "31:418": {
+   "asset": "gift/parts/31-418.webp",
+   "figmaName": "Open (20) 3",
+   "x": 351,
+   "y": 8885,
+   "w": 466,
+   "h": 466
+  },
+  "31:423": {
+   "asset": "gift/parts/31-423.webp",
+   "figmaName": "Open (20) 5",
+   "x": 235,
+   "y": 9332,
+   "w": 466,
+   "h": 466
+  },
+  "31:419": {
+   "asset": "gift/parts/31-419.webp",
+   "figmaName": "image 27",
+   "x": -196,
+   "y": 9250,
+   "w": 374,
+   "h": 277
+  },
+  "31:421": {
+   "asset": "gift/parts/31-421.webp",
+   "figmaName": "image 58",
+   "x": 791,
+   "y": 9250,
+   "w": 374,
+   "h": 277
+  },
+  "31:427": {
+   "asset": "gift/parts/31-427.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 18",
+   "x": 108,
+   "y": 9250,
+   "w": 194,
+   "h": 238
+  },
+  "32:457": {
+   "asset": "gift/parts/32-457.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 20",
+   "x": 78,
+   "y": 9109,
+   "w": 194,
+   "h": 238
+  },
+  "31:428": {
+   "asset": "gift/parts/31-428.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 19",
+   "x": 488,
+   "y": 9250,
+   "w": 194,
+   "h": 238
+  },
   "32:447": {
    "asset": "groom/parts/32-447.webp",
    "figmaName": "image 41",
@@ -1090,6 +1178,14 @@
    "y": 6252,
    "w": 161,
    "h": 196
+  },
+  "32:458": {
+   "asset": "gift/parts/32-458.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 21",
+   "x": 518,
+   "y": 9111,
+   "w": 194,
+   "h": 238
   },
   "32:459": {
    "asset": "hero/parts/32-459.webp",

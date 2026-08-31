@@ -62,6 +62,9 @@ const sheet = await browser.newPage({
   viewport: { width: 596, height: 900 },
   deviceScaleFactor: 2,
   reducedMotion: 'reduce',
+  // The gift band's Copy button writes to the clipboard, which is permission-gated:
+  // without this its handler throws and the check below reads as a broken button.
+  permissions: ['clipboard-write'],
 })
 await sheet.goto(URL, { waitUntil: 'networkidle' })
 await sheet.waitForTimeout(800)
@@ -111,6 +114,24 @@ const carousel = await sheet.evaluate(async () => {
   return restored === before ? 'ok' : 'advanced but did not restore'
 })
 
+/*
+ * The gift band's Copy button is the other stateful control. Click it, confirm the label
+ * confirms the copy, and confirm it reverts -- a rejected clipboard write leaves the label
+ * alone, which is exactly the failure a screenshot cannot see.
+ */
+const copyBtn = await sheet.evaluate(async () => {
+  const btn = document.querySelector('.gift__copy')
+  if (!btn) return 'no copy button'
+  const before = btn.textContent.trim()
+  btn.click()
+  await new Promise((r) => setTimeout(r, 300))
+  const after = document.querySelector('.gift__copy').textContent.trim()
+  await new Promise((r) => setTimeout(r, 1700))
+  const back = document.querySelector('.gift__copy').textContent.trim()
+  if (before === after) return `label did not change (${before})`
+  return back === before ? 'ok' : `confirmed but stuck on "${back}"`
+})
+
 await sheet.evaluate(() => window.scrollTo(0, 0))
 await sheet.waitForTimeout(400)
 await sheet.locator('.sheet').screenshot({ path: `${OUT}/web-sheet.png` })
@@ -122,5 +143,7 @@ console.log(`cover removed after transition: ${coverGone}`)
 console.log(`hero reveal fired: ${revealed}`)
 for (const b of bands) console.log(`${b.name} reveal fired on scroll: ${b.shown}`)
 console.log(`gallery carousel advances: ${carousel}`)
+console.log(`gift copy button confirms: ${copyBtn}`)
 if (errors.length) console.log(errors.join('\n'))
-if (!opened || !revealed || bands.some((b) => !b.shown) || carousel !== 'ok') process.exitCode = 1
+if (!opened || !revealed || bands.some((b) => !b.shown) || carousel !== 'ok' || copyBtn !== 'ok')
+  process.exitCode = 1

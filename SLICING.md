@@ -31,17 +31,17 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom, quote, akad, resepsi, dresscode and gallery sliced** (1.710 / 1.822 / 4.929 / 1.402 /
-  1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149), covering y 0..8865 of 12818. Four bands
-  remain, each with nothing but a provisional y-range. The countdown and bismillah were cut once by an
+  groom, quote, akad, resepsi, dresscode, gallery and gift sliced** (1.710 / 1.822 / 4.929 /
+  1.402 / 1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 / **0.898**), covering y 0..9565
+  of 12818. Three bands remain, each with nothing but a provisional y-range. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
-- **Gift (y 8865..) is next.** Twenty-four nodes and the frame's first band with real UI
-  in it: two bank cards, each with a "Copy" control (`31:408`, `31:442`). Its art repeats
-  hard — `Open (20) 2..5` and four copies of the same `Photoroom` floral — so expect twins,
-  and expect the akad/resepsi right-edge read on every one of them (`31:417` declares 225
-  for a 466-wide node, `31:419` declares -196, `31:421` declares 791).
+- **Wishes (y 9565..) is next.** Eighteen nodes and the frame's biggest live surface: a
+  name field, a message field, a Send button (`33:478` / `33:481` / `33:484`) and two baked
+  wish cards with a "Show more" (`33:524`). `useWedding` already has `wishes` and
+  `sendWish`, so this band is mostly form work rather than slicing — only five of its nodes
+  are art.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -131,7 +131,7 @@ there is nothing to re-measure yet.
    node begins, and 6970 is where `29:242` (the resepsi card frame) ends. The six entries
    below it were read off heading positions in the frame render and must be re-measured as
    each band is cut — 7750 and 8865 are verified too, where `31:316` / `29:235` open the
-   gallery and `45:12` / `45:11` open the gift band. Note
+   gallery, `45:12` / `45:11` open the gift band and `32:456` / `32:454` open wishes. Note
    the resepsi band still *derives* 5907..7034: nothing sits in the 64px of plain ground
    between the card and the dresscode heading, so the gap falls to resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
    fill. `EMPTY` holds `54:35` and `54:41`, 1x1 transparent files declaring the same box and
@@ -781,6 +781,33 @@ What did NOT transfer: the y offsets. The cartouche is 1061px below akad's, the 
 1063, the text block 1048. The band is a flip, not a translation — do not try to derive
 positions from the akad band arithmetically the way the bride/groom mirror allowed.
 
+## Figma's MCP does not report `textCase` either
+
+`31:390` and `31:432`, the gift band's bank lines, come back as `characters: "Bank Bca
+(014)"`. The render prints **BANK BCA (014)**. `get_nodes_info` reports fills, family, size,
+weight and line-height and nothing about case, so this joins `opacity`, `blendMode` and
+`letterSpacing` on the list of things only the render knows.
+
+The tell is the width: the render's ink is **157** where mixed case sets 129, and the band
+went 1.515 -> 0.898 once `text-transform: uppercase` landed. Put it in CSS rather than in
+the string — a live `bank_name` from the API has to get the same treatment, and the design's
+own copy is not the source of truth for case.
+
+So: **when a text node's ink is wider than its `characters` can explain, check the case
+before reaching for letter-spacing or a substitute face.**
+
+## Where a band repeats a sprite, trust the geometry over `locate`
+
+`32:457` is the trap in its purest form. `locate` placed it at (30, 9250) with **err 5.1** —
+a real match, and a confident one. It is a match of `31:427`'s copy of the same floral,
+which really does sit at (0, 9250). Its own geometry — a mirrored left bleed, declared y —
+puts it at (0, 9109) at err 5.2, statistically the same number in the right place.
+
+The twins guard did not fire because the four `Photoroom` crops in this band are
+near-identical without being byte-identical, and the guard hashes bytes. A hash cannot see
+this; only the geometry can. When a band draws the same sprite more than once, resolve every
+copy from its declared box and use `locate` to confirm, never to decide.
+
 ## A masked PHOTO exports clipped too — so the mask's box is its position
 
 `54:33`'s fountain was the first case; the gallery band has four more and they make the rule
@@ -993,7 +1020,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
 | **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
-| **gallery** (7750..8865) | **2.149** | gift | — |
+| **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
 | wishes | — | rsvp | — |
 | closing | — | | |
 
@@ -1099,3 +1126,24 @@ first thing to delete before the template ships to a real couple.
 in the sheet, so it is the only thing a screenshot cannot check: the run now clicks "next"
 and confirms the oval's `src` actually changed. A wrong modulo reads as a still picture,
 which every other check in that file would pass.
+
+The gift band is the cleanest run of the right-edge rule in the frame, and it is worth
+keeping as the reference case: **every left-side node declares its RIGHT edge and every
+right-side node declares its left one**, in five matched pairs — `45:12`/`45:11`,
+`31:417`/`31:418`, `31:423`/`31:422`, `32:457`/`32:458`, `31:427`/`31:428` — plus `31:419`
+(an ordinary left bleed at -196) and `31:421` (a mirrored one at 791 -> 417). Only four
+needed a pin; the clip rule guessed the right edge for the rest.
+
+**The Copy pill is not in the node dump at all.** Its label `31:408` reports a
+parent-relative origin of 24,8 inside a box `flatten_frame.py` never emitted, and the render
+shows a 92x41 plate at (252, 9250) filled `#80a2ba`. Both pills land 0px on all four edges
+once drawn from those measurements. A paint-bearing auto-layout wrapper is the mirror image
+of the cover's `32:461` finding — that one was a wrapper that painted nothing and could be
+dropped; this one paints and has to be reconstructed. **When a text node's reported bounds
+are parent-relative and no parent is in the dump, the parent is a missing layer, not a
+coordinate bug** — its box is `text.abs - text.rel`, and its size is the text's plus twice
+that offset.
+
+`shot.mjs` grew a second interaction assertion with this band: it clicks Copy, confirms the
+label changes and confirms it reverts. The page context now grants `clipboard-write`, without
+which the handler throws and a working button reads as broken.

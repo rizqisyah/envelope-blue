@@ -176,7 +176,8 @@ PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '2
          '29:242': 24, '29:241': 62, '29:253': 146, '29:254': 0, '24:897': 0, '29:244': 0,
          '29:248': 0, '29:243': 456, '29:246': 429, '29:249': 0, '29:274': 0, '54:42': 62,
          '45:9': 0, '29:235': 10, '31:287': 78, '31:289': 152, '52:6': 17, '52:8': 293,
-         '31:295': 146, '31:301': 255, '31:304': 364, '31:314': 140, '31:315': 457}
+         '31:295': 146, '31:301': 255, '31:304': 364, '31:314': 140, '31:315': 457,
+         '45:12': 0, '31:417': 0, '31:423': 0, '32:457': 0}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
          '23:882': 4071, '20:762': 4323, '20:763': 4329,
@@ -186,7 +187,28 @@ PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 
          '29:244': 6393, '29:248': 6541, '29:243': 6372, '29:246': 6004, '29:249': 6475,
          '29:274': 6004, '54:42': 6688,
          '29:235': 7750, '31:289': 8062, '52:6': 8155, '52:8': 8155,
-         '31:295': 8478, '31:301': 8478, '31:304': 8478, '31:314': 8262, '31:315': 8262}
+         '31:295': 8478, '31:301': 8478, '31:304': 8478, '31:314': 8262, '31:315': 8262,
+         '32:457': 9109}
+
+# The gift band is the cleanest demonstration of the right-edge rule in the frame: every
+# LEFT-side node declares its right edge and every RIGHT-side node declares its left one.
+#
+#   45:12  140.1 -> 0     45:11  460.1 stands   (280-wide pair)
+#   31:417 225   -> 0     31:418 351   stands   (466-wide pair)
+#   31:423 235   -> 0     31:422 361   stands   (466-wide pair)
+#   32:457  78   -> 0     32:458 518   stands   (194-wide pair)
+#   31:427 108   -> 0     31:428 488   stands   (194-wide pair)
+#   31:419 -196  -> 0 (an ordinary left bleed) and 31:421 791 -> 417 (a mirrored one)
+#
+# Only four needed pinning; the clip rule guessed the right edge for the rest. 45:12,
+# 31:417 and 31:423 each scored 210..214 where it put them against 39..140 at 0.
+#
+# 32:457 is a different trap: locate placed it at (30, 9250) with err 5.1 -- a REAL match,
+# but of 31:427's copy of the same floral, which really is at (0, 9250). The four
+# Photoroom crops in this band are near-identical without being byte-identical, so the
+# twins guard never fires. Its own geometry (mirror bleed left, declared y) gives
+# (0, 9109) at err 5.2, statistically the same score in the right place. When a band
+# repeats a sprite, trust the geometry over locate even when locate is confident.
 
 # The gallery band. Its photos are the useful find: **a masked photo exports ALREADY
 # CLIPPED, so the mask's box is its position.** 31:289 declares 403.6x504.6 and exports

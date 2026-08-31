@@ -114,7 +114,9 @@ NO_MOVE = {'54:33', '54:42',
            '29:243', '29:246', '29:249', '29:274',
            # The gallery band's pins.
            '45:9', '29:235', '31:287', '31:289', '52:6', '52:8',
-           '31:295', '31:301', '31:304', '31:314', '31:315'}
+           '31:295', '31:301', '31:304', '31:314', '31:315',
+           # The gift band's pins.
+           '45:12', '31:417', '31:423', '32:457'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every

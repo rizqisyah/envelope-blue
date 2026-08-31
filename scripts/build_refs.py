@@ -62,7 +62,7 @@ BANDS = [
     ('dresscode', 6970),  # verified -- 29:242's resepsi card frame ends here
     ('gallery', 7750),  # verified -- 31:316 / 29:235 open the gallery here
     ('gift', 8865),  # verified -- 45:12 / 45:11 open the gift band here
-    ('wishes', 9550),
+    ('wishes', 9565),  # verified -- 32:456 / 32:454 open the wishes band here
     ('rsvp', 10700),
     ('closing', 11450),
 ]
