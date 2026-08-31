@@ -708,6 +708,17 @@ right edge, export comes back 592 wide, `locate` err 2.3). **Type is not the que
 whether the node is one flat fill is.** The gallery band below has `ELLIPSE`es used as photo
 MASKS; those are not CSS shapes.
 
+**A CSS shape has to be masked in `solve_alpha` the way TEXT is**, and it was not at first.
+Its composite neither paints a `CSS_SHAPES` node (there is no asset) nor knew to ignore it,
+so four solid ellipses against plain ground put **~1.46 of phantom error** into the band's
+composite score — 2.438 where the corrected mask gives 0.977. It changed no verdict here,
+because no solvable layer's search box comes within `SEARCH` of the swatches and the live
+sheet score is the authority anyway. It would change one on a band where a CSS shape sits
+beside a genuinely faded layer: that layer's local score is inflated, and `refine_paint`
+pays for it by fading something that should not fade. `text_mask` now masks **anything in
+the z-order with no asset**, which is the honest statement of what it was always for — the
+composite cannot draw it, so it must not be scored.
+
 ## The clean-band number is 0.683
 
 Dresscode scores **0.683**, less than half the next-best band, and it is worth knowing why

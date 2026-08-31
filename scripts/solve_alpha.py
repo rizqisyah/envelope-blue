@@ -204,11 +204,24 @@ def paste(canvas, im, x, y, alpha, mode="normal"):
 
 
 def text_mask(y0, y1):
-    """White where the render carries live copy the composite cannot draw."""
+    """White where the render carries something the composite cannot draw.
+
+    That is live copy, and also the flat shapes a band draws in CSS: build_refs.py's
+    CSS_SHAPES are in the z-order but have no asset, exactly like TEXT, so the composite
+    neither paints them nor knew to ignore them. Four solid ellipses against plain ground
+    put ~1.7 of phantom error into the dresscode band's composite score. Harmless there --
+    no solvable layer's search box reaches them -- but a CSS shape beside a genuinely faded
+    layer would inflate that layer's local score and `refine_paint` would pay for it.
+    """
     mask = Image.new("L", (FRAME_W, y1 - y0), 0)
     d = ImageDraw.Draw(mask)
+    assets = json.load(open(f".figma-ref/frame{FRAME}-assets.json"))["nodes"]
     for c in json.load(open(f".figma-ref/frame{FRAME}-zorder.json"))["children"]:
-        if c["type"] not in ("TEXT", "TEXT_PATH"):
+        if c["type"] in ("TEXT", "TEXT_PATH"):
+            pass
+        elif c["id"] not in assets:
+            pass  # in the z-order with no asset: a CSS_SHAPES node
+        else:
             continue
         # 4px of slack: several faces overshoot their Figma box by a pixel or two.
         d.rectangle([c["x"] - 4, c["y"] - y0 - 4, c["x"] + c["w"] + 4, c["y"] - y0 + c["h"] + 4],
