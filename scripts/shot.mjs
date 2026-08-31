@@ -96,11 +96,19 @@ const carousel = await sheet.evaluate(async () => {
   const oval = document.querySelector('.gallery__oval img')
   const next = document.querySelectorAll('.gallery__nav')[1]
   if (!oval || !next) return 'no carousel'
+  const prev = document.querySelectorAll('.gallery__nav')[0]
   const before = oval.getAttribute('src')
   next.click()
   await new Promise((r) => setTimeout(r, 200))
   const after = document.querySelector('.gallery__oval img')?.getAttribute('src')
-  return before !== after ? 'ok' : `unchanged (${before})`
+  // Put it back before the sheet screenshot below: left on photo 2 this check would
+  // bake its own leftover state into web-sheet.png and every later band's eyeball pass
+  // would show a "regression" that is only the test.
+  prev.click()
+  await new Promise((r) => setTimeout(r, 200))
+  const restored = document.querySelector('.gallery__oval img')?.getAttribute('src')
+  if (before === after) return `unchanged (${before})`
+  return restored === before ? 'ok' : 'advanced but did not restore'
 })
 
 await sheet.evaluate(() => window.scrollTo(0, 0))
