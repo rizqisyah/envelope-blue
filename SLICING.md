@@ -31,16 +31,12 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah and
-  bride sliced** (1.710 / 1.822 / 4.929 / 1.402), covering y 0..3163 of 12818. Ten bands
-  remain, each with nothing but a provisional y-range. The countdown and bismillah were cut
+  bride and groom sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478), covering y 0..4021 of
+  12818. Nine bands remain, each with nothing but a provisional y-range. The countdown and bismillah were cut
   once by an earlier pass at 5.542 and 20.202 and then reworked — the findings sections
   below are all from that rework, and all of them apply to the bands still to come.
   `npm install` is done; dev server is `npm run dev` on 5179.
-- **Cut the groom band next, against the bride as a template.** The two are an exact
-  mirror at **+1002px** (20:605↔20:608, 20:594↔20:610, 19:574↔20:607, 20:592↔20:632,
-  19:572↔20:609), which makes every bride placement a prediction for its groom twin:
-  a groom layer should land at `(mirror-x, bride-y + 1002)`. A pair that does not is a
-  measurement to redo, not a coincidence.
+- **Quote (y 4021..) is next.** It is the first band with no mirror to lean on.
 - **Every script call needs the frame env**, or they silently run against templates 2-5's
   375-px assumptions: `BODY_FRAME=1 BODY_H=12818 FRAME_W=596 BODY_FRAME_ID=1:3`.
 - **`.figma-tmp/exports1/frame1-full.png` is the reference render** (scale 1, so 1px == 1
@@ -66,6 +62,7 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 | `src/components/sections/CountdownSection.vue` | **Sliced** from Frame 1 y 1108..1802 |
 | `src/components/sections/BismillahSection.vue` | **Sliced** from Frame 1 y 1802..2161. Three substituted faces |
 | `src/components/sections/BrideSection.vue` | **Sliced** from Frame 1 y 2161..3163. The Instagram pill is CSS + the exported glyph |
+| `src/components/sections/GroomSection.vue` | **Sliced** from Frame 1 y 3163..4021. Placed entirely by mirroring the bride |
 | `scripts/text-ink.mjs` | Isolates a band's LIVE text ink by difference; prints computed font sizes |
 | `src/components/invite/BandArt.vue` | Renders a `BandLayer[]` table with per-layer entrances. Design-agnostic |
 | `src/lib/bandLayer.ts` / `bandAssets.ts` | The layer type, and the glob that turns `src/assets/<band>/parts/*.webp` into urls |
@@ -554,6 +551,17 @@ no loaded face reaches its 24px cap height at its 227.5px measure; width-matched
 Infant's caps land ~14px. That gap is the floor for the node until the real face is
 licensed, and it is a recorded deviation rather than a placement error.
 
+## A width match is per WORD, not per face
+
+Both call names are Cavilenny 36 in the design and both are set in Cormorant Infant here,
+and they need **different sizes**: "Syifa" wants 39.2 (Cormorant sets it 8.8% narrow) and
+"El Rumi" wants 37.5 (4.2% narrow). Two faces' per-glyph widths do not differ by a constant
+ratio, so a compensation fitted on one string is only right for that string. Measure each
+node; a substitute's size belongs beside the node, never in the token.
+
+The second-order effect: the line-box correction moves with the size. "Syifa" at 39.2
+needs x −1 / y +1 and "El Rumi" at 37.5 needs neither, same face, same line-height.
+
 ## Score the box over what the layer EXPLAINS, not over the layer
 
 The bride's `20:584` is the sharpest case of this the file has. It is a sweet-pea sprig
@@ -591,13 +599,32 @@ has grown an export in one direction only (`16:491`, `16:493`, `20:640`, now `20
 **Treat the re-centre as a guess and the declared top as the better prior**, then confirm
 against the render.
 
-## The bride and groom bands are an exact mirror at +1002
+## The bride and groom bands are an exact mirror — and a mirror places a band for free
 
-`20:605↔20:608`, `20:594↔20:610`, `19:574↔20:607`, `20:592↔20:632`, `19:572↔20:609` —
-every pair sits exactly 1002px apart. That fixes both band tops (2161 and 3163) without
-measuring a heading, and it gives every hard placement in one band a free check in the
-other: a groom layer belongs at `(mirror-x, bride-y + 1002)`, and a pair that disagrees is
-a measurement to redo.
+Fourteen pairs, 1002px apart, and it is a real mirror rather than a copy: every same-size
+pair's export is the horizontal FLIP of its twin (mean abs delta 3..9 mirrored, against
+17..61 unflipped). Correlating the two scene crops puts the axis at **x 294**, not the
+frame's 298, which matches the constant every pair's declared origins already showed:
+`bride_x + groom_x = 588`.
+
+    groom_x = 588 - bride_x - bride_w        groom_y = bride_y + 1002
+
+That is not a sanity check, it is the placement method. Nine of the fourteen pairs came
+out of the ordinary chain already agreeing with it — including every clipped one, which is
+what makes the remaining five safe to pin outright rather than search for. Pinning those
+five took the band **5.958 -> 1.516** in one pass, and a 1px scan afterwards puts `20:626`
+at a sharp minimum on the predicted 294 (1.914 / 1.702 / **1.478** / 1.678 / 1.903 across
+292..296). The prediction is exact, not approximate.
+
+**Figma reports a mirrored node's `bounds.x` as its RIGHT edge.** That is why the chain
+missed the five: `20:627` declares 333 for 141-wide art that renders at 192, `20:609`
+declares 433 for 342-wide art that renders at 91, `20:625` declares 679 for 183 that
+renders at 496. Every one of those boxes sits comfortably inside the frame, so no clip
+branch fires and the number falls straight through to `round()` — the same structural
+blind spot as `16:397`, arrived at by a different route. `rescue()` did fire on two of
+them and returned err 154 and 41, i.e. noise.
+
+So: **when a band has a mirror, resolve the pairs before searching anything.**
 
 ## A centred Figma line is centred INCLUDING its leading space
 
@@ -626,8 +653,10 @@ tuning at all. It is what settled every text node in this band:
 |---|---|---|
 | `20:641` "Syifa Hadju" | Roben Elegante 32/57 | **0** |
 | `19:543` "And" | Roben Elegante 40/71 | **0** |
-| `19:546` parents | Cormorant Infant 20/28.4 | **0** (once `pre-wrap` lands) |
-| `20:596` "Syifa" | Cormorant Infant for Cavilenny | x −1, y +1 |
+| `19:546` / `20:616` parents | Cormorant Infant 20/28.4 | **0** (once `pre-wrap` lands) |
+| `20:614` "Ahmad Jalaluddin Rumi" | Roben Elegante 32/57 | **0** |
+| `20:596` "Syifa" | Cormorant Infant for Cavilenny, 39.2 | x −1, y +1 |
+| `20:622` "El Rumi" | Cormorant Infant for Cavilenny, 37.5 | **0** |
 
 Note the hero's Roben Elegante wants **+1** and this band's wants **0**. The offset is a
 property of the (face, size, line-height) triple, not of the face alone — the table in
@@ -724,7 +753,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 |---|---|---|---|
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
-| **bride** (2161..3163) | **1.402** | groom | — |
+| **bride** (2161..3163) | **1.402** | **groom** (3163..4021) | **1.478** |
 | quote | — | akad | — |
 | resepsi | — | dresscode | — |
 | | | | |

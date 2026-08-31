@@ -3,6 +3,14 @@
  "scale": 2,
  "assetDir": "src/assets/",
  "nodes": {
+  "54:18": {
+   "asset": "groom/parts/54-18.webp",
+   "figmaName": "njnjk 2",
+   "x": 637.05,
+   "y": 3822,
+   "w": 746,
+   "h": 481
+  },
   "40:91": {
    "asset": "countdown/parts/40-91.webp",
    "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 3",
@@ -83,11 +91,27 @@
    "w": 948,
    "h": 345
   },
+  "20:607": {
+   "asset": "groom/parts/20-607.webp",
+   "figmaName": "fdbn gb 3",
+   "x": 764,
+   "y": 3212,
+   "w": 948,
+   "h": 345
+  },
   "20:605": {
    "asset": "bride/parts/20-605.webp",
    "figmaName": "9ed2e2b0-5fe5-4ea8-9573-c5aee6522477-Photoroom 1",
    "x": -62.15,
    "y": 2161,
+   "w": 136.22,
+   "h": 172.1
+  },
+  "20:608": {
+   "asset": "groom/parts/20-608.webp",
+   "figmaName": "9ed2e2b0-5fe5-4ea8-9573-c5aee6522477-Photoroom 2",
+   "x": 650.15,
+   "y": 3163,
    "w": 136.22,
    "h": 172.1
   },
@@ -211,6 +235,14 @@
    "w": 342,
    "h": 253
   },
+  "20:609": {
+   "asset": "groom/parts/20-609.webp",
+   "figmaName": "image 33",
+   "x": 433,
+   "y": 3385,
+   "w": 342,
+   "h": 253
+  },
   "20:594": {
    "asset": "bride/parts/20-594.webp",
    "figmaName": "image 31",
@@ -219,11 +251,27 @@
    "w": 342,
    "h": 253
   },
+  "20:610": {
+   "asset": "groom/parts/20-610.webp",
+   "figmaName": "image 34",
+   "x": -179,
+   "y": 3200,
+   "w": 342,
+   "h": 253
+  },
   "20:584": {
    "asset": "bride/parts/20-584.webp",
    "figmaName": "image 29",
    "x": 186.24,
    "y": 2389,
+   "w": 342,
+   "h": 253
+  },
+  "20:611": {
+   "asset": "groom/parts/20-611.webp",
+   "figmaName": "image 35",
+   "x": 401.76,
+   "y": 3391,
    "w": 342,
    "h": 253
   },
@@ -363,11 +411,27 @@
    "w": 183,
    "h": 247
   },
+  "20:625": {
+   "asset": "groom/parts/20-625.webp",
+   "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 3",
+   "x": 679,
+   "y": 3321,
+   "w": 183,
+   "h": 247
+  },
   "20:589": {
    "asset": "bride/parts/20-589.webp",
    "figmaName": "image 30",
    "x": 144.4,
    "y": 2412.55,
+   "w": 204.29,
+   "h": 198.74
+  },
+  "20:626": {
+   "asset": "groom/parts/20-626.webp",
+   "figmaName": "image 37",
+   "x": 443.6,
+   "y": 3414.55,
    "w": 204.29,
    "h": 198.74
   },
@@ -379,11 +443,27 @@
    "w": 141,
    "h": 191
   },
+  "20:627": {
+   "asset": "groom/parts/20-627.webp",
+   "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 4",
+   "x": 333,
+   "y": 3342,
+   "w": 141,
+   "h": 191
+  },
   "20:582": {
    "asset": "bride/parts/20-582.webp",
    "figmaName": "c5ff532e-1fdc-437b-95b5-60296cfddce7-Photoroom 1",
    "x": 210,
    "y": 2499,
+   "w": 81,
+   "h": 81
+  },
+  "20:628": {
+   "asset": "groom/parts/20-628.webp",
+   "figmaName": "c5ff532e-1fdc-437b-95b5-60296cfddce7-Photoroom 3",
+   "x": 378,
+   "y": 3501,
    "w": 81,
    "h": 81
   },
@@ -395,11 +475,27 @@
    "w": 81,
    "h": 81
   },
+  "20:629": {
+   "asset": "groom/parts/20-629.webp",
+   "figmaName": "c5ff532e-1fdc-437b-95b5-60296cfddce7-Photoroom 4",
+   "x": 622.7,
+   "y": 3535.5,
+   "w": 81,
+   "h": 81
+  },
   "20:581": {
    "asset": "bride/parts/20-581.webp",
    "figmaName": "f0767deb-9298-4fd6-9c75-be7c924054f2-Photoroom 1",
    "x": 241,
    "y": 2451,
+   "w": 139,
+   "h": 139
+  },
+  "20:630": {
+   "asset": "groom/parts/20-630.webp",
+   "figmaName": "f0767deb-9298-4fd6-9c75-be7c924054f2-Photoroom 3",
+   "x": 347,
+   "y": 3453,
    "w": 139,
    "h": 139
   },
@@ -411,11 +507,27 @@
    "w": 101,
    "h": 101
   },
+  "20:631": {
+   "asset": "groom/parts/20-631.webp",
+   "figmaName": "f0767deb-9298-4fd6-9c75-be7c924054f2-Photoroom 4",
+   "x": 386,
+   "y": 3501,
+   "w": 101,
+   "h": 101
+  },
   "20:592": {
    "asset": "bride/parts/20-592.webp",
    "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 1",
    "x": -138,
    "y": 2313,
+   "w": 186,
+   "h": 227
+  },
+  "20:632": {
+   "asset": "groom/parts/20-632.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 6",
+   "x": 726,
+   "y": 3315,
    "w": 186,
    "h": 227
   },
@@ -459,6 +571,14 @@
    "w": 148,
    "h": 176
   },
+  "20:634": {
+   "asset": "groom/parts/20-634.webp",
+   "figmaName": "image 38",
+   "x": 47,
+   "y": 3269,
+   "w": 148,
+   "h": 176
+  },
   "20:649": {
    "asset": "bride/parts/20-649.webp",
    "figmaName": "image 40",
@@ -482,6 +602,22 @@
    "y": 14.91,
    "w": 611,
    "h": 250
+  },
+  "32:447": {
+   "asset": "groom/parts/32-447.webp",
+   "figmaName": "image 41",
+   "x": -97.85,
+   "y": 3771,
+   "w": 351,
+   "h": 339.35
+  },
+  "32:449": {
+   "asset": "groom/parts/32-449.webp",
+   "figmaName": "image 59",
+   "x": 691.04,
+   "y": 3771,
+   "w": 351,
+   "h": 339.35
   },
   "32:459": {
    "asset": "hero/parts/32-459.webp",

@@ -148,8 +148,30 @@ TRUST_CLIP = set()
 # a FIXED box over just that visible corner (place_plate.py, 0 2560 160 2720) separates
 # them at once -- 14.13 without the layer, 7.41 at (0, 2389). Pick the box over what the
 # layer is supposed to explain, not over the layer.
-PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '20:589': 9, '20:584': 0}
-PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389}
+#
+# The five groom pins are not measurements at all -- they are the BRIDE's, mirrored. The
+# two scenes are an exact horizontal mirror: every paired export is the flip of its twin
+# (`same` err 17..61 against `mirrored` err 3..9 across all eight same-size pairs), the y
+# offset is +1002, and correlating the two scene crops puts the axis at x 294, i.e.
+#
+#     groom_x = 588 - bride_x - bride_w        groom_y = bride_y + 1002
+#
+# Nine of the fourteen pairs already agreed with that after the ordinary chain, including
+# every clipped one, which is what makes the other five safe to pin rather than search.
+# The band went 5.958 -> 1.516 on those five alone, and a 1px scan afterwards puts 20:626
+# at a sharp minimum on the predicted 294 (1.914 / 1.702 / 1.478 / 1.678 / 1.903 at
+# 292..296) -- the prediction is exact, not approximate.
+#
+# The reason the chain missed them is worth keeping: **Figma reports a mirrored node's
+# bounds.x as its RIGHT edge.** 20:627 declares 333 for art 141 wide that renders at 192;
+# 20:609 declares 433 for art 342 wide that renders at 91; 20:625 declares 679 for 183
+# that renders at 496. Every one of those boxes is inside the frame, so no clip branch
+# fires and the value falls straight through -- the same structural blind spot as 16:397,
+# reached by a different route. When a band has a mirror, check the pairs before searching.
+PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '20:589': 9, '20:584': 0,
+         '20:625': 496, '20:627': 192, '20:609': 91, '20:626': 294}
+PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
+         '20:625': 3321, '20:611': 3391, '20:626': 3415}
 
 # Opacity and blend mode for the layers whose POSITION is pinned above. solve_alpha
 # fitted their alpha against a composite in which they sat hundreds of pixels from home,

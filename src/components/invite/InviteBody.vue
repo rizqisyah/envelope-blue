@@ -3,13 +3,14 @@
 // each band positions its own children relative to its own top, so inserting a band
 // never renumbers the others. Band map and asset inventory: ../../../SLICING.md
 //
-// Sliced so far: hero (y 0..1108), countdown (y 1108..1802), bismillah (y 1802..2161), bride (y 2161..3163).
+// Sliced so far: hero (y 0..1108), countdown (y 1108..1802), bismillah (y 1802..2161), bride (y 2161..3163), groom (y 3163..4021).
 // The rest of Frame 1 is still to cut — add each band's component here in Figma order
 // as it lands.
 import HeroSection from '../sections/HeroSection.vue'
 import CountdownSection from '../sections/CountdownSection.vue'
 import BismillahSection from '../sections/BismillahSection.vue'
 import BrideSection from '../sections/BrideSection.vue'
+import GroomSection from '../sections/GroomSection.vue'
 </script>
 
 <template>
@@ -18,6 +19,7 @@ import BrideSection from '../sections/BrideSection.vue'
     <CountdownSection />
     <BismillahSection />
     <BrideSection />
+    <GroomSection />
   </div>
 </template>
 
