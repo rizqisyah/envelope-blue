@@ -788,8 +788,10 @@ positions from the akad band arithmetically the way the bride/groom mirror allow
 weight and line-height and nothing about case, so this joins `opacity`, `blendMode` and
 `letterSpacing` on the list of things only the render knows.
 
-The tell is the width: the render's ink is **157** where mixed case sets 129, and the band
-went 1.515 -> 0.898 once `text-transform: uppercase` landed. Put it in CSS rather than in
+The tell is the width: the render's ink is **157** where mixed case sets 129. Toggling the
+rule with everything else in the band held fixed puts it at **1.542 without, 0.898 with** —
+one `text-transform` is worth 0.644 on a 700px band, because the line is set twice and each
+copy misses on every glyph. Put it in CSS rather than in
 the string — a live `bank_name` from the API has to get the same treatment, and the design's
 own copy is not the source of truth for case.
 

@@ -50,7 +50,8 @@ const cards = computed<Card[]>(() => {
 /*
  * Clipboard is permission-gated and absent over plain http, so a failure is not an
  * error worth surfacing — the number is on screen either way. The label confirms the
- * copy for a moment instead, which is also what a screen reader announces.
+ * copy for a moment instead; the button carries `aria-live` so that swap is announced
+ * rather than only seen.
  */
 const copied = ref(-1)
 async function copy(i: number, text: string) {
@@ -113,6 +114,7 @@ const ROWS = [
       <button
         type="button"
         class="gift__copy"
+        aria-live="polite"
         :style="{
           zIndex: 199 + i,
           top: `calc(${385 + i * CARD_GAP} * var(--px))`,
