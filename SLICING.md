@@ -31,12 +31,14 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom and quote sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817), covering
-  y 0..4425 of 12818. Eight bands remain, each with nothing but a provisional y-range. The
-  countdown and bismillah were cut once by an earlier pass at 5.542 and 20.202 and then
-  reworked — the findings sections below are all from that rework, and all of them apply to
-  the bands still to come. `npm install` is done; dev server is `npm run dev` on 5179.
-- **Akad (y 4425..) is next.** Its ground plate is `54:20`, the blue landscape.
+  groom, quote and akad sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817 / 1.922),
+  covering y 0..5907 of 12818. Seven bands remain, each with nothing but a provisional
+  y-range. The countdown and bismillah were cut once by an earlier pass at 5.542 and 20.202
+  and then reworked — the findings sections below are all from that rework, and all of them
+  apply to the bands still to come. `npm install` is done; dev server is `npm run dev` on 5179.
+- **Resepsi (y 5907..) is next.** It repeats the akad band's shape almost node for node —
+  `29:253` is `22:842`'s twin, `24:897` / `29:254` are `22:849` / `22:848`'s — so read the
+  akad band's pins before searching anything.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -120,13 +122,14 @@ there is nothing to re-measure yet.
 ## Still to fill in
 
 1. ~~The body frame's node id, size and `--body-h`.~~ Frame 1 (`1:3`), 596 x 12818.
-2. `scripts/build_refs.py`'s `BANDS` — filled, and verified down to **4425**: 1108 is the
-   top of `26:8`, 2161 and 3163 come out of the bride/groom mirror, 4021 is `54:17`'s top
-   and 4425 is `54:20`'s, each of them a ground plate and each the render's own seam. The
-   eight entries below 4425 were read off heading positions in the frame render and must be
-   re-measured as each band is cut. `SHEET_PLATES` and `EMPTY`
-   are both correctly empty: the frame paints its ground with its own fill, and every
-   hero export carries ink.
+2. `scripts/build_refs.py`'s `BANDS` — filled, and verified down to **5907**: 1108 is the
+   top of `26:8`, 2161 and 3163 come out of the bride/groom mirror, 4021 is `54:17`'s top,
+   4425 is `54:20`'s, and 5907 is where `22:822` (the akad card frame) ends and resepsi's
+   first node begins. The seven entries below 5907 were read off heading positions in the
+   frame render and must be re-measured as each band is cut. `SHEET_PLATES` is correctly
+   empty — the frame paints its ground with its own fill. `EMPTY` holds one id: `54:35`, a
+   1x1 transparent file declaring the same box and the same name ("dbfb") as `23:851`, i.e.
+   a dead duplicate of the akad card's plate rather than a layer.
 3. ~~`.figma-ref/frame1-{zorder,assets}.json`~~ — generated. Work from them, not Figma.
 4. ~~`solve_alpha.py`'s `GROUND`~~ — `[(0, FRAME_H, (231, 249, 254))]`, the frame's own
    `#e7f9fe` fill. Note this is NOT `--paper` (`#e9faff`), which was sampled off the
@@ -681,6 +684,79 @@ So: **a twin is a layer with no evidence behind its position.** Score it by hand
 scorer is three lines around `locate.opaque_points` — before believing anything the chain
 did with it.
 
+## Figma reports a flipped node's bounds as its RIGHT and/or BOTTOM edge
+
+The bride/groom band established the x half of this. The akad band has both axes, and
+several nodes flipped on only one of them:
+
+| node | declared | export | truth | rule |
+|---|---|---|---|---|
+| `52:4` | −182.9, 4902, 366x366 | 183x366 | 0, **4536** | y − h |
+| `52:5` | 785, 4902, 366x366 | 177x366 | **419**, **4536** | x − w, y − h |
+| `22:837` | −83, 5610, 223x301 | 140x301 | 0, **5309** | y − h |
+| `22:846` | −154.1, 5395.1, 435x322 | 167x**454** | 0, **4941** | y − EXPORT h |
+| `22:827` | 445.9, 5866.1, 435x322 | 177x**454** | **419**, **5412** | x − w, y − EXPORT h |
+| `32:450` | 75, 5828, 130x383 | **75**x383 | **0**, 5828 | x − w, then clip |
+
+Two things to take from the table. **Where the export grew, the edge is measured against
+the EXPORT's height, not the declared one** — `22:846` and `22:827` both land exactly on
+`y − 454`, and `y − 322` is 132px wrong. And **the flip is per node, not per motif**:
+`52:2` / `52:3` are the same botanical at the same card's foot and are NOT flipped
+vertically, so both keep their declared y (their flip-height alternative scores 197..200
+against 10..13). Derive it per node; never carry it across from a sibling.
+
+`32:450` is the same blind spot as `16:397`, reached by a third route: its declared 75 is
+its right edge, so the node really spans −55..75 and the clip is on the LEFT. Because the
+export IS narrower than the box, the clip branch does fire — it simply guesses the wrong
+edge. 520 at the declared 75 against 235 at 0.
+
+## A masked node exports clipped to its MASK
+
+`54:33`, the fountain at the foot of the akad card, declares 620x310 and exports **471x261
+— smaller on both axes**. Frame-clipping cannot do that at y 5618 in a 12818-tall frame,
+and no growth rule produces it either. 471 is exactly the width of `23:851`, the card's
+inner plate, and 63 is that plate's left edge: Figma exported the node clipped to its mask,
+so **the mask's box is the position**. 89.2 at (63, 5618) against 130.9 where the clip rule
+put it, and the export's 261 rows end at 5879, which is the plate's own bottom edge.
+
+So: when an export is smaller than its box on BOTH axes, look for a mask, and look for
+another node whose box explains the export's exact size.
+
+## `NO_SOLVE` was too blunt: pinning a position must not pin the paint
+
+`solve_alpha.py`'s `NO_SOLVE` skipped a layer entirely, and every hand-pinned id was told
+to go in it. That is right for the layers it was written for — a plate 200px from home is
+only made to score by fading it out, so its fitted alpha is a symptom, not a measurement.
+It is wrong for a layer the design genuinely fades. `54:33` is masked into the card and
+painted back at **0.55 darken**; blocked from the paint search it sat at full opacity and
+cost the band 0.4 on its own (4.105 -> 2.476 once solved).
+
+There is now a second set, **`NO_MOVE`**: position held, paint still searched. Use it for a
+layer whose position you measured and trust, and `NO_SOLVE` only when the fitted alpha was
+itself an artefact of the bad position.
+
+## Before calling a layer buried, prove it has no LEGAL position
+
+The `20:584` finding says a free search rating a layer "worthless" is not evidence it is
+absent. The converse test is what settles it, and `24:916` is the worked example:
+
+- Its export is clipped 239 -> 107 wide, so the geometry allows exactly two x values,
+  0 and 489. Scanning **every y in the band** at both bottoms out at err 43.4 and 42.4.
+- A free 2-D search over the whole band does no better — 39.9 — and it lands at x 373,
+  which the clip forbids. That is the "least-bad spot" pattern, not a match.
+- Dropping the layer takes the band **2.476 -> 2.251**.
+
+Three signals, one conclusion: it is buried, and it goes in `PAINTS_NOTHING`. Note the
+order — enumerate the legal positions FIRST, because a free search will always answer.
+
+## A design underline is not a browser underline
+
+`23:879` "View Maps" is underlined in the render. The default `text-decoration: underline`
+put a 2px line at y 5677; the render's own row profile has a **single 1px line at 5682**,
+98 wide, at (121, 140, 131) — `#4e685c` anti-aliased across one row. `text-underline-offset:
+8px` and `text-decoration-thickness: 1px` land it. Measure the rule's row and width off the
+render before accepting the browser's defaults; it is worth 0.04 on the band.
+
 ## A centred Figma line is centred INCLUDING its leading space
 
 `19:546`'s string is `"Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih
@@ -809,7 +885,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
 | **bride** (2161..3163) | **1.402** | **groom** (3163..4021) | **1.478** |
-| **quote** (4021..4425) | **1.817** | akad | — |
+| **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
 | resepsi | — | dresscode | — |
 | | | | |
 | gallery | — | gift | — |
@@ -849,3 +925,21 @@ anywhere in it. Colour-keying `#c04935` in both images puts `20:669` at **0px on
 edges** and `20:670` at 0 on left, right and bottom with its top 2px high — one glyph's
 ascender on the opening quote mark, not a placement offset. What is left in 1.817 is glyph
 rasterisation and webp loss on the botanicals.
+
+The akad band's ten text nodes all match the render to **0px in both axes**, measured by
+colour-keying `#4e685c`, `#623c2a` and `#aa7a3a` in both images. Two things had to be
+measured to get there. **Ibarra Real Nova's line-box offset is +1 at 20px and 0 at 16px** —
+every 20px node in the band sat 1px high at Figma's own y and both 16px nodes sat exactly
+on it, which is one more confirmation that the offset belongs to the (face, size) pair
+rather than the face. And its heading is the band's only substitute: Kaleagnetta, a thin
+monoline signature script, set in **Sacramento** at 39.3 (48 x 190/232, width-matched on
+"Akad Nikah"). Sacramento was picked against Roben Elegante, Pinyon Script, Mr De Haviland
+and Herr Von Muellerhoff by rendering all five side by side — the other four all carry
+stroke contrast Kaleagnetta does not have. Its ink stands 31 tall against the render's 46,
+which is the width-first trade and the band's floor until Kaleagnetta is licensed.
+
+The design's own copy is inconsistent in this band and is reproduced rather than
+reconciled: the ornate cartouche prints **Kamis / 27 / Desember 2026** in Indonesian and
+the card underneath prints **Saturday, / 06 September 2025** in English. Not the same day,
+not the same language. Live data drives both from one `acara` entry
+(`formatEventDateId` / `formatEventDate`).

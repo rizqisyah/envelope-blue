@@ -74,7 +74,7 @@ OUT_DIR = pathlib.Path("src/lib/bands")
 # exactly where it belongs, and a high err on an overlapped layer is evidence of nothing.
 # Never add a node measured at its reported bounds when those bounds are the fiction --
 # place it with scripts/place_plate.py first, then decide.
-PAINTS_NOTHING = set()
+PAINTS_NOTHING = {'24:916'}
 
 # Layers where the clip rule is right and the search is wrong. A layer buried under most
 # of its band scores badly WHERE IT BELONGS, so the search wanders off to open ground and
@@ -170,10 +170,43 @@ TRUST_CLIP = set()
 # reached by a different route. When a band has a mirror, check the pairs before searching.
 PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '20:589': 9, '20:584': 0,
          '20:625': 496, '20:627': 192, '20:609': 91, '20:626': 294,
-         '23:882': 101, '20:762': 73, '20:763': 433}
+         '23:882': 101, '20:762': 73, '20:763': 433,
+         '52:4': 0, '52:5': 419, '22:846': 0, '22:827': 419, '32:450': 0,
+         '54:33': 63, '23:851': 63}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
-         '23:882': 4071, '20:762': 4323, '20:763': 4329}
+         '23:882': 4071, '20:762': 4323, '20:763': 4329,
+         '52:4': 4536, '52:5': 4536, '22:846': 4941, '22:827': 5412, '22:837': 5309,
+         '54:33': 5618, '23:851': 5173}
+
+# The akad band, and a rule this frame had only shown on the x axis until now:
+# **Figma reports a flipped node's bounds as its RIGHT and/or BOTTOM edge**, and where the
+# export grew, the edge is measured against the EXPORT's size, not the declared one.
+#
+#   52:4  (-182.9, 4902) 366x366, exports 183x366 -> (0,   4536) = y - h        err 12.0
+#   52:5  ( 785.0, 4902) 366x366, exports 177x366 -> (419, 4536) = x - w, y - h  err  9.0
+#   22:837 (-83, 5610)  223x301, exports 140x301 -> (0,   5309) = y - h         err 68.5
+#   22:846 (-154.1, 5395.1) 435x322, exports 167x454 -> (0,   4941) = y - EXPORT h
+#   22:827 ( 445.9, 5866.1) 435x322, exports 177x454 -> (419, 5412) = y - EXPORT h
+#   32:450 (75, 5828) 130x383, exports 75x383 -> x 0: the 75 is its RIGHT edge, so the
+#          node spans -55..75 and the clip is on the LEFT. At the declared 75 it scores
+#          520 against 235 at 0.
+#
+# 52:2 / 52:3 are the same botanical at the card's foot and are NOT flipped vertically --
+# both keep y 5695 (200/197 one flip-height away). So the flip is per node; derive it,
+# never assume it from a sibling.
+#
+# 54:33 is a different animal: it is MASKED. Its export is 471x261 against a declared
+# 620x310, smaller on BOTH axes, which the clip rule cannot produce at y 5618 in a
+# 12818-tall frame. 471 is exactly the width of 23:851, the akad card's inner plate, and
+# x 63 is that plate's left edge -- Figma exported the node clipped to its mask, so the
+# mask's box is the position. 89.2 at (63, 5618) against 130.9 at the clip rule's (0, 5618).
+#
+# 24:916 is in PAINTS_NOTHING instead. Its export is clipped 239 -> 107 wide, so the only
+# positions the geometry allows are x 0 and x 489, and scanning every y in the band at both
+# bottoms out at err 43.4 and 42.4 -- no match anywhere. A free 2-D search over the whole
+# band does no better (39.9, and it lands at x 373, which the clip forbids). Dropping it
+# takes the band 2.476 -> 2.251. It is buried.
 
 # The quote band's three, all three of them cases the chain gets wrong in a NEW way:
 # **Figma grew these exports on ONE side and it is not always the same side.** All three

@@ -58,7 +58,7 @@ BANDS = [
     ('groom', 3150),   # derives 3163 -- verified
     ('quote', 4021),  # verified -- 54:17, the scene's own ground plate, and the render's seam
     ('akad', 4425),   # verified -- 54:20, the blue landscape that covers 54:17's tail
-    ('resepsi', 5900),
+    ('resepsi', 5907),  # verified -- 22:822's akad card ends exactly here, 29:253 opens resepsi
     ('dresscode', 6900),
     ('gallery', 7700),
     ('gift', 8800),
@@ -73,7 +73,10 @@ BANDS = [
 SHEET_PLATES = set()
 # Exports that came back fully transparent. Every hero export carries ink -- the sparsest
 # is 20:647 at 7.4% opaque, which is the light wash over the portrait, not an empty file.
-EMPTY = set()
+# 54:35 is a 1x1 transparent file: it declares the same 471x706 box at 63,5173 as 23:851
+# and carries the same name ("dbfb"), so it is a dead duplicate of the akad card's plate,
+# not a layer. Figma wrote 149 bytes for it against 23:851's 1.0MB.
+EMPTY = {'54:35'}
 
 if not BANDS:
     sys.exit('fill in BANDS first -- see the docstring')

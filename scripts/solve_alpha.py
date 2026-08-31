@@ -97,7 +97,15 @@ MODES = ["normal", "screen", "multiply", "lighten", "darken"]
 # refits it 94px away at 0.12 multiply and the lily disappears.
 NO_SOLVE = {'15:192', '16:397', '16:491', '16:493', '20:584', '20:589', '20:640',
             '20:609', '20:611', '20:625', '20:626', '20:627',
-            '23:882', '20:762', '20:763'}
+            '23:882', '20:762', '20:763',
+            '52:4', '52:5', '22:846', '22:827', '22:837', '32:450', '23:851'}
+
+# Position pinned by hand, paint still unknown. NO_SOLVE above blocks BOTH searches, which
+# is right when a hand-placed layer's alpha was itself a symptom of the bad position; it is
+# wrong for a layer the design genuinely fades. 54:33, the akad card's fountain, is the
+# second kind: it is masked into the card and painted back at low strength, and blocking it
+# outright left it at full opacity and cost the band 0.4.
+NO_MOVE = {'54:33'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every
@@ -327,10 +335,13 @@ def main():
             # scores badly at every alpha, and solving paint first "fixes" that by fading
             # the layer out of the band entirely. Solving position first against a plate
             # that should be screened has the mirror problem, so both get a second look.
-            refine_position()
-            refine_paint()
-            refine_position()
-            refine_paint()
+            if r["id"] in NO_MOVE:
+                refine_paint()
+            else:
+                refine_position()
+                refine_paint()
+                refine_position()
+                refine_paint()
             trial[r["id"]], offs[r["id"]], modes[r["id"]] = best[2], best[1], best[3]
             if best[1] != (0, 0) or best[2] != 1.0 or best[3] != "normal":
                 print(f"  {r['id']:12} d{best[1]}  alpha {best[2]:.2f}  {best[3]:9}"

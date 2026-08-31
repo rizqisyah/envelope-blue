@@ -59,6 +59,22 @@
    "w": 384,
    "h": 172
   },
+  "23:851": {
+   "asset": "akad/parts/23-851.webp",
+   "figmaName": "dbfb",
+   "x": 63,
+   "y": 5173,
+   "w": 471,
+   "h": 706
+  },
+  "22:822": {
+   "asset": "akad/parts/22-822.webp",
+   "figmaName": "Open (13) 1",
+   "x": 24,
+   "y": 5144,
+   "w": 548,
+   "h": 763
+  },
   "26:8": {
    "asset": "countdown/parts/26-8.webp",
    "figmaName": "Open (16) 1",
@@ -66,6 +82,22 @@
    "y": 1108,
    "w": 641,
    "h": 641
+  },
+  "22:837": {
+   "asset": "akad/parts/22-837.webp",
+   "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 5",
+   "x": -83,
+   "y": 5610,
+   "w": 223,
+   "h": 301
+  },
+  "22:838": {
+   "asset": "akad/parts/22-838.webp",
+   "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 6",
+   "x": 464,
+   "y": 5330,
+   "w": 223,
+   "h": 301
   },
   "20:640": {
    "asset": "bride/parts/20-640.webp",
@@ -603,6 +635,102 @@
    "w": 351,
    "h": 339.35
   },
+  "22:826": {
+   "asset": "akad/parts/22-826.webp",
+   "figmaName": "image 41",
+   "x": -213,
+   "y": 5138,
+   "w": 435,
+   "h": 322
+  },
+  "22:846": {
+   "asset": "akad/parts/22-846.webp",
+   "figmaName": "image 45",
+   "x": -154.06,
+   "y": 5395.11,
+   "w": 435,
+   "h": 322
+  },
+  "22:828": {
+   "asset": "akad/parts/22-828.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 8",
+   "x": -63,
+   "y": 5201,
+   "w": 161,
+   "h": 196
+  },
+  "22:832": {
+   "asset": "akad/parts/22-832.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 9",
+   "x": 502,
+   "y": 5478,
+   "w": 161,
+   "h": 196
+  },
+  "22:827": {
+   "asset": "akad/parts/22-827.webp",
+   "figmaName": "image 42",
+   "x": 445.94,
+   "y": 5866.11,
+   "w": 435,
+   "h": 322
+  },
+  "22:834": {
+   "asset": "akad/parts/22-834.webp",
+   "figmaName": "image 43",
+   "x": 531,
+   "y": 5646,
+   "w": 174,
+   "h": 138
+  },
+  "22:836": {
+   "asset": "akad/parts/22-836.webp",
+   "figmaName": "image 44",
+   "x": -76,
+   "y": 5306,
+   "w": 174,
+   "h": 138
+  },
+  "22:839": {
+   "asset": "akad/parts/22-839.webp",
+   "figmaName": "f0767deb-9298-4fd6-9c75-be7c924054f2-Photoroom 5",
+   "x": 598,
+   "y": 5452,
+   "w": 96,
+   "h": 96
+  },
+  "22:842": {
+   "asset": "akad/parts/22-842.webp",
+   "figmaName": "Open (14) 1",
+   "x": 146,
+   "y": 4844,
+   "w": 304,
+   "h": 304
+  },
+  "22:848": {
+   "asset": "akad/parts/22-848.webp",
+   "figmaName": "Open (2) 1",
+   "x": 410,
+   "y": 4965,
+   "w": 365,
+   "h": 365
+  },
+  "22:849": {
+   "asset": "akad/parts/22-849.webp",
+   "figmaName": "Open (2) 2",
+   "x": -154,
+   "y": 4682,
+   "w": 365,
+   "h": 365
+  },
+  "24:916": {
+   "asset": "akad/parts/24-916.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 12",
+   "x": -132,
+   "y": 5790,
+   "w": 239,
+   "h": 292
+  },
   "24:919": {
    "asset": "quote/parts/24-919.webp",
    "figmaName": "image 51",
@@ -618,6 +746,22 @@
    "y": 4412,
    "w": 156,
    "h": 166.5
+  },
+  "32:450": {
+   "asset": "akad/parts/32-450.webp",
+   "figmaName": "image 60",
+   "x": 75,
+   "y": 5828,
+   "w": 130,
+   "h": 383
+  },
+  "32:452": {
+   "asset": "akad/parts/32-452.webp",
+   "figmaName": "image 61",
+   "x": 513,
+   "y": 5812,
+   "w": 130,
+   "h": 383
   },
   "31:321": {
    "asset": "hero/parts/31-321.webp",
@@ -675,6 +819,30 @@
    "w": 80,
    "h": 156.33
   },
+  "45:13": {
+   "asset": "akad/parts/45-13.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 22",
+   "x": 496.05,
+   "y": 4796,
+   "w": 201,
+   "h": 246
+  },
+  "52:2": {
+   "asset": "akad/parts/52-2.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 1",
+   "x": -139.95,
+   "y": 5695,
+   "w": 309,
+   "h": 309
+  },
+  "52:3": {
+   "asset": "akad/parts/52-3.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 2",
+   "x": 747.05,
+   "y": 5695,
+   "w": 309,
+   "h": 309
+  },
   "52:10": {
    "asset": "hero/parts/52-10.webp",
    "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 8",
@@ -690,6 +858,38 @@
    "y": 980,
    "w": 255,
    "h": 255
+  },
+  "54:33": {
+   "asset": "akad/parts/54-33.webp",
+   "figmaName": "fxdbvg 1",
+   "x": -11.95,
+   "y": 5618,
+   "w": 620,
+   "h": 310
+  },
+  "54:20": {
+   "asset": "akad/parts/54-20.webp",
+   "figmaName": "kfjghj 1",
+   "x": -155.95,
+   "y": 4425,
+   "w": 825,
+   "h": 622
+  },
+  "52:4": {
+   "asset": "akad/parts/52-4.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 3",
+   "x": -182.95,
+   "y": 4902,
+   "w": 366,
+   "h": 366
+  },
+  "52:5": {
+   "asset": "akad/parts/52-5.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 4",
+   "x": 785.05,
+   "y": 4902,
+   "w": 366,
+   "h": 366
   }
  }
 }

@@ -44,6 +44,13 @@
   /* The quote band's verse credit. The design's own face, on fontsource — no
    * substitution and no width compensation, unlike --font-caps above. */
   --font-verse: "Cinzel", serif;
+  /*
+   * Stands in for Kaleagnetta, the akad/resepsi card headings. Kaleagnetta is a thin
+   * monoline signature script and Sacramento is the closest loaded match by a wide
+   * margin — Roben Elegante and Pinyon Script both carry heavy stroke contrast this
+   * face does not have. Width-matched per word, like --font-caps.
+   */
+  --font-hand: "Sacramento", cursive;
 
   /* design frame reference — cover = Frame 2 (27:9); body = Frame 1 (1:3) */
   --frame-w: 596;

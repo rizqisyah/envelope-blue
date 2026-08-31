@@ -16,21 +16,48 @@ const RANGE_SEPARATORS = ['|', 's/d', ' - ', '-', '–']
 
 export type EventDate = { weekday: string; date: string }
 
-export function formatEventDate(raw?: string | null): EventDate | null {
-  if (!raw) return null
-  /*
-   * A bare 'YYYY-MM-DD' is parsed as UTC midnight, so west of Greenwich it renders
-   * as the day before -- the wedding would read Friday to a guest in New York.
-   * Build those as a local date instead; anything with a time keeps its own offset.
-   */
+/*
+ * A bare 'YYYY-MM-DD' is parsed as UTC midnight, so west of Greenwich it renders
+ * as the day before -- the wedding would read Friday to a guest in New York.
+ * Build those as a local date instead; anything with a time keeps its own offset.
+ */
+function localDate(raw: string): Date | null {
   const parts = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/)
   const d = parts
     ? new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))
     : new Date(raw)
-  if (Number.isNaN(d.getTime())) return null
+  return Number.isNaN(d.getTime()) ? null : d
+}
+
+export function formatEventDate(raw?: string | null): EventDate | null {
+  const d = raw ? localDate(raw) : null
+  if (!d) return null
   return {
     weekday: d.toLocaleDateString('en-GB', { weekday: 'long' }),
     date: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+  }
+}
+
+export type EventDateId = { weekday: string; day: string; monthYear: string }
+
+/*
+ * The same date in Indonesian, split the way the ornate date cartouche sets it:
+ *
+ *   Kamis            <- weekday, in the script face
+ *   27               <- day alone
+ *   Desember 2026    <- month and year
+ *
+ * The event CARD above prints the same date in English (formatEventDate). That is the
+ * design's own inconsistency -- Frame 1 sets the cartouche in Indonesian and the card in
+ * English -- and both are reproduced rather than reconciled.
+ */
+export function formatEventDateId(raw?: string | null): EventDateId | null {
+  const d = raw ? localDate(raw) : null
+  if (!d) return null
+  return {
+    weekday: d.toLocaleDateString('id-ID', { weekday: 'long' }),
+    day: d.toLocaleDateString('id-ID', { day: 'numeric' }),
+    monthYear: d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
   }
 }
 
