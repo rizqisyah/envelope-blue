@@ -5,7 +5,7 @@
 //
 // Sliced so far: hero (y 0..1108), countdown (y 1108..1802), bismillah (y 1802..2161),
 // bride (y 2161..3163), groom (y 3163..4021), quote (y 4021..4425),
-// akad (y 4425..5907), resepsi (y 5907..7034).
+// akad (y 4425..5907), resepsi (y 5907..7034), dresscode (y 7034..7750).
 // The rest of Frame 1 is still to cut — add each band's component here in Figma order
 // as it lands.
 import HeroSection from '../sections/HeroSection.vue'
@@ -16,6 +16,7 @@ import GroomSection from '../sections/GroomSection.vue'
 import QuoteSection from '../sections/QuoteSection.vue'
 import AkadSection from '../sections/AkadSection.vue'
 import ResepsiSection from '../sections/ResepsiSection.vue'
+import DresscodeSection from '../sections/DresscodeSection.vue'
 </script>
 
 <template>
@@ -28,6 +29,7 @@ import ResepsiSection from '../sections/ResepsiSection.vue'
     <QuoteSection />
     <AkadSection />
     <ResepsiSection />
+    <DresscodeSection />
   </div>
 </template>
 

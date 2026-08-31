@@ -60,7 +60,7 @@ BANDS = [
     ('akad', 4425),   # verified -- 54:20, the blue landscape that covers 54:17's tail
     ('resepsi', 5907),  # verified -- 22:822's akad card ends exactly here, 29:253 opens resepsi
     ('dresscode', 6970),  # verified -- 29:242's resepsi card frame ends here
-    ('gallery', 7700),
+    ('gallery', 7750),  # verified -- 31:316 / 29:235 open the gallery here
     ('gift', 8800),
     ('wishes', 9550),
     ('rsvp', 10700),
@@ -71,6 +71,13 @@ BANDS = [
 # Frame 1 paints its ground with its own #e7f9fe fill and no flat rectangle, so this
 # stays empty; the sheet's `background: var(--sheet)` is that fill.
 SHEET_PLATES = set()
+# Flat-colour shapes drawn as CSS by their own band rather than exported. They stay in
+# the z-order (like TEXT) so the stacking stays intact -- they simply get no asset.
+# The dresscode band's four palette swatches are the frame's first: ELLIPSE nodes with a
+# single solid fill and nothing else, which a <div> with border-radius reproduces exactly
+# and an image only approximates.
+CSS_SHAPES = {'29:275', '29:276', '29:277', '30:281'}
+
 # Exports that came back fully transparent. Every hero export carries ink -- the sparsest
 # is 20:647 at 7.4% opaque, which is the light wash over the portrait, not an empty file.
 # 54:35 and 54:41 are 1x1 transparent files: each declares the same 471x706 box and the
@@ -100,7 +107,7 @@ for f in FLAT:
     # TEXT stays live so useWedding() can drive it -- never baked into an image.
     # TEXT_PATH (lettering bent along a curve) is the exception and ships as art;
     # Figma reports it as TEXT, so pull those ids out by hand when the frame has any.
-    if f['type'] == 'TEXT':
+    if f['type'] == 'TEXT' or f['id'] in CSS_SHAPES:
         continue
     src = f".figma-tmp/parts{FRAME}/{f['id'].replace(':', '-')}.png"
     if not os.path.exists(src):

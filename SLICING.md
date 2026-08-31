@@ -31,16 +31,17 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom, quote, akad and resepsi sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817 /
-  1.922 / 2.102), covering y 0..7034 of 12818. Six bands remain, each with nothing but a
-  provisional y-range. The countdown and bismillah were cut once by an earlier pass at 5.542
-  and 20.202 and then reworked — the findings sections below are all from that rework, and
-  all of them apply to the bands still to come. `npm install` is done; dev server is
-  `npm run dev` on 5179.
-- **Dresscode (y 7034..) is next.** Eleven nodes and the frame's first `ELLIPSE`es and
-  `VECTOR` — four colour swatches at y 7115 that are almost certainly CSS circles rather
-  than exports, and `29:233`, a 602x161 vector. Neither shape has been met before in this
-  frame; check what `save_screenshots` gives for a VECTOR before assuming it rasterises.
+  groom, quote, akad, resepsi and dresscode sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 /
+  1.817 / 1.922 / 2.102 / **0.683**), covering y 0..7750 of 12818. Five bands remain, each
+  with nothing but a provisional y-range. The countdown and bismillah were cut once by an
+  earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
+  from that rework, and all of them apply to the bands still to come. `npm install` is done;
+  dev server is `npm run dev` on 5179.
+- **Gallery (y 7750..) is next.** Twenty-five nodes, the biggest band left: three photo
+  slots masked by `ELLIPSE`es (`31:288`, `31:294` / `31:300` / `31:303`), two small
+  `VECTOR`s, and `31:319` "Buat video prewed", which reads like a CTA rather than a caption.
+  The ellipses here are MASKS over photos, not flat fills — do not reach for `CSS_SHAPES`
+  without checking the fill first.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -129,9 +130,9 @@ there is nothing to re-measure yet.
    4425 is `54:20`'s, 5907 is where `22:822` (the akad card frame) ends and resepsi's first
    node begins, and 6970 is where `29:242` (the resepsi card frame) ends. The six entries
    below it were read off heading positions in the frame render and must be re-measured as
-   each band is cut. Note the resepsi band still *derives* 5907..7034: nothing sits in the
-   64px of plain ground between the card and the dresscode heading, so the gap falls to
-   resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
+   each band is cut — 7750 is verified too, where `31:316` / `29:235` open the gallery. Note
+   the resepsi band still *derives* 5907..7034: nothing sits in the 64px of plain ground
+   between the card and the dresscode heading, so the gap falls to resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
    fill. `EMPTY` holds `54:35` and `54:41`, 1x1 transparent files declaring the same box and
    the same name ("dbfb") as their own band's card plate (`23:851`, `29:241`) — dead
    duplicates rather than layers, and there is one per event card.
@@ -689,6 +690,42 @@ So: **a twin is a layer with no evidence behind its position.** Score it by hand
 scorer is three lines around `locate.opaque_points` — before believing anything the chain
 did with it.
 
+## Flat shapes are CSS, and a VECTOR rasterises like anything else
+
+The dresscode band brought the frame's first `ELLIPSE` and `VECTOR` nodes, and they want
+opposite treatment.
+
+Its four palette swatches (`29:275` / `29:276` / `29:277` / `30:281`, 68x71 at y 7115,
+fills `#dbc58e` `#9bccdb` `#bde0b5` `#edcbe3`) are solid fills and nothing else, so they go
+in **`build_refs.py`'s new `CSS_SHAPES`**: skipped for export the way `TEXT` is, but KEPT in
+the z-order so the stacking stays intact, and drawn by the band as `border-radius: 50%`
+divs. All four land 0px on all four edges — a `border-radius` is exact where a 68x71 webp
+is resampled. Note they are ellipses, not circles (68 wide, 71 tall), so `50%` both ways.
+
+`29:233`, a 602x161 `VECTOR`, needs none of that: `save_screenshots` rasterises it like any
+rectangle, and the ordinary clip rule places it (declared x 4, so 4..606 bleeds off the
+right edge, export comes back 592 wide, `locate` err 2.3). **Type is not the question —
+whether the node is one flat fill is.** The gallery band below has `ELLIPSE`es used as photo
+MASKS; those are not CSS shapes.
+
+## The clean-band number is 0.683
+
+Dresscode scores **0.683**, less than half the next-best band, and it is worth knowing why
+because it calibrates every other number in the table:
+
+- Both its faces are the design's own (Roben Elegante, Ibarra Real Nova). No substitution,
+  no width compensation, no per-word size.
+- Nothing needed a position pin. All five art layers either sit inside the frame or bleed
+  off BOTH edges, so the clip rule and `locate` agree — the two failure modes this frame is
+  full of (a flipped node's declared edge, a one-sided export growth) simply do not arise.
+- Its flat shapes are CSS rather than resampled art.
+- `solve_alpha` found nothing to fade.
+
+So 0.683 is roughly what this pipeline costs when nothing is substituted: webp loss on the
+art and glyph rasterisation, and no more. Read the other bands against it — the ~1.4-2.1
+range is placement that is right but art that is compressed, and the bismillah's 4.9 is
+three substitute faces.
+
 ## Figma reports a flipped node's bounds as its RIGHT and/or BOTTOM edge
 
 The bride/groom band established the x half of this. The akad band has both axes, and
@@ -922,7 +959,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
 | **bride** (2161..3163) | **1.402** | **groom** (3163..4021) | **1.478** |
 | **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
-| **resepsi** (5907..7034) | **2.102** | dresscode | — |
+| **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
 | gallery | — | gift | — |
 | wishes | — | rsvp | — |
@@ -1003,3 +1040,8 @@ alone it gives 189.8 there, so it stays in `PAINTS_NOTHING`. The layer therefore
 band not yet cut, painting upward into resepsi's rows; a flipped node declares a y far below
 where it renders, so it will not look like it belongs here until its own band is dumped.
 Expect it to close on its own, and re-score resepsi when it does.
+
+Roben Elegante at 32/57 takes **no line-box offset** in the dresscode band, the same as in
+the bride and groom bands and unlike the hero's +1. Three bands now agree, so the hero's is
+the outlier and the offset belongs to the (face, size, line-height) triple rather than the
+face — which is what the table under "The line-box offset is per FACE" already warns.

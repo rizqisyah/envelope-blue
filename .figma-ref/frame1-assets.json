@@ -27,6 +27,14 @@
    "w": 653,
    "h": 866
   },
+  "54:24": {
+   "asset": "dresscode/parts/54-24.webp",
+   "figmaName": "njnjk 4",
+   "x": -108.95,
+   "y": 7264,
+   "w": 751,
+   "h": 484
+  },
   "40:90": {
    "asset": "bride/parts/40-90.webp",
    "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 2",
@@ -90,6 +98,14 @@
    "y": 6207,
    "w": 548,
    "h": 763
+  },
+  "28:227": {
+   "asset": "dresscode/parts/28-227.webp",
+   "figmaName": "Untitled_Artwork-1 1",
+   "x": -11,
+   "y": 7390,
+   "w": 631,
+   "h": 441
   },
   "26:8": {
    "asset": "countdown/parts/26-8.webp",
@@ -851,6 +867,14 @@
    "w": 156,
    "h": 166.5
   },
+  "28:226": {
+   "asset": "dresscode/parts/28-226.webp",
+   "figmaName": "Open (18) 1",
+   "x": 94,
+   "y": 7216,
+   "w": 422,
+   "h": 422
+  },
   "24:921": {
    "asset": "quote/parts/24-921.webp",
    "figmaName": "image 52",
@@ -874,6 +898,22 @@
    "y": 5812,
    "w": 130,
    "h": 383
+  },
+  "29:228": {
+   "asset": "dresscode/parts/29-228.webp",
+   "figmaName": "Open (19) 1",
+   "x": -96,
+   "y": 7533,
+   "w": 802,
+   "h": 217
+  },
+  "29:233": {
+   "asset": "dresscode/parts/29-233.webp",
+   "figmaName": "Vector",
+   "x": 4,
+   "y": 7654,
+   "w": 602,
+   "h": 161
   },
   "29:274": {
    "asset": "resepsi/parts/29-274.webp",
