@@ -86,7 +86,8 @@ watchEffect(() => {
           <p class="left-title">{{ coupleName }}</p>
         </div>
         <div class="left-quote-container">
-          <p class="left-quote">&ldquo;{{ quoteText }}&rdquo;</p>
+          <!-- quoteText carries the design's own quotation marks — do not add a second pair. -->
+          <p class="left-quote">{{ quoteText }}</p>
           <span class="left-quote-verse">{{ quoteVerse }}</span>
         </div>
       </div>

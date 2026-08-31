@@ -41,6 +41,9 @@
    * node carries its own font-size compensation — see the comments beside them.
    */
   --font-caps: "Cormorant Infant", serif;
+  /* The quote band's verse credit. The design's own face, on fontsource — no
+   * substitution and no width compensation, unlike --font-caps above. */
+  --font-verse: "Cinzel", serif;
 
   /* design frame reference — cover = Frame 2 (27:9); body = Frame 1 (1:3) */
   --frame-w: 596;

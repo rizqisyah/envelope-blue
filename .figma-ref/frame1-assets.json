@@ -11,6 +11,14 @@
    "w": 746,
    "h": 481
   },
+  "54:17": {
+   "asset": "quote/parts/54-17.webp",
+   "figmaName": "njnjk 1",
+   "x": -116.95,
+   "y": 4021,
+   "w": 746,
+   "h": 481
+  },
   "40:91": {
    "asset": "countdown/parts/40-91.webp",
    "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 3",
@@ -579,6 +587,14 @@
    "w": 148,
    "h": 176
   },
+  "23:882": {
+   "asset": "quote/parts/23-882.webp",
+   "figmaName": "ChatGPT Image Aug 23, 2026, 02_19_32 PM 1",
+   "x": 101.05,
+   "y": 4071,
+   "w": 396,
+   "h": 594
+  },
   "20:649": {
    "asset": "bride/parts/20-649.webp",
    "figmaName": "image 40",
@@ -586,6 +602,22 @@
    "y": 2580,
    "w": 351,
    "h": 339.35
+  },
+  "24:919": {
+   "asset": "quote/parts/24-919.webp",
+   "figmaName": "image 51",
+   "x": 60.05,
+   "y": 4412,
+   "w": 156,
+   "h": 166.5
+  },
+  "24:921": {
+   "asset": "quote/parts/24-921.webp",
+   "figmaName": "image 52",
+   "x": 536.05,
+   "y": 4412,
+   "w": 156,
+   "h": 166.5
   },
   "31:321": {
    "asset": "hero/parts/31-321.webp",
@@ -626,6 +658,22 @@
    "y": 347,
    "w": 124,
    "h": 124
+  },
+  "20:762": {
+   "asset": "quote/parts/20-762.webp",
+   "figmaName": "image 13",
+   "x": 85.43,
+   "y": 4323,
+   "w": 80,
+   "h": 156.33
+  },
+  "20:763": {
+   "asset": "quote/parts/20-763.webp",
+   "figmaName": "image 14",
+   "x": 512.79,
+   "y": 4329,
+   "w": 80,
+   "h": 156.33
   },
   "52:10": {
    "asset": "hero/parts/52-10.webp",

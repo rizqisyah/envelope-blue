@@ -161,8 +161,9 @@ export function useWedding() {
     () =>
       wedding.value?.theme_override?.quote?.text ||
       // Matches the copy the design prints on the card, so an unconfigured
-      // render lines up with the design.
-      'Di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda kebesaran Allah bagi kaum yang berpikir.',
+      // render lines up with the design. Frame 1 (20:670) prints its own quotation
+      // marks, so they belong in the string rather than around the element.
+      '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang"',
   )
   /*
    * The hero's hashtag. Not read off `theme_override`: the API sends that as a JSON
@@ -172,7 +173,11 @@ export function useWedding() {
    */
   const hashtag = computed(() => wedding.value?.hashtag || '#AhmadSALMAnya')
 
-  const quoteVerse = computed(() => wedding.value?.theme_override?.quote?.verse || 'QS Ar-Rum 21')
+  // Frame 1 (20:669) prints the parentheses too, so they are part of the string; a
+  // configured verse arrives already formatted and is printed verbatim.
+  const quoteVerse = computed(
+    () => wedding.value?.theme_override?.quote?.verse || '(Qs. Ar-Rum: 21)',
+  )
   const quoteArabic = computed(
     () =>
       wedding.value?.theme_override?.quote?.arabic ||

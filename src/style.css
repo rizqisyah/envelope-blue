@@ -1,11 +1,13 @@
 /* Frame 2 (27:9) the cover, and Frame 1 (1:3) the invitation body. */
 @import "@fontsource/cormorant-infant/400.css";
+@import "@fontsource/cormorant-infant/500.css";
 @import "@fontsource/jost/400.css";
 @import "@fontsource/lancelot/400.css";
 @import "@fontsource/pinyon-script/400.css";
 @import "@fontsource/ibarra-real-nova/400.css";
 @import "@fontsource/ibarra-real-nova/400-italic.css";
 @import "@fontsource/amiri/400.css";
+@import "@fontsource/cinzel/700.css";
 @import "./style/tokens.css";
 
 /*

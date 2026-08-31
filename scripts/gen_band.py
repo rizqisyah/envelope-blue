@@ -169,9 +169,34 @@ TRUST_CLIP = set()
 # fires and the value falls straight through -- the same structural blind spot as 16:397,
 # reached by a different route. When a band has a mirror, check the pairs before searching.
 PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '20:589': 9, '20:584': 0,
-         '20:625': 496, '20:627': 192, '20:609': 91, '20:626': 294}
+         '20:625': 496, '20:627': 192, '20:609': 91, '20:626': 294,
+         '23:882': 101, '20:762': 73, '20:763': 433}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
-         '20:625': 3321, '20:611': 3391, '20:626': 3415}
+         '20:625': 3321, '20:611': 3391, '20:626': 3415,
+         '23:882': 4071, '20:762': 4323, '20:763': 4329}
+
+# The quote band's three, all three of them cases the chain gets wrong in a NEW way:
+# **Figma grew these exports on ONE side and it is not always the same side.** All three
+# report a y the export matches EXACTLY, so every pixel of vertical growth is at the
+# BOTTOM and reconcile()'s re-centre pushes them up by half of it.
+#
+# 23:882, the white cartouche, is 396x594 declared and exports 396x598. locate offered
+# (105, 4066) at err 21.0 -- a gray-zone match on a big soft-edged plate, exactly the class
+# locate is weakest on. The truth is Figma's own box, (101, 4071): the sheet score is a
+# sharp minimum there, 1.817 against 2.03 one px away in any direction and 2.22 two px
+# away. Note a 1px render scan preferred 102 (err 21.47 to 101's 22.50) and was WRONG --
+# locate samples only alpha > 240, this plate's edges top out at alpha 64, so the scan
+# never saw an edge and was matching flat interior texture. Trust the declared x whenever
+# the export width equals the declared width; there is no growth to reconcile.
+#
+# 20:762 / 20:763 are BYTE-IDENTICAL twins, so locate never ran on them and the clip rule's
+# re-centre stood unchallenged: it put 20:763 at 507, where it scores err 107.8. They are
+# 80x156.3 declared and export 92.5x162.5, and the 12.5 of width lands entirely on ONE
+# side -- the left for 20:762 (73 = 85.4 - 12.4), the RIGHT for 20:763, whose declared
+# 512.8 is its node's right edge in the bride/groom sense (433 = 512.8 - 79.8). Both land
+# at err 12.4. They are NOT a mirror pair despite the bounding behaving like one: scoring
+# each export against its own horizontal flip is decisive the other way (12.4 same against
+# 87..94 flipped), so the art ships unflipped and only the boxes mirror.
 
 # Opacity and blend mode for the layers whose POSITION is pinned above. solve_alpha
 # fitted their alpha against a composite in which they sat hundreds of pixels from home,

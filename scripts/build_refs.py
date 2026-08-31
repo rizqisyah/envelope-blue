@@ -56,8 +56,8 @@ BANDS = [
     ('bismillah', 1700),
     ('bride', 2150),   # derives 2161 -- verified
     ('groom', 3150),   # derives 3163 -- verified
-    ('quote', 4000),
-    ('akad', 4800),
+    ('quote', 4021),  # verified -- 54:17, the scene's own ground plate, and the render's seam
+    ('akad', 4425),   # verified -- 54:20, the blue landscape that covers 54:17's tail
     ('resepsi', 5900),
     ('dresscode', 6900),
     ('gallery', 7700),

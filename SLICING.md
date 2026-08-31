@@ -30,13 +30,17 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 
 ## Picking this up in a new session
 
-- **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah and
-  bride and groom sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478), covering y 0..4021 of
-  12818. Nine bands remain, each with nothing but a provisional y-range. The countdown and bismillah were cut
-  once by an earlier pass at 5.542 and 20.202 and then reworked — the findings sections
-  below are all from that rework, and all of them apply to the bands still to come.
-  `npm install` is done; dev server is `npm run dev` on 5179.
-- **Quote (y 4021..) is next.** It is the first band with no mirror to lean on.
+- **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
+  groom and quote sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817), covering
+  y 0..4425 of 12818. Eight bands remain, each with nothing but a provisional y-range. The
+  countdown and bismillah were cut once by an earlier pass at 5.542 and 20.202 and then
+  reworked — the findings sections below are all from that rework, and all of them apply to
+  the bands still to come. `npm install` is done; dev server is `npm run dev` on 5179.
+- **Akad (y 4425..) is next.** Its ground plate is `54:20`, the blue landscape.
+- **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
+  pulled band by band, so the next band's nodes have to come out of Figma first or
+  `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
+  them with `save_screenshots` at scale 2 into `.figma-tmp/parts1/<id with : as ->.png`.
 - **Every script call needs the frame env**, or they silently run against templates 2-5's
   375-px assumptions: `BODY_FRAME=1 BODY_H=12818 FRAME_W=596 BODY_FRAME_ID=1:3`.
 - **`.figma-tmp/exports1/frame1-full.png` is the reference render** (scale 1, so 1px == 1
@@ -47,7 +51,9 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 - **`save_screenshots` writes only inside the MCP server's own working directory.** From a
   session rooted elsewhere it refuses the path outright; the cover's exports had to be
   written into the other template's `.figma-tmp` and moved. Run the Figma work from a
-  session rooted in THIS directory, or expect the same detour.
+  session rooted in THIS directory — done that way it takes an absolute path into this
+  repo and writes straight to `.figma-tmp/parts1/`, no detour (confirmed on the quote
+  band's six).
 - **Its `result` echoes the node's declared bounds, not the file it wrote.** Measure the
   PNG on disk — that is the only way to see what Figma clipped. See the cover findings.
 
@@ -114,10 +120,11 @@ there is nothing to re-measure yet.
 ## Still to fill in
 
 1. ~~The body frame's node id, size and `--body-h`.~~ Frame 1 (`1:3`), 596 x 12818.
-2. `scripts/build_refs.py`'s `BANDS` — filled, but **only the hero/countdown boundary at
-   1108 is verified** (it is the top of `26:8`, the ornate countdown frame, and the
-   render's own seam). The twelve entries below it were read off heading positions in the
-   frame render and must be re-measured as each band is cut. `SHEET_PLATES` and `EMPTY`
+2. `scripts/build_refs.py`'s `BANDS` — filled, and verified down to **4425**: 1108 is the
+   top of `26:8`, 2161 and 3163 come out of the bride/groom mirror, 4021 is `54:17`'s top
+   and 4425 is `54:20`'s, each of them a ground plate and each the render's own seam. The
+   eight entries below 4425 were read off heading positions in the frame render and must be
+   re-measured as each band is cut. `SHEET_PLATES` and `EMPTY`
    are both correctly empty: the frame paints its ground with its own fill, and every
    hero export carries ink.
 3. ~~`.figma-ref/frame1-{zorder,assets}.json`~~ — generated. Work from them, not Figma.
@@ -626,6 +633,54 @@ them and returned err 154 and 41, i.e. noise.
 
 So: **when a band has a mirror, resolve the pairs before searching anything.**
 
+## `locate` cannot see a plate whose edges are soft, and its answer is not noise-free
+
+`23:882`, the quote band's white cartouche, is 396x594 declared and exports 396x598.
+`locate` offered (105, 4066) at err 21.0 — inside `GOOD_ERR`, so the chain took it. A 1px
+scan of the same scorer preferred (102, 4071). **Both were wrong.** Scoring the whole sheet
+instead puts a sharp minimum on Figma's own box, (101, 4071):
+
+| x at y 4071 | 99 | 100 | **101** | 102 | 103 |
+|---|---|---|---|---|---|
+| sheet delta | 2.232 | 2.035 | **1.817** | 2.015 | 2.217 |
+
+and y is the same shape: 2.028 / **1.817** / 2.032 / 2.223 across 4070..4073.
+
+The reason the render scan misled is structural. `locate.opaque_points` samples only pixels
+with **alpha > 240**; this plate's edges top out at alpha 64 for their whole length, so not
+one edge pixel is in the sample. Everything it matched was flat interior texture, which is
+nearly translation-invariant — hence a shallow, wandering minimum. A soft-edged plate gives
+`locate` nothing to bite on, and its err lands in the 15..40 gray zone precisely because of
+that.
+
+So: **when the export's width equals the declared width, there is no growth to reconcile
+and the declared x is the answer** — do not let a gray-zone `locate` hit talk you out of it.
+And when a placement is worth a pixel, A/B it against the SHEET SCORE, which weights every
+pixel of the layer equally, rather than against a scorer that only sees the opaque ones.
+
+## Byte-identical twins skip `locate` entirely, and the clip rule can be 74px wrong
+
+`20:762` / `20:763` are twins — same bytes, so `gen_band` refuses to template-match them
+(every copy scores the same at every other copy's slot) and the re-centre rule stands
+unchallenged. It put `20:763` at x 507, where it scores **err 107.8**. Its real x is 433.
+
+Both are 80x156.3 declared and export 92.5x162.5, and **the 12.5px of width lands entirely
+on one side — a different side for each**: the left for `20:762` (73 = 85.4 − 12.4), the
+right for `20:763`, whose declared 512.8 is its node's right edge in the bride/groom sense
+(433 = 512.8 − 79.8). Both then land at err 12.4. Their declared *y* is exact for both, so
+all 6.2px of height growth is at the bottom — the fourth, fifth and sixth one-sided growth
+in this frame, counting `23:882`.
+
+**The bounding can mirror without the art mirroring.** The pair looks like a mirror and its
+boxes behave like one, but scoring each export against its own horizontal flip is decisive
+the other way — 12.4 unflipped against 87..94 flipped. They ship unflipped; only the boxes
+are mirrored. Run the flip test before assuming a `scaleX(-1)`; `BandLayer` has no transform
+channel and adding one for a pair that does not need it is the expensive mistake here.
+
+So: **a twin is a layer with no evidence behind its position.** Score it by hand — the
+scorer is three lines around `locate.opaque_points` — before believing anything the chain
+did with it.
+
 ## A centred Figma line is centred INCLUDING its leading space
 
 `19:546`'s string is `"Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih
@@ -754,7 +809,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
 | **bride** (2161..3163) | **1.402** | **groom** (3163..4021) | **1.478** |
-| quote | — | akad | — |
+| **quote** (4021..4425) | **1.817** | akad | — |
 | resepsi | — | dresscode | — |
 | | | | |
 | gallery | — | gift | — |
@@ -787,3 +842,10 @@ their exported glyph ink in both images), and the amplified difference map shows
 doubled edge or offset silhouette anywhere in the band — what is left in 1.720 is webp
 compression on the toile and the botanicals. It is a busier band than the cover by 29
 layers, which is most of the gap between the two numbers.
+
+The quote band is the first with **no substitute face**: Cinzel and Cormorant Infant are
+both the design's own and both ship from fontsource, so no width compensation was needed
+anywhere in it. Colour-keying `#c04935` in both images puts `20:669` at **0px on all four
+edges** and `20:670` at 0 on left, right and bottom with its top 2px high — one glyph's
+ascender on the opening quote mark, not a placement offset. What is left in 1.817 is glyph
+rasterisation and webp loss on the botanicals.
