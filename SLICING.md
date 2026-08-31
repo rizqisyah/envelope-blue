@@ -769,13 +769,21 @@ The `20:584` finding says a free search rating a layer "worthless" is not eviden
 absent. The converse test is what settles it, and `24:916` is the worked example:
 
 - Its export is clipped 239 -> 107 wide, so the geometry allows exactly two x values,
-  0 and 489. Scanning **every y in the band** at both bottoms out at err 43.4 and 42.4.
+  0 and 489. Sweeping y at both — **past the band's own edges, because bands overlap and a
+  layer's declared band is only a bucket** — bottoms out at err 43.4 and 42.4, and extending
+  the sweep to 6300 only reaches 45.9.
 - A free 2-D search over the whole band does no better — 39.9 — and it lands at x 373,
   which the clip forbids. That is the "least-bad spot" pattern, not a match.
+- Scored over **the box it would EXPLAIN** rather than its whole export — the flower head
+  alone, against the rows where the render actually has a pale-blue chrysanthemum — its
+  declared (0, 5790) gives 189.8. That is the `20:584` technique run the other way, and it
+  is the check that has to be done before the verdict: a full-box err near 190 says nothing
+  by itself, because an occluded layer scores ~190 everywhere.
 - Dropping the layer takes the band **2.476 -> 2.251**.
 
-Three signals, one conclusion: it is buried, and it goes in `PAINTS_NOTHING`. Note the
-order — enumerate the legal positions FIRST, because a free search will always answer.
+Four signals, one conclusion: it is buried, and it goes in `PAINTS_NOTHING`. Note the
+order — enumerate the legal positions FIRST, because a free search will always answer, and
+sweep past the band edge, and score the explained box rather than the export.
 
 ## A design underline is not a browser underline
 
@@ -985,3 +993,13 @@ against 111.9 at its declared y, and **dropping it changes the band by 0.002** �
 `24:916` it is not worth calling `PAINTS_NOTHING`, and unlike the rest of the band its
 position is not really known. `solve_alpha` fits it 0.20 screen, which is a fit to noise on
 a layer that is invisible either way. Revisit it if the band is ever pushed below 2.
+
+**Resepsi has an unowned residual and it is not `24:916`.** The render carries a pale-blue
+chrysanthemum at roughly x 30..90, y 5880..5990 that nothing sliced so far explains: every
+exported asset in the repo under 300x450 was scored across that window and the best is 30.2,
+which is a bride-band floral and not plausible. `24:916` was the obvious suspect — same art,
+and its clip-legal (0, 5790) spans exactly those rows — but scored over the flower head
+alone it gives 189.8 there, so it stays in `PAINTS_NOTHING`. The layer therefore belongs to a
+band not yet cut, painting upward into resepsi's rows; a flipped node declares a y far below
+where it renders, so it will not look like it belongs here until its own band is dumped.
+Expect it to close on its own, and re-score resepsi when it does.
