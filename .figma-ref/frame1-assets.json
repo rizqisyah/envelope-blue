@@ -75,6 +75,22 @@
    "w": 548,
    "h": 763
   },
+  "29:241": {
+   "asset": "resepsi/parts/29-241.webp",
+   "figmaName": "dbfb",
+   "x": 533,
+   "y": 6236,
+   "w": 471,
+   "h": 706
+  },
+  "29:242": {
+   "asset": "resepsi/parts/29-242.webp",
+   "figmaName": "Open (13) 1",
+   "x": 572,
+   "y": 6207,
+   "w": 548,
+   "h": 763
+  },
   "26:8": {
    "asset": "countdown/parts/26-8.webp",
    "figmaName": "Open (16) 1",
@@ -82,6 +98,14 @@
    "y": 1108,
    "w": 641,
    "h": 641
+  },
+  "54:42": {
+   "asset": "resepsi/parts/54-42.webp",
+   "figmaName": "fxdbvg 1",
+   "x": -12.91,
+   "y": 6688,
+   "w": 620,
+   "h": 310
   },
   "22:837": {
    "asset": "akad/parts/22-837.webp",
@@ -91,11 +115,27 @@
    "w": 223,
    "h": 301
   },
+  "29:243": {
+   "asset": "resepsi/parts/29-243.webp",
+   "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 7",
+   "x": 679,
+   "y": 6673,
+   "w": 223,
+   "h": 301
+  },
   "22:838": {
    "asset": "akad/parts/22-838.webp",
    "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 6",
    "x": 464,
    "y": 5330,
+   "w": 223,
+   "h": 301
+  },
+  "29:244": {
+   "asset": "resepsi/parts/29-244.webp",
+   "figmaName": "ad44ce9bb3303874e85f046b7f44fb65-Photoroom 8",
+   "x": 132,
+   "y": 6393,
    "w": 223,
    "h": 301
   },
@@ -643,6 +683,14 @@
    "w": 435,
    "h": 322
   },
+  "29:245": {
+   "asset": "resepsi/parts/29-245.webp",
+   "figmaName": "image 53",
+   "x": 809,
+   "y": 6201,
+   "w": 435,
+   "h": 322
+  },
   "22:846": {
    "asset": "akad/parts/22-846.webp",
    "figmaName": "image 45",
@@ -667,11 +715,27 @@
    "w": 161,
    "h": 196
   },
+  "29:248": {
+   "asset": "resepsi/parts/29-248.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 14",
+   "x": 94,
+   "y": 6541,
+   "w": 161,
+   "h": 196
+  },
   "22:827": {
    "asset": "akad/parts/22-827.webp",
    "figmaName": "image 42",
    "x": 445.94,
    "y": 5866.11,
+   "w": 435,
+   "h": 322
+  },
+  "29:249": {
+   "asset": "resepsi/parts/29-249.webp",
+   "figmaName": "image 55",
+   "x": 150.06,
+   "y": 6929.11,
    "w": 435,
    "h": 322
   },
@@ -683,11 +747,27 @@
    "w": 174,
    "h": 138
   },
+  "29:250": {
+   "asset": "resepsi/parts/29-250.webp",
+   "figmaName": "image 56",
+   "x": 65,
+   "y": 6709,
+   "w": 174,
+   "h": 138
+  },
   "22:836": {
    "asset": "akad/parts/22-836.webp",
    "figmaName": "image 44",
    "x": -76,
    "y": 5306,
+   "w": 174,
+   "h": 138
+  },
+  "29:251": {
+   "asset": "resepsi/parts/29-251.webp",
+   "figmaName": "image 57",
+   "x": 672,
+   "y": 6369,
    "w": 174,
    "h": 138
   },
@@ -699,6 +779,14 @@
    "w": 96,
    "h": 96
   },
+  "29:252": {
+   "asset": "resepsi/parts/29-252.webp",
+   "figmaName": "f0767deb-9298-4fd6-9c75-be7c924054f2-Photoroom 6",
+   "x": -2,
+   "y": 6515,
+   "w": 96,
+   "h": 96
+  },
   "22:842": {
    "asset": "akad/parts/22-842.webp",
    "figmaName": "Open (14) 1",
@@ -707,11 +795,35 @@
    "w": 304,
    "h": 304
   },
+  "29:253": {
+   "asset": "resepsi/parts/29-253.webp",
+   "figmaName": "Open (14) 2",
+   "x": 450,
+   "y": 5907,
+   "w": 304,
+   "h": 304
+  },
   "22:848": {
    "asset": "akad/parts/22-848.webp",
    "figmaName": "Open (2) 1",
    "x": 410,
    "y": 4965,
+   "w": 365,
+   "h": 365
+  },
+  "29:254": {
+   "asset": "resepsi/parts/29-254.webp",
+   "figmaName": "Open (2) 4",
+   "x": 186,
+   "y": 6028,
+   "w": 365,
+   "h": 365
+  },
+  "24:897": {
+   "asset": "resepsi/parts/24-897.webp",
+   "figmaName": "Open (2) 3",
+   "x": 169,
+   "y": 5978,
    "w": 365,
    "h": 365
   },
@@ -763,6 +875,14 @@
    "w": 130,
    "h": 383
   },
+  "29:274": {
+   "asset": "resepsi/parts/29-274.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 15",
+   "x": -164,
+   "y": 6296,
+   "w": 239,
+   "h": 292
+  },
   "31:321": {
    "asset": "hero/parts/31-321.webp",
    "figmaName": "Open (19) 2",
@@ -794,6 +914,22 @@
    "y": 3771,
    "w": 351,
    "h": 339.35
+  },
+  "29:246": {
+   "asset": "resepsi/parts/29-246.webp",
+   "figmaName": "image 54",
+   "x": 750.06,
+   "y": 6458.11,
+   "w": 435,
+   "h": 322
+  },
+  "29:247": {
+   "asset": "resepsi/parts/29-247.webp",
+   "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 13",
+   "x": 676,
+   "y": 6252,
+   "w": 161,
+   "h": 196
   },
   "32:459": {
    "asset": "hero/parts/32-459.webp",

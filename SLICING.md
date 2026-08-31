@@ -31,14 +31,16 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom, quote and akad sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817 / 1.922),
-  covering y 0..5907 of 12818. Seven bands remain, each with nothing but a provisional
-  y-range. The countdown and bismillah were cut once by an earlier pass at 5.542 and 20.202
-  and then reworked — the findings sections below are all from that rework, and all of them
-  apply to the bands still to come. `npm install` is done; dev server is `npm run dev` on 5179.
-- **Resepsi (y 5907..) is next.** It repeats the akad band's shape almost node for node —
-  `29:253` is `22:842`'s twin, `24:897` / `29:254` are `22:849` / `22:848`'s — so read the
-  akad band's pins before searching anything.
+  groom, quote, akad and resepsi sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817 /
+  1.922 / 2.102), covering y 0..7034 of 12818. Six bands remain, each with nothing but a
+  provisional y-range. The countdown and bismillah were cut once by an earlier pass at 5.542
+  and 20.202 and then reworked — the findings sections below are all from that rework, and
+  all of them apply to the bands still to come. `npm install` is done; dev server is
+  `npm run dev` on 5179.
+- **Dresscode (y 7034..) is next.** Eleven nodes and the frame's first `ELLIPSE`es and
+  `VECTOR` — four colour swatches at y 7115 that are almost certainly CSS circles rather
+  than exports, and `29:233`, a 602x161 vector. Neither shape has been met before in this
+  frame; check what `save_screenshots` gives for a VECTOR before assuming it rasterises.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -122,14 +124,17 @@ there is nothing to re-measure yet.
 ## Still to fill in
 
 1. ~~The body frame's node id, size and `--body-h`.~~ Frame 1 (`1:3`), 596 x 12818.
-2. `scripts/build_refs.py`'s `BANDS` — filled, and verified down to **5907**: 1108 is the
+2. `scripts/build_refs.py`'s `BANDS` — filled, and verified down to **6970**: 1108 is the
    top of `26:8`, 2161 and 3163 come out of the bride/groom mirror, 4021 is `54:17`'s top,
-   4425 is `54:20`'s, and 5907 is where `22:822` (the akad card frame) ends and resepsi's
-   first node begins. The seven entries below 5907 were read off heading positions in the
-   frame render and must be re-measured as each band is cut. `SHEET_PLATES` is correctly
-   empty — the frame paints its ground with its own fill. `EMPTY` holds one id: `54:35`, a
-   1x1 transparent file declaring the same box and the same name ("dbfb") as `23:851`, i.e.
-   a dead duplicate of the akad card's plate rather than a layer.
+   4425 is `54:20`'s, 5907 is where `22:822` (the akad card frame) ends and resepsi's first
+   node begins, and 6970 is where `29:242` (the resepsi card frame) ends. The six entries
+   below it were read off heading positions in the frame render and must be re-measured as
+   each band is cut. Note the resepsi band still *derives* 5907..7034: nothing sits in the
+   64px of plain ground between the card and the dresscode heading, so the gap falls to
+   resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
+   fill. `EMPTY` holds `54:35` and `54:41`, 1x1 transparent files declaring the same box and
+   the same name ("dbfb") as their own band's card plate (`23:851`, `29:241`) — dead
+   duplicates rather than layers, and there is one per event card.
 3. ~~`.figma-ref/frame1-{zorder,assets}.json`~~ — generated. Work from them, not Figma.
 4. ~~`solve_alpha.py`'s `GROUND`~~ — `[(0, FRAME_H, (231, 249, 254))]`, the frame's own
    `#e7f9fe` fill. Note this is NOT `--paper` (`#e9faff`), which was sampled off the
@@ -710,6 +715,23 @@ its right edge, so the node really spans −55..75 and the clip is on the LEFT. 
 export IS narrower than the box, the clip branch does fire — it simply guesses the wrong
 edge. 520 at the declared 75 against 235 at 0.
 
+## The resepsi band is the akad band flipped, and the flip is in the DATA
+
+Twelve of resepsi's seventeen layers declare a right edge where the chain reads a left one,
+and four of those declare a bottom edge as well. The card itself is the tell: `29:242`
+declares x 572 for a 548-wide export, which cannot be a clip (572 + 548 overruns the frame,
+so Figma would have cut it) — read as a right edge it gives **x 24, the same x as akad's
+`22:822`**. Same card, flipped, same place. Its plate `29:241` then lands at 62 with insets
+38/39/29/28 against the frame, which is akad's 39/38/29/28 with left and right swapped.
+
+`29:274` is the cleanest match in the band at **err 4.2** on `x − w` plus `y − EXPORT h`,
+and it is worth noting against its akad twin `24:916`, which is buried and paints nothing.
+**The same source art in the mirrored slot is not the same layer.** Check each one.
+
+What did NOT transfer: the y offsets. The cartouche is 1061px below akad's, the card frame
+1063, the text block 1048. The band is a flip, not a translation — do not try to derive
+positions from the akad band arithmetically the way the bride/groom mirror allowed.
+
 ## A masked node exports clipped to its MASK
 
 `54:33`, the fountain at the foot of the akad card, declares 620x310 and exports **471x261
@@ -733,7 +755,13 @@ cost the band 0.4 on its own (4.105 -> 2.476 once solved).
 
 There is now a second set, **`NO_MOVE`**: position held, paint still searched. Use it for a
 layer whose position you measured and trust, and `NO_SOLVE` only when the fitted alpha was
-itself an artefact of the bad position.
+itself an artefact of the bad position. Every akad and resepsi pin lives in `NO_MOVE`.
+
+`NO_MOVE` also **overrides the twins guard**, and `54:42` is why. It is byte-identical to
+`54:33`, so `solve_alpha` skipped it outright and the resepsi fountain sat at full opacity
+where the akad one is 0.55 — 4.167 against 2.138 for the band. A twin whose position is held
+cannot slide into its sibling's slot, so only its paint gets searched, which is exactly what
+a repeated faded sprite needs. Expect this on every band that redraws a card.
 
 ## Before calling a layer buried, prove it has no LEGAL position
 
@@ -886,7 +914,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
 | **bride** (2161..3163) | **1.402** | **groom** (3163..4021) | **1.478** |
 | **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
-| resepsi | — | dresscode | — |
+| **resepsi** (5907..7034) | **2.102** | dresscode | — |
 | | | | |
 | gallery | — | gift | — |
 | wishes | — | rsvp | — |
@@ -943,3 +971,17 @@ reconciled: the ornate cartouche prints **Kamis / 27 / Desember 2026** in Indone
 the card underneath prints **Saturday, / 06 September 2025** in English. Not the same day,
 not the same language. Live data drives both from one `acara` entry
 (`formatEventDateId` / `formatEventDate`).
+
+The resepsi band's nine text nodes all match the render to **0px in both axes**, and its
+heading is the third node in this frame to prove the width match is per WORD: Sacramento
+sets "Resepsi" 126 wide at Figma's own 48 against the render's 113, so it wants **43.8**
+where "Akad Nikah" wanted 39.3. At that size it also takes a 1px `top` and a 2px `left`
+correction the akad heading did not — the line-box offset moves with the size, exactly as
+Ibarra Real Nova's does.
+
+`24:897` is the band's one unresolved layer. It is ornate scrollwork almost entirely buried
+under `29:254`; x 0 is the only clip-legal value it can take, its best y scores err 68.7
+against 111.9 at its declared y, and **dropping it changes the band by 0.002** — so unlike
+`24:916` it is not worth calling `PAINTS_NOTHING`, and unlike the rest of the band its
+position is not really known. `solve_alpha` fits it 0.20 screen, which is a fit to noise on
+a layer that is invisible either way. Revisit it if the band is ever pushed below 2.

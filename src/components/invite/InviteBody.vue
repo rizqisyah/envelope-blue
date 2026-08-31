@@ -4,7 +4,8 @@
 // never renumbers the others. Band map and asset inventory: ../../../SLICING.md
 //
 // Sliced so far: hero (y 0..1108), countdown (y 1108..1802), bismillah (y 1802..2161),
-// bride (y 2161..3163), groom (y 3163..4021), quote (y 4021..4425), akad (y 4425..5907).
+// bride (y 2161..3163), groom (y 3163..4021), quote (y 4021..4425),
+// akad (y 4425..5907), resepsi (y 5907..7034).
 // The rest of Frame 1 is still to cut — add each band's component here in Figma order
 // as it lands.
 import HeroSection from '../sections/HeroSection.vue'
@@ -14,6 +15,7 @@ import BrideSection from '../sections/BrideSection.vue'
 import GroomSection from '../sections/GroomSection.vue'
 import QuoteSection from '../sections/QuoteSection.vue'
 import AkadSection from '../sections/AkadSection.vue'
+import ResepsiSection from '../sections/ResepsiSection.vue'
 </script>
 
 <template>
@@ -25,6 +27,7 @@ import AkadSection from '../sections/AkadSection.vue'
     <GroomSection />
     <QuoteSection />
     <AkadSection />
+    <ResepsiSection />
   </div>
 </template>
 

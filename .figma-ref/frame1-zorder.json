@@ -311,17 +311,6 @@
    "section": "countdown"
   },
   {
-   "z": 29,
-   "id": "54:41",
-   "name": "dbfb",
-   "type": "RECTANGLE",
-   "x": 62.05,
-   "y": 6243,
-   "w": 471,
-   "h": 706,
-   "section": "resepsi"
-  },
-  {
    "z": 30,
    "id": "54:42",
    "name": "fxdbvg 1",
@@ -1595,7 +1584,7 @@
    "y": 6929.11,
    "w": 435,
    "h": 322,
-   "section": "dresscode"
+   "section": "resepsi"
   },
   {
    "z": 146,

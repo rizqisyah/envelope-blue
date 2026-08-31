@@ -97,15 +97,21 @@ MODES = ["normal", "screen", "multiply", "lighten", "darken"]
 # refits it 94px away at 0.12 multiply and the lily disappears.
 NO_SOLVE = {'15:192', '16:397', '16:491', '16:493', '20:584', '20:589', '20:640',
             '20:609', '20:611', '20:625', '20:626', '20:627',
-            '23:882', '20:762', '20:763',
-            '52:4', '52:5', '22:846', '22:827', '22:837', '32:450', '23:851'}
+            '23:882', '20:762', '20:763'}
 
 # Position pinned by hand, paint still unknown. NO_SOLVE above blocks BOTH searches, which
 # is right when a hand-placed layer's alpha was itself a symptom of the bad position; it is
 # wrong for a layer the design genuinely fades. 54:33, the akad card's fountain, is the
 # second kind: it is masked into the card and painted back at low strength, and blocking it
 # outright left it at full opacity and cost the band 0.4.
-NO_MOVE = {'54:33'}
+NO_MOVE = {'54:33', '54:42',
+           # The akad and resepsi bands' pinned layers. Their positions are measured, so
+           # unlike the ids above them there is nothing artefactual about their paint --
+           # and several of them ARE faded in the design. Holding them out of the paint
+           # search cost the akad band its whole left column.
+           '52:4', '52:5', '22:846', '22:827', '22:837', '32:450', '23:851',
+           '29:242', '29:241', '29:253', '29:254', '24:897', '29:244', '29:248',
+           '29:243', '29:246', '29:249', '29:274'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every
@@ -288,11 +294,17 @@ def main():
                 continue
             if r["id"] in NO_SOLVE:
                 continue
-            if r["id"] in twins:
+            if r["id"] in twins and r["id"] not in NO_MOVE:
                 # Repeated sprite: the gift band draws the same card plate three times,
                 # 119px apart. The search cannot tell one copy from another, so it will
                 # happily slide card 1's tab into card 2's slot and score the same. Their
                 # Figma positions are already right -- leave them alone.
+                #
+                # NO_MOVE is the exception, and 54:42 is why: it is byte-identical to
+                # 54:33 and so was skipped outright, which left the resepsi fountain at
+                # full opacity where the akad one is 0.55 darken. A NO_MOVE id cannot
+                # slide into its twin's slot -- its position is held -- so only its paint
+                # is searched, which is exactly what a repeated faded sprite needs.
                 continue
             # Score over what this layer can reach, plus the search margin — a 40x40
             # floral scored across the whole band is drowned out by everything else.

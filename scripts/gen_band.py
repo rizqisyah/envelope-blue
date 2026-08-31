@@ -172,12 +172,38 @@ PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '2
          '20:625': 496, '20:627': 192, '20:609': 91, '20:626': 294,
          '23:882': 101, '20:762': 73, '20:763': 433,
          '52:4': 0, '52:5': 419, '22:846': 0, '22:827': 419, '32:450': 0,
-         '54:33': 63, '23:851': 63}
+         '54:33': 63, '23:851': 63,
+         '29:242': 24, '29:241': 62, '29:253': 146, '29:254': 0, '24:897': 0, '29:244': 0,
+         '29:248': 0, '29:243': 456, '29:246': 429, '29:249': 0, '29:274': 0, '54:42': 62}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
          '23:882': 4071, '20:762': 4323, '20:763': 4329,
          '52:4': 4536, '52:5': 4536, '22:846': 4941, '22:827': 5412, '22:837': 5309,
-         '54:33': 5618, '23:851': 5173}
+         '54:33': 5618, '23:851': 5173,
+         '29:242': 6207, '29:241': 6236, '29:253': 5907, '29:254': 6028, '24:897': 6081,
+         '29:244': 6393, '29:248': 6541, '29:243': 6372, '29:246': 6004, '29:249': 6475,
+         '29:274': 6004, '54:42': 6688}
+
+# The resepsi band is the akad band FLIPPED, and every rule the akad band cost us transfers
+# to it -- but the flip is per node there too, so each one still has to be checked.
+# Twelve of its seventeen layers declare a right edge where the chain reads a left one:
+#
+#   29:242 card frame   572 - 548 = 24    (the same x as akad's 22:822 -- same card, flipped)
+#   29:241 card plate   533 - 471 = 62    insets 38/39/29/28 against the frame, akad's
+#                                          39/38/29/28 with left and right swapped
+#   29:253 / 29:254 / 24:897 / 29:244 / 29:248 / 29:249 / 29:274  all bleed off the LEFT
+#   29:243 / 29:246 / 29:247 / 29:251                             all bleed off the RIGHT
+#
+# and four of those also report a bottom edge: 29:243 at y - h, and 29:246 / 29:249 /
+# 29:274 at y - EXPORT h. 29:274 lands at err 4.2 that way, the cleanest match in the band.
+#
+# 54:42 is 54:33's twin (byte-identical, so locate never runs) and is masked the same way:
+# 62 is 29:241's left edge, exactly as 63 was 23:851's. 88.4 there against 132.6 at the
+# clip rule's 0.
+#
+# 24:897 is the one that is only measured: err 68.7 at (0, 6081) against 111.9 at its
+# declared y and 70.0 where the chain put it. It is scrollwork almost entirely buried under
+# 29:254, so nothing scores well; x 0 is the only clip-legal value it can take.
 
 # The akad band, and a rule this frame had only shown on the x axis until now:
 # **Figma reports a flipped node's bounds as its RIGHT and/or BOTTOM edge**, and where the
