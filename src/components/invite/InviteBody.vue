@@ -7,7 +7,8 @@
 // bride (y 2161..3163), groom (y 3163..4021), quote (y 4021..4425),
 // akad (y 4425..5907), resepsi (y 5907..7034), dresscode (y 7034..7750),
 // gallery (y 7750..8865), gift (y 8865..9565),
-// wishes (y 9565..10763).
+// wishes (y 9565..10763), rsvp (y 10763..11452),
+// closing (y 11452..12818). The frame is complete.
 // The rest of Frame 1 is still to cut — add each band's component here in Figma order
 // as it lands.
 import HeroSection from '../sections/HeroSection.vue'
@@ -22,6 +23,8 @@ import DresscodeSection from '../sections/DresscodeSection.vue'
 import GallerySection from '../sections/GallerySection.vue'
 import GiftSection from '../sections/GiftSection.vue'
 import WishesSection from '../sections/WishesSection.vue'
+import RsvpSection from '../sections/RsvpSection.vue'
+import ClosingSection from '../sections/ClosingSection.vue'
 </script>
 
 <template>
@@ -38,6 +41,8 @@ import WishesSection from '../sections/WishesSection.vue'
     <GallerySection />
     <GiftSection />
     <WishesSection />
+    <RsvpSection />
+    <ClosingSection />
   </div>
 </template>
 

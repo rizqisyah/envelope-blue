@@ -137,6 +137,41 @@ await sheet.waitForTimeout(400)
 await sheet.locator('.sheet').screenshot({ path: `${OUT}/web-sheet.png` })
 
 /*
+ * The rsvp form is the fourth stateful control. In design mode `submitRsvp` throws by
+ * design, so a submitted form must ANSWER — an empty error line means the click never
+ * reached the handler, which looks identical to a working form in a screenshot.
+ */
+const rsvpForm = await sheet.evaluate(async () => {
+  const setValue = (el, v) => {
+    const proto = Object.getPrototypeOf(el)
+    Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, v)
+    el.dispatchEvent(new Event('input', { bubbles: true }))
+    el.dispatchEvent(new Event('change', { bubbles: true }))
+  }
+  const form = document.querySelector('.rsvp__form')
+  if (!form) return 'no rsvp form'
+  // The name arrives filled in -- design mode's guest is "Ahmad & Salma" -- so the
+  // empty-name branch is reached by clearing it, not by submitting as loaded.
+  setValue(form.querySelector('input[type="text"]'), '')
+  form.requestSubmit()
+  await new Promise((r) => setTimeout(r, 200))
+  const blank = document.querySelector('.rsvp__error')?.textContent.trim()
+  if (blank !== 'Nama masih kosong.') return `no name validation (${blank})`
+  setValue(form.querySelector('input[type="text"]'), 'Playwright')
+  form.requestSubmit()
+  await new Promise((r) => setTimeout(r, 200))
+  const noPick = document.querySelector('.rsvp__error')?.textContent.trim()
+  if (noPick !== 'Pilih kehadiran dulu.') return `no attendance validation (${noPick})`
+  setValue(form.querySelector('select'), 'hadir')
+  form.requestSubmit()
+  await new Promise((r) => setTimeout(r, 600))
+  // Design mode makes submitRsvp throw on purpose; the form has to say so.
+  const answered = document.querySelector('.rsvp__error')?.textContent.trim()
+  return answered && answered !== noPick ? 'ok' : `submitted but silent (${answered})`
+})
+
+
+/*
  * The wish form is the third stateful control, and the only one that writes: in design
  * mode `sendWish` answers locally, so a submitted wish must appear at the top of the list
  * with the guest's name on it. A silent failure here looks exactly like a working form.
@@ -171,6 +206,7 @@ console.log(`hero reveal fired: ${revealed}`)
 for (const b of bands) console.log(`${b.name} reveal fired on scroll: ${b.shown}`)
 console.log(`gallery carousel advances: ${carousel}`)
 console.log(`gift copy button confirms: ${copyBtn}`)
+console.log(`rsvp form answers: ${rsvpForm}`)
 console.log(`wish form posts: ${wishForm}`)
 if (errors.length) console.log(errors.join('\n'))
 if (
@@ -179,6 +215,7 @@ if (
   bands.some((b) => !b.shown) ||
   carousel !== 'ok' ||
   copyBtn !== 'ok' ||
+  rsvpForm !== 'ok' ||
   wishForm !== 'ok'
 )
   process.exitCode = 1

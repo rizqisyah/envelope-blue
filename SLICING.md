@@ -30,21 +30,18 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 
 ## Picking this up in a new session
 
-- **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom, quote, akad, resepsi, dresscode, gallery, gift and wishes sliced** (1.710 / 1.822 /
-  4.929 / 1.402 / 1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 / **0.898** / 1.554),
-  covering y 0..10763 of 12818. Two bands remain, each with nothing but a provisional
-  y-range. The countdown and bismillah were cut once by an
+- **State: the frame is COMPLETE.** Cover sliced (1.29) and all fourteen body bands sliced
+  (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 /
+  **0.898** / 1.554 / 1.195 / 2.953), covering y 0..12818 — the whole of Frame 1, at a
+  sheet-wide **1.856**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
-- **RSVP (y 10763..) is next.** Sixteen nodes and the same shape as wishes: a heading in
-  an `ELLIPSE` (`39:7`, check its fill before reaching for `CSS_SHAPES`), three labelled
-  fields (`40:16` Nama, `40:28` No Hp, `40:39` "Will you be joining us?", `40:41` "Number of
-  Guests:") and a Send (`40:36`). Its field plates will be missing from the dump the same
-  way the wishes band's were — measure them off the render and add them to `solve_alpha`'s
-  `DRAWN_BOXES`. No `sendRsvp` exists in `useWedding` yet; check `api.ts` before assuming
-  one.
+- **What is left is polish, not slicing.** The three faces the frame needs and does not
+  have — Cavilenny, Activists and the bismillah's Arabic, Kaleagnetta, Comtic Hiden, and
+  whatever condensed serif sets the gallery band's promo caps — are the whole of the
+  remaining gap on every band above 2. Licensing any of them is worth more than any further
+  measurement. The known residuals are listed at the foot of this file.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -135,7 +132,7 @@ there is nothing to re-measure yet.
    below it were read off heading positions in the frame render and must be re-measured as
    each band is cut — 7750 and 8865 are verified too, where `31:316` / `29:235` open the
    gallery, `45:12` / `45:11` open the gift band, `32:456` / `32:454` open wishes and
-   `35:534` opens rsvp. Note
+   `35:534` opens rsvp and `40:76` opens closing. Note
    the resepsi band still *derives* 5907..7034: nothing sits in the 64px of plain ground
    between the card and the dresscode heading, so the gap falls to resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
    fill. `EMPTY` holds `54:35` and `54:41`, 1x1 transparent files declaring the same box and
@@ -785,6 +782,18 @@ What did NOT transfer: the y offsets. The cartouche is 1061px below akad's, the 
 1063, the text block 1048. The band is a flip, not a translation — do not try to derive
 positions from the akad band arithmetically the way the bride/groom mirror allowed.
 
+## A single-line `<input>` centres its text whatever `padding-top` says
+
+The rsvp band's four field plates put their label 12.8 down from the plate's top, which is
+2.7 ABOVE the centre of a 54px box. That inset cannot be written as `padding-top`: a
+one-line `<input>` centres its value in the CONTENT box, so raising the top padding pushes
+the content box down and the text stays centred in it. The lever is the DIFFERENCE between
+top and bottom padding — `8.8 / 16.8` here, measured, with the horizontal inset carried
+separately at 11.8.
+
+A `<textarea>` behaves the other way (its text starts at the top padding), which is why the
+wishes band's message field takes a plain 12.8 and its name field does not.
+
 ## A band's own chrome is invisible to every script in the toolchain
 
 The wishes band draws four things that are in no node table at all — the two white fields,
@@ -1075,8 +1084,8 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
-| **wishes** (9565..10763) | **1.554** | rsvp | — |
-| closing | — | | |
+| **wishes** (9565..10763) | **1.554** | **rsvp** (10763..11452) | **1.195** |
+| **closing** (11452..12818) | **2.953** | **SHEET** (0..12818) | **1.856** |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
@@ -1234,3 +1243,66 @@ into live data.
 button and the wish form. The wish check runs **after** the `.sheet` screenshot on purpose:
 design mode has no way to un-post a wish, so run earlier it would leave its own test card in
 the artifact every later band is eyeballed against.
+
+The rsvp band answers the question its handoff left open: **`submitRsvp` already exists**,
+in `lib/api.ts`, posting to `/v1/service/menu/hadir2/{slug}` — and api.ts's own comment
+names `RsvpSection` as the reason `DESIGN_MODE` is enforced at the boundary rather than in
+`useWedding`. So the section imports it directly, and in design mode the throw is the
+designed answer: the form validates, submits, and reports "undangan ini belum terhubung ke
+server" in its error line. `shot.mjs` asserts exactly that, in three steps — empty name,
+no attendance, then a valid submit — because a form whose click never reaches its handler
+looks identical to a working one in a screenshot.
+
+Its five plates are reconstructed from the parent-offset rule the gift band established:
+the four fields at (85, 11139 / 11200 / 11261 / 11322), 426 x 54, white with a 1px `#8d9879`
+rule and a radius of 10, and Send at (85, 11398) in `#b2d3e2`. All five land 0px, as do all
+seven text nodes. `39:7`, the white oval behind the heading, IS a flat `#ffffff` ellipse —
+it goes in `CSS_SHAPES` — but that had to be checked rather than assumed: the gallery band's
+six ellipses at the same `#d9d9d9` were four masks and two buttons.
+
+One more note on its Send button: the design draws it at full strength, so it is NOT
+disabled until the form is valid. A control that greys out before the guest has typed
+anything reads as broken rather than as guidance, and the render is the specification.
+
+## The closing band, and what Figma's silence about line-height means
+
+The last band is the busiest: a full-bleed toile (`40:76`), an ornate envelope, a framed
+photo and four text nodes. It is also the only node in the frame **clipped on its BOTTOM
+edge** — `40:76` declares 671x1565 at y 11452 and exports 596x1366, which is exactly what
+is left of the sheet (12818 − 11452). The clip rule handles it unchanged; it is worth
+knowing only because every other vertical surprise in this frame has been growth, not a cut.
+
+**When Figma declares no line-height, the FACE's own leading is the first guess** — not the
+box height over the line count. `41:92` is four rendered lines in a 162 box, so 40.5 looks
+obvious and is wrong: measured line by line the render's pitch is **36**, which is Roben
+Elegante's natural 1.8em at 20. Setting 40.5 matched the first line exactly and drifted 16px
+by the fourth, which is the shape of this mistake — it always looks right where you check it
+first. The box is simply taller than the block it holds.
+
+Its signature `42:3` is the frame's fourth substitute and its second tracking case, in the
+opposite direction to the gallery band's promo: Comtic Hiden is a monoline brush script, and
+the render sets "The Bride & Groom" 286 x 31 where Sacramento at 24 gives 180 x 27 — 38%
+wider PER UNIT HEIGHT. So the height comes from the size (27.6) and the width from a
+`letter-spacing` of 4.9, with a matching `text-indent` because CSS also adds the space after
+the last glyph and would otherwise push the centred line half a space right.
+
+One thing that is NOT a substitution problem: `42:3` reads "The Bride & Groom" and it stays
+a literal. Driving it from `coupleNickname` was wrong twice over — that computed never
+returns empty (it falls back to "Ahmad & Salma", the design's other mock), so a fallback
+behind it could never fire, and swapping names in changes what the design SAYS rather than
+what it shows.
+
+## Known residuals, now that every band is cut
+
+| where | what | worth |
+|---|---|---|
+| bismillah | three substitute faces, incl. an Arabic fallback | ~3 of its 4.929 |
+| closing | the blurred botanicals `52:11` / `52:12` / `40:81` | most of its 2.953 |
+| gallery | the promo caps' condensed face, and photo webp loss | ~0.5 |
+| resepsi | `24:897`, buried scrollwork whose position is not really known | ~0 |
+| resepsi | a pale-blue chrysanthemum at x 30..90, y 5880..5990 that no asset explains | unknown |
+| akad | the left column, x 0..99 — pinned layers `22:837` / `22:846` at scan positions | ~0.2 |
+
+The chrysanthemum is the only open QUESTION rather than a known trade: it belongs to a node
+that renders far from where it is declared, and every band is now cut, so it is either a
+layer this frame draws twice or one whose declared y is a bottom edge nothing tested.

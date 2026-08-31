@@ -64,7 +64,7 @@ BANDS = [
     ('gift', 8865),  # verified -- 45:12 / 45:11 open the gift band here
     ('wishes', 9565),  # verified -- 32:456 / 32:454 open the wishes band here
     ('rsvp', 10763),  # verified -- 35:534 opens the rsvp band here
-    ('closing', 11450),
+    ('closing', 11452),  # verified -- 40:76 opens the closing band here
 ]
 
 # Full-sheet flat-colour plates: CSS on the sheet in InviteBody.vue, not images.
@@ -84,7 +84,8 @@ SHEET_PLATES = set()
 #   node has nothing left to draw and the photo's position is the mask's box.
 CSS_SHAPES = {'29:275', '29:276', '29:277', '30:281',
               '31:307', '31:308',
-              '31:288', '31:294', '31:300', '31:303'}
+              '31:288', '31:294', '31:300', '31:303',
+              '39:7'}
 
 # Exports that came back fully transparent. Every hero export carries ink -- the sparsest
 # is 20:647 at 7.4% opaque, which is the light wash over the portrait, not an empty file.

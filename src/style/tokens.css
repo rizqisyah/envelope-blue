@@ -55,6 +55,8 @@
    * so neither needs a width compensation. */
   --font-wish: "Bellefair", serif;
   --font-wish-name: "Abhaya Libre ExtraBold", serif;
+  /* The rsvp band's lede. The design's own face, from fontsource. */
+  --font-garamond: "EB Garamond", serif;
 
   /* design frame reference — cover = Frame 2 (27:9); body = Frame 1 (1:3) */
   --frame-w: 596;

@@ -118,7 +118,9 @@ NO_MOVE = {'54:33', '54:42',
            # The gift band's pins.
            '45:12', '31:417', '31:423', '32:457',
            # The wishes band's pins.
-           '31:424', '31:426'}
+           '31:424', '31:426',
+           # The rsvp band's pins.
+           '40:79', '40:71'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every
@@ -224,6 +226,11 @@ DRAWN_BOXES = [
     (85, 10344, 511, 10398),  # wishes: the Show more pill
     (252, 9250, 344, 9291),   # gift: the Copy pill, card 1
     (252, 9454, 344, 9495),   # gift: the Copy pill, card 2
+    (85, 11139, 511, 11193),  # rsvp: the four field plates
+    (85, 11200, 511, 11254),
+    (85, 11261, 511, 11315),
+    (85, 11322, 511, 11376),
+    (85, 11398, 511, 11452),  # rsvp: the Send pill
 ]
 
 

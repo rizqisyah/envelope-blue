@@ -115,6 +115,54 @@
    "w": 384,
    "h": 172
   },
+  "40:76": {
+   "asset": "closing/parts/40-76.webp",
+   "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_6c018481-e318-412e-902d-92087bbd5f51 1",
+   "x": -64.95,
+   "y": 11452,
+   "w": 671,
+   "h": 1565
+  },
+  "52:11": {
+   "asset": "closing/parts/52-11.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 9",
+   "x": 140.65,
+   "y": 12038,
+   "w": 251,
+   "h": 251
+  },
+  "52:12": {
+   "asset": "closing/parts/52-12.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 10",
+   "x": 483.51,
+   "y": 11934,
+   "w": 251,
+   "h": 251
+  },
+  "61:619": {
+   "asset": "closing/parts/61-619.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 14",
+   "x": 101.85,
+   "y": 11789.81,
+   "w": 251,
+   "h": 251
+  },
+  "61:620": {
+   "asset": "closing/parts/61-620.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 15",
+   "x": 502.05,
+   "y": 11773.78,
+   "w": 251,
+   "h": 251
+  },
+  "42:4": {
+   "asset": "closing/parts/42-4.webp",
+   "figmaName": "Ellipse 11",
+   "x": 82.05,
+   "y": 11594,
+   "w": 459,
+   "h": 340
+  },
   "31:287": {
    "asset": "gallery/parts/31-287.webp",
    "figmaName": "Open (20) 1",
@@ -154,6 +202,14 @@
    "y": 6207,
    "w": 548,
    "h": 763
+  },
+  "40:79": {
+   "asset": "rsvp/parts/40-79.webp",
+   "figmaName": "image 68",
+   "x": 95.05,
+   "y": 11346,
+   "w": 130,
+   "h": 383
   },
   "28:227": {
    "asset": "dresscode/parts/28-227.webp",
@@ -1259,6 +1315,86 @@
    "w": 80,
    "h": 156.33
   },
+  "35:534": {
+   "asset": "rsvp/parts/35-534.webp",
+   "figmaName": "image 64",
+   "x": -93,
+   "y": 10763,
+   "w": 244,
+   "h": 180
+  },
+  "40:73": {
+   "asset": "rsvp/parts/40-73.webp",
+   "figmaName": "image 66",
+   "x": 677,
+   "y": 10810,
+   "w": 244,
+   "h": 180
+  },
+  "40:71": {
+   "asset": "rsvp/parts/40-71.webp",
+   "figmaName": "Open (19) 4",
+   "x": 225,
+   "y": 10905,
+   "w": 418,
+   "h": 418
+  },
+  "40:72": {
+   "asset": "rsvp/parts/40-72.webp",
+   "figmaName": "Open (19) 5",
+   "x": 371,
+   "y": 10909,
+   "w": 418,
+   "h": 418
+  },
+  "40:77": {
+   "asset": "rsvp/parts/40-77.webp",
+   "figmaName": "image 67",
+   "x": 511.05,
+   "y": 11335,
+   "w": 130,
+   "h": 383
+  },
+  "40:80": {
+   "asset": "closing/parts/40-80.webp",
+   "figmaName": "Open (18) 2",
+   "x": 58.05,
+   "y": 12137,
+   "w": 501,
+   "h": 501
+  },
+  "40:81": {
+   "asset": "closing/parts/40-81.webp",
+   "figmaName": "Rectangle 2",
+   "x": 177.05,
+   "y": 11948,
+   "w": 263,
+   "h": 419
+  },
+  "40:84": {
+   "asset": "closing/parts/40-84.webp",
+   "figmaName": "Rectangle 4",
+   "x": 206.05,
+   "y": 11984,
+   "w": 205,
+   "h": 347
+  },
+  "40:82": {
+   "asset": "closing/parts/40-82.webp",
+   "figmaName": "Rectangle 3",
+   "x": 206.05,
+   "y": 11984,
+   "w": 205,
+   "h": 347
+  },
+  "40:86": {
+   "asset": "closing/parts/40-86.webp",
+   "figmaName": "Open (21) 2",
+   "x": 263.05,
+   "y": 12321,
+   "w": 91,
+   "h": 91
+  },
   "45:13": {
    "asset": "akad/parts/45-13.webp",
    "figmaName": "6fb01f0e-185c-4f19-ab15-0e17de454c12-Photoroom 22",
@@ -1307,6 +1443,46 @@
    "w": 620,
    "h": 310
   },
+  "61:606": {
+   "asset": "rsvp/parts/61-606.webp",
+   "figmaName": "9c8283ed-3b7a-4f5c-9eb8-b1a99fc825b9-Photoroom 5",
+   "x": -112.95,
+   "y": 11254,
+   "w": 156,
+   "h": 195
+  },
+  "61:607": {
+   "asset": "rsvp/parts/61-607.webp",
+   "figmaName": "9c8283ed-3b7a-4f5c-9eb8-b1a99fc825b9-Photoroom 6",
+   "x": 709.05,
+   "y": 11254,
+   "w": 156,
+   "h": 195
+  },
+  "61:609": {
+   "asset": "closing/parts/61-609.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 11",
+   "x": -221.95,
+   "y": 11594,
+   "w": 377,
+   "h": 377
+  },
+  "61:610": {
+   "asset": "closing/parts/61-610.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 12",
+   "x": -221.95,
+   "y": 11594,
+   "w": 377,
+   "h": 377
+  },
+  "61:611": {
+   "asset": "closing/parts/61-611.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 13",
+   "x": 806.05,
+   "y": 11594,
+   "w": 377,
+   "h": 377
+  },
   "61:615": {
    "asset": "wishes/parts/61-615.webp",
    "figmaName": "dd394a56-c64d-424d-a92b-31fe52e64004-Photoroom 1",
@@ -1338,6 +1514,14 @@
    "y": 4902,
    "w": 366,
    "h": 366
+  },
+  "42:2": {
+   "asset": "closing/parts/42-2.webp",
+   "figmaName": "Rectangle 5",
+   "x": 0.05,
+   "y": 12767,
+   "w": 596,
+   "h": 51
   }
  }
 }
