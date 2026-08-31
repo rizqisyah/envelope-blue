@@ -174,7 +174,9 @@ PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '2
          '52:4': 0, '52:5': 419, '22:846': 0, '22:827': 419, '32:450': 0,
          '54:33': 63, '23:851': 63,
          '29:242': 24, '29:241': 62, '29:253': 146, '29:254': 0, '24:897': 0, '29:244': 0,
-         '29:248': 0, '29:243': 456, '29:246': 429, '29:249': 0, '29:274': 0, '54:42': 62}
+         '29:248': 0, '29:243': 456, '29:246': 429, '29:249': 0, '29:274': 0, '54:42': 62,
+         '45:9': 0, '29:235': 10, '31:287': 78, '31:289': 152, '52:6': 17, '52:8': 293,
+         '31:295': 146, '31:301': 255, '31:304': 364, '31:314': 140, '31:315': 457}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
          '23:882': 4071, '20:762': 4323, '20:763': 4329,
@@ -182,7 +184,30 @@ PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 
          '54:33': 5618, '23:851': 5173,
          '29:242': 6207, '29:241': 6236, '29:253': 5907, '29:254': 6028, '24:897': 6081,
          '29:244': 6393, '29:248': 6541, '29:243': 6372, '29:246': 6004, '29:249': 6475,
-         '29:274': 6004, '54:42': 6688}
+         '29:274': 6004, '54:42': 6688,
+         '29:235': 7750, '31:289': 8062, '52:6': 8155, '52:8': 8155,
+         '31:295': 8478, '31:301': 8478, '31:304': 8478, '31:314': 8262, '31:315': 8262}
+
+# The gallery band. Its photos are the useful find: **a masked photo exports ALREADY
+# CLIPPED, so the mask's box is its position.** 31:289 declares 403.6x504.6 and exports
+# 308x403, which is exactly 31:288's box, and lands there at err 28.8 against 96.9 at its
+# own declared origin; the three thumbnails do the same 12px up and left of where the clip
+# rule puts them (28.8 against 91..96). Same mechanism as 54:33's fountain, one band up.
+#
+# Two more mirrors, both the now-familiar right-edge read: 45:9 (declared 181.1 for a
+# 181-wide export -> x 0, err 13.1 against 223.2) and 29:235 (declared 313 for a 303-wide
+# export that is NOT clipped, so 313 is its right edge -> x 10, err 11.0). 31:287's 528 is
+# the same read (528 - 450 = 78) and rescue found it independently.
+#
+# 52:6 / 52:8 grow 248 -> 295.5 on BOTH axes and the growth is one-sided on both: 52:6
+# keeps its declared x and grows right, 52:8 takes the mirror read and grows left
+# (588.1 - 248 - 47.5 = 292.6). Their y is 52.8 above the declared, measured, not derived --
+# both scans landed on 8155 independently, which is the only corroboration available for a
+# pair this buried (err 86 and 104 under the oval photo).
+#
+# 31:314 / 31:315, the carousel chevrons, are NOT a mirrored pair despite pointing opposite
+# ways: scoring 31:315 against its own flip gives 39.8 unflipped against 174.4 flipped.
+# Their offsets inside their buttons differ (12 and 21), which is the design, not a slip.
 
 # The resepsi band is the akad band FLIPPED, and every rule the akad band cost us transfers
 # to it -- but the flip is per node there too, so each one still has to be checked.

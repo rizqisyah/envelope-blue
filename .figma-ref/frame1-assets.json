@@ -19,6 +19,22 @@
    "w": 746,
    "h": 481
   },
+  "45:9": {
+   "asset": "gallery/parts/45-9.webp",
+   "figmaName": "Open (19) 7",
+   "x": 181.05,
+   "y": 7803,
+   "w": 355,
+   "h": 355
+  },
+  "45:10": {
+   "asset": "gallery/parts/45-10.webp",
+   "figmaName": "Open (19) 8",
+   "x": 415.05,
+   "y": 7803,
+   "w": 355,
+   "h": 355
+  },
   "40:91": {
    "asset": "countdown/parts/40-91.webp",
    "figmaName": "zeniaraustri_99855_Whimsical_vintage_toile_de_Jouy_wallpaper_pa_a7679fe2-8a21-4de9-b3b6-7b96ad4c744f 3",
@@ -66,6 +82,14 @@
    "y": 131,
    "w": 384,
    "h": 172
+  },
+  "31:287": {
+   "asset": "gallery/parts/31-287.webp",
+   "figmaName": "Open (20) 1",
+   "x": 528.05,
+   "y": 8036,
+   "w": 450,
+   "h": 224
   },
   "23:851": {
    "asset": "akad/parts/23-851.webp",
@@ -122,6 +146,22 @@
    "y": 6688,
    "w": 620,
    "h": 310
+  },
+  "52:6": {
+   "asset": "gallery/parts/52-6.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 5",
+   "x": 17.05,
+   "y": 8207.78,
+   "w": 248,
+   "h": 248
+  },
+  "52:8": {
+   "asset": "gallery/parts/52-8.webp",
+   "figmaName": "zeniaraustri_99855_Hand-drawn_vintage_botanical_illustration_fe_5c0ea846-45c3-4f2b-a342-28f2b2ef9ac5-Photoroom 6",
+   "x": 588.14,
+   "y": 8207.78,
+   "w": 248,
+   "h": 248
   },
   "22:837": {
    "asset": "akad/parts/22-837.webp",
@@ -907,6 +947,22 @@
    "w": 802,
    "h": 217
   },
+  "29:235": {
+   "asset": "gallery/parts/29-235.webp",
+   "figmaName": "ChatGPT Image Aug 22, 2026, 10_41_26 PM 2",
+   "x": 313,
+   "y": 7750,
+   "w": 303,
+   "h": 161
+  },
+  "31:316": {
+   "asset": "gallery/parts/31-316.webp",
+   "figmaName": "ChatGPT Image Aug 22, 2026, 10_41_26 PM 3",
+   "x": 297,
+   "y": 7750,
+   "w": 303,
+   "h": 161
+  },
   "29:233": {
    "asset": "dresscode/parts/29-233.webp",
    "figmaName": "Vector",
@@ -923,6 +979,62 @@
    "w": 239,
    "h": 292
   },
+  "31:289": {
+   "asset": "gallery/parts/31-289.webp",
+   "figmaName": "malay couple 1",
+   "x": 104.29,
+   "y": 8037.67,
+   "w": 403.64,
+   "h": 504.55
+  },
+  "31:295": {
+   "asset": "gallery/parts/31-295.webp",
+   "figmaName": "malay couple 1",
+   "x": 133.93,
+   "y": 8466.42,
+   "w": 126.22,
+   "h": 157.78
+  },
+  "31:301": {
+   "asset": "gallery/parts/31-301.webp",
+   "figmaName": "malay couple 1",
+   "x": 242.93,
+   "y": 8466.42,
+   "w": 126.22,
+   "h": 157.78
+  },
+  "31:304": {
+   "asset": "gallery/parts/31-304.webp",
+   "figmaName": "malay couple 1",
+   "x": 351.93,
+   "y": 8466.42,
+   "w": 126.22,
+   "h": 157.78
+  },
+  "31:314": {
+   "asset": "gallery/parts/31-314.webp",
+   "figmaName": "Vector 4",
+   "x": 139,
+   "y": 8263,
+   "w": 13,
+   "h": 23
+  },
+  "31:315": {
+   "asset": "gallery/parts/31-315.webp",
+   "figmaName": "Vector 5",
+   "x": 471,
+   "y": 8263,
+   "w": 13,
+   "h": 23
+  },
+  "31:318": {
+   "asset": "gallery/parts/31-318.webp",
+   "figmaName": "Rectangle 1",
+   "x": 116.05,
+   "y": 8651,
+   "w": 380,
+   "h": 205
+  },
   "31:321": {
    "asset": "hero/parts/31-321.webp",
    "figmaName": "Open (19) 2",
@@ -938,6 +1050,14 @@
    "y": 14.91,
    "w": 611,
    "h": 250
+  },
+  "31:309": {
+   "asset": "gallery/parts/31-309.webp",
+   "figmaName": "5d8831b8-ba4a-4715-b846-b2eeee80b642-Photoroom 1",
+   "x": -19,
+   "y": 8723,
+   "w": 634,
+   "h": 188
   },
   "32:447": {
    "asset": "groom/parts/32-447.webp",

@@ -61,7 +61,7 @@ BANDS = [
     ('resepsi', 5907),  # verified -- 22:822's akad card ends exactly here, 29:253 opens resepsi
     ('dresscode', 6970),  # verified -- 29:242's resepsi card frame ends here
     ('gallery', 7750),  # verified -- 31:316 / 29:235 open the gallery here
-    ('gift', 8800),
+    ('gift', 8865),  # verified -- 45:12 / 45:11 open the gift band here
     ('wishes', 9550),
     ('rsvp', 10700),
     ('closing', 11450),
@@ -71,12 +71,20 @@ BANDS = [
 # Frame 1 paints its ground with its own #e7f9fe fill and no flat rectangle, so this
 # stays empty; the sheet's `background: var(--sheet)` is that fill.
 SHEET_PLATES = set()
-# Flat-colour shapes drawn as CSS by their own band rather than exported. They stay in
-# the z-order (like TEXT) so the stacking stays intact -- they simply get no asset.
-# The dresscode band's four palette swatches are the frame's first: ELLIPSE nodes with a
-# single solid fill and nothing else, which a <div> with border-radius reproduces exactly
-# and an image only approximates.
-CSS_SHAPES = {'29:275', '29:276', '29:277', '30:281'}
+# Shapes that are NOT exported. They stay in the z-order (like TEXT) so the stacking stays
+# intact -- they simply get no asset. Two kinds, both ELLIPSE so far:
+#
+# - Flat fills the band draws itself. The dresscode band's four palette swatches
+#   (a single solid fill and nothing else) and the gallery's two carousel buttons
+#   (#d9d9d9, solid, sampled opaque off the render). A <div> with border-radius
+#   reproduces these exactly where a resampled webp only approximates.
+# - MASKS. The gallery's photo ovals are #d9d9d9 Figma placeholders that never paint:
+#   the photo directly above each one is exported ALREADY CLIPPED to the oval (31:289
+#   declares 403.6x504.6 and exports 308x403, exactly 31:288's box), so the mask's own
+#   node has nothing left to draw and the photo's position is the mask's box.
+CSS_SHAPES = {'29:275', '29:276', '29:277', '30:281',
+              '31:307', '31:308',
+              '31:288', '31:294', '31:300', '31:303'}
 
 # Exports that came back fully transparent. Every hero export carries ink -- the sparsest
 # is 20:647 at 7.4% opaque, which is the light wash over the portrait, not an empty file.

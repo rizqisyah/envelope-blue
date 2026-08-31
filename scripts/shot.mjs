@@ -86,6 +86,23 @@ const bands = await sheet.evaluate(() =>
     shown: el.classList.contains('is-in'),
   })),
 )
+/*
+ * The gallery carousel is the only thing in the sheet that has state, so it is the only
+ * thing a screenshot cannot check. Click "next" and confirm the oval's photo actually
+ * changed -- a wrong modulo or a broken index reads as a still picture, which every other
+ * check in this file would pass.
+ */
+const carousel = await sheet.evaluate(async () => {
+  const oval = document.querySelector('.gallery__oval img')
+  const next = document.querySelectorAll('.gallery__nav')[1]
+  if (!oval || !next) return 'no carousel'
+  const before = oval.getAttribute('src')
+  next.click()
+  await new Promise((r) => setTimeout(r, 200))
+  const after = document.querySelector('.gallery__oval img')?.getAttribute('src')
+  return before !== after ? 'ok' : `unchanged (${before})`
+})
+
 await sheet.evaluate(() => window.scrollTo(0, 0))
 await sheet.waitForTimeout(400)
 await sheet.locator('.sheet').screenshot({ path: `${OUT}/web-sheet.png` })
@@ -96,5 +113,6 @@ console.log(`invite visible after click: ${opened}`)
 console.log(`cover removed after transition: ${coverGone}`)
 console.log(`hero reveal fired: ${revealed}`)
 for (const b of bands) console.log(`${b.name} reveal fired on scroll: ${b.shown}`)
+console.log(`gallery carousel advances: ${carousel}`)
 if (errors.length) console.log(errors.join('\n'))
-if (!opened || !revealed || bands.some((b) => !b.shown)) process.exitCode = 1
+if (!opened || !revealed || bands.some((b) => !b.shown) || carousel !== 'ok') process.exitCode = 1

@@ -31,17 +31,17 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah, bride,
-  groom, quote, akad, resepsi and dresscode sliced** (1.710 / 1.822 / 4.929 / 1.402 / 1.478 /
-  1.817 / 1.922 / 2.102 / **0.683**), covering y 0..7750 of 12818. Five bands remain, each
-  with nothing but a provisional y-range. The countdown and bismillah were cut once by an
+  groom, quote, akad, resepsi, dresscode and gallery sliced** (1.710 / 1.822 / 4.929 / 1.402 /
+  1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149), covering y 0..8865 of 12818. Four bands
+  remain, each with nothing but a provisional y-range. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
-- **Gallery (y 7750..) is next.** Twenty-five nodes, the biggest band left: three photo
-  slots masked by `ELLIPSE`es (`31:288`, `31:294` / `31:300` / `31:303`), two small
-  `VECTOR`s, and `31:319` "Buat video prewed", which reads like a CTA rather than a caption.
-  The ellipses here are MASKS over photos, not flat fills — do not reach for `CSS_SHAPES`
-  without checking the fill first.
+- **Gift (y 8865..) is next.** Twenty-four nodes and the frame's first band with real UI
+  in it: two bank cards, each with a "Copy" control (`31:408`, `31:442`). Its art repeats
+  hard — `Open (20) 2..5` and four copies of the same `Photoroom` floral — so expect twins,
+  and expect the akad/resepsi right-edge read on every one of them (`31:417` declares 225
+  for a 466-wide node, `31:419` declares -196, `31:421` declares 791).
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -130,7 +130,8 @@ there is nothing to re-measure yet.
    4425 is `54:20`'s, 5907 is where `22:822` (the akad card frame) ends and resepsi's first
    node begins, and 6970 is where `29:242` (the resepsi card frame) ends. The six entries
    below it were read off heading positions in the frame render and must be re-measured as
-   each band is cut — 7750 is verified too, where `31:316` / `29:235` open the gallery. Note
+   each band is cut — 7750 and 8865 are verified too, where `31:316` / `29:235` open the
+   gallery and `45:12` / `45:11` open the gift band. Note
    the resepsi band still *derives* 5907..7034: nothing sits in the 64px of plain ground
    between the card and the dresscode heading, so the gap falls to resepsi. `SHEET_PLATES` is correctly empty — the frame paints its ground with its own
    fill. `EMPTY` holds `54:35` and `54:41`, 1x1 transparent files declaring the same box and
@@ -780,6 +781,26 @@ What did NOT transfer: the y offsets. The cartouche is 1061px below akad's, the 
 1063, the text block 1048. The band is a flip, not a translation — do not try to derive
 positions from the akad band arithmetically the way the bride/groom mirror allowed.
 
+## A masked PHOTO exports clipped too — so the mask's box is its position
+
+`54:33`'s fountain was the first case; the gallery band has four more and they make the rule
+worth stating on its own. `31:289` declares 403.6x504.6 and exports **308x403**, which is
+exactly the box of `31:288`, the `ELLIPSE` above it. It lands there at err 28.8 against 96.9
+at its own declared origin. The three thumbnails do the same: declared 126.2x157.8, exported
+102x119, and they belong 12px up and left of where the clip rule puts them (28.8 against
+91..96).
+
+So a photo in an oval needs no CSS clip to be *placed* — the export already carries the
+oval. The band still draws it inside a `border-radius: 50%` container, because a LIVE photo
+from the API is rectangular and needs the shape; over the design's own export the radius is
+a no-op.
+
+**The mask nodes themselves paint nothing.** All six of the band's `ELLIPSE`es are
+`#d9d9d9`, Figma's placeholder grey: four are masks fully covered by their photo, and two
+are the carousel buttons, which the render shows at that exact colour, fully opaque
+(sampled (217, 217, 217) dead centre). All six go in `CSS_SHAPES` — four because there is
+nothing left to draw, two because a `border-radius` div is exact.
+
 ## A masked node exports clipped to its MASK
 
 `54:33`, the fountain at the foot of the akad card, declares 620x310 and exports **471x261
@@ -972,7 +993,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
 | **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
-| gallery | — | gift | — |
+| **gallery** (7750..8865) | **2.149** | gift | — |
 | wishes | — | rsvp | — |
 | closing | — | | |
 
@@ -1056,3 +1077,25 @@ Roben Elegante at 32/57 takes **no line-box offset** in the dresscode band, the 
 the bride and groom bands and unlike the hero's +1. Three bands now agree, so the hero's is
 the outlier and the offset belongs to the (face, size, line-height) triple rather than the
 face — which is what the table under "The line-box offset is per FACE" already warns.
+
+The gallery band's three Roben Elegante nodes land 0px in both axes. Its fourth text node,
+`31:319`, is the frame's hardest and is worth reading before the remaining bands: Figma
+reports its family as **"mixed"** at 40 and gives nothing else, and the two runs really are
+two faces. "Buat" is Ibarra Real Nova to within a -2px letter-spacing, at the render's own
+cap height. "VIDEO PREWED" is not: the render sets those caps 235 wide at a 28 cap height,
+with an 'O' 17 wide — 0.61 of cap, where Ibarra needs 0.75 — so glyph for glyph the render's
+D, O and E are 35-40% narrower. That is a condensed face this repo does not have, or a text
+node squeezed horizontally in Figma; either way the caps take the width-first trade at 28.2
+instead of 40, which puts the line's right edge on the render's 473 to the pixel and costs
+9px of cap height. On the sheet: 2.465 at 40, 2.210 at 33.2, **2.134** at 28.2.
+
+Two notes on that node beyond its metrics. **A "mixed" family report means measure each run
+separately** — one size for the whole string cannot fit both. And the copy itself
+("Buat video prewed") advertises a prewedding-video service rather than saying anything
+about the wedding; it is reproduced because the render is the specification, and it is the
+first thing to delete before the template ships to a real couple.
+
+`shot.mjs` grew one more assertion with this band. The carousel is the only stateful thing
+in the sheet, so it is the only thing a screenshot cannot check: the run now clicks "next"
+and confirms the oval's `src` actually changed. A wrong modulo reads as a still picture,
+which every other check in that file would pass.

@@ -111,7 +111,10 @@ NO_MOVE = {'54:33', '54:42',
            # search cost the akad band its whole left column.
            '52:4', '52:5', '22:846', '22:827', '22:837', '32:450', '23:851',
            '29:242', '29:241', '29:253', '29:254', '24:897', '29:244', '29:248',
-           '29:243', '29:246', '29:249', '29:274'}
+           '29:243', '29:246', '29:249', '29:274',
+           # The gallery band's pins.
+           '45:9', '29:235', '31:287', '31:289', '52:6', '52:8',
+           '31:295', '31:301', '31:304', '31:314', '31:315'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every
