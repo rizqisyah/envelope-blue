@@ -10,11 +10,11 @@ find.
 | Frame | Node | Size | State |
 |---|---|---|---|
 | Frame 2 — cover | `27:9` | 596 x 1183 | sliced → `src/components/cover/CoverSection.vue`, layer table in `src/lib/coverLayers.ts` |
-| Frame 1 — body | `1:3` | 596 x 12818 | dumped; **hero band sliced** (y 0..1108) → `src/components/sections/HeroSection.vue` |
+| Frame 1 — body | `1:3` | 596 x 12818 | dumped; **hero, countdown, bismillah and bride sliced** (y 0..3163) |
 
 The body frame flattens to **290 leaves** across 14 bands. `.figma-ref/frame1-zorder.json`
-carries all of them with a band hint each; `.figma-ref/frame1-assets.json` carries the 29
-that are exported so far (the hero's). Its own fill is `#e7f9fe`, which is the sheet's
+carries all of them with a band hint each; `.figma-ref/frame1-assets.json` carries the 63
+that are exported so far (hero, countdown, bismillah and bride). Its own fill is `#e7f9fe`, which is the sheet's
 ground — see the palette below.
 
 `.figma-ref/frame27-9-assets.json` is the cover's full child list with a verdict per
@@ -30,11 +30,17 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 
 ## Picking this up in a new session
 
-- **State:** cover sliced (1.29); body frame dumped; **hero, countdown and bismillah
-  sliced** (1.710 / 1.822 / 4.884), covering y 0..2161 of 12818. Eleven bands remain, each
-  with nothing but a provisional y-range. The countdown and bismillah were cut once by an
-  earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
-  from that rework, and all of them apply to the bands still to come. `npm install` is done; dev server is `npm run dev` on 5179.
+- **State:** cover sliced (1.29); body frame dumped; **hero, countdown, bismillah and
+  bride sliced** (1.710 / 1.822 / 4.929 / 1.402), covering y 0..3163 of 12818. Ten bands
+  remain, each with nothing but a provisional y-range. The countdown and bismillah were cut
+  once by an earlier pass at 5.542 and 20.202 and then reworked — the findings sections
+  below are all from that rework, and all of them apply to the bands still to come.
+  `npm install` is done; dev server is `npm run dev` on 5179.
+- **Cut the groom band next, against the bride as a template.** The two are an exact
+  mirror at **+1002px** (20:605↔20:608, 20:594↔20:610, 19:574↔20:607, 20:592↔20:632,
+  19:572↔20:609), which makes every bride placement a prediction for its groom twin:
+  a groom layer should land at `(mirror-x, bride-y + 1002)`. A pair that does not is a
+  measurement to redo, not a coincidence.
 - **Every script call needs the frame env**, or they silently run against templates 2-5's
   375-px assumptions: `BODY_FRAME=1 BODY_H=12818 FRAME_W=596 BODY_FRAME_ID=1:3`.
 - **`.figma-tmp/exports1/frame1-full.png` is the reference render** (scale 1, so 1px == 1
@@ -59,6 +65,7 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 | `src/components/sections/HeroSection.vue` | **Sliced** from Frame 1 y 0..1108. Layer table in `src/lib/bands/hero.ts` |
 | `src/components/sections/CountdownSection.vue` | **Sliced** from Frame 1 y 1108..1802 |
 | `src/components/sections/BismillahSection.vue` | **Sliced** from Frame 1 y 1802..2161. Three substituted faces |
+| `src/components/sections/BrideSection.vue` | **Sliced** from Frame 1 y 2161..3163. The Instagram pill is CSS + the exported glyph |
 | `scripts/text-ink.mjs` | Isolates a band's LIVE text ink by difference; prints computed font sizes |
 | `src/components/invite/BandArt.vue` | Renders a `BandLayer[]` table with per-layer entrances. Design-agnostic |
 | `src/lib/bandLayer.ts` / `bandAssets.ts` | The layer type, and the glob that turns `src/assets/<band>/parts/*.webp` into urls |
@@ -91,6 +98,7 @@ value flashes at the seams while it decodes.
 
 | Figma face | Token | Shipping as |
 |---|---|---|
+| Cavilenny | `--font-caps` | **substituted** — Cormorant Infant at 39.2 for Figma's 36 (bride call name) |
 | Roben Elegante Script | `--font-script`, `--font-display` | **the real file**, self-hosted from `src/assets/fonts/`. Demo cut, personal-use only |
 | Cormorant Infant | `--font-serif`, `--font-body` | fontsource, as authored |
 | Lancelot | `--font-lancelot` | fontsource, as authored — the hero's eyebrow and hashtag |
@@ -98,7 +106,9 @@ value flashes at the seams while it decodes.
 The body frame uses **21 faces** in all (`Ibarra Real Nova` 33 nodes, `Roben Elegante` 14,
 `Bellefair` 13, then a long tail). Only the hero's two are wired up. Most of the rest are
 on fontsource; `Kaleagnetta`, `Cavilenny`, `Activists` and `Comtic Hiden` are not, and will
-need the same self-hosted treatment — and the same re-measure — as Roben Elegante.
+need the same self-hosted treatment — and the same re-measure — as Roben Elegante. Until
+then `Cavilenny` and `Activists` are both standing in as width-matched Cormorant Infant;
+retiring either means reverting its size compensation as well as its family.
 
 Both cover faces are the design's own, so no size compensation is carried anywhere — every
 number in `CoverSection.vue` is Figma's. Retiring a substitute later means re-measuring;
@@ -149,6 +159,7 @@ python3 scripts/flatten_frame.py <raw node json> <flat json>      # once per Fig
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/build_refs.py           # zorder + assets + webp
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/gen_band.py             # every band
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/gen_band.py hero        # just one
+GEN_TRACE=1 BODY_FRAME=<n> BODY_H=<h> python3 scripts/gen_band.py bride  # + one line per layer
 BODY_FRAME=<n> BODY_H=<h> python3 scripts/solve_alpha.py          # opacity/blend/position
 
 npm run dev &                                                     # port 5179
@@ -162,13 +173,21 @@ node scripts/shot.mjs 5179                                         # eyeball at 
 node scripts/cover-shot.mjs 5179                                  # cover at 1:1, + open check
 ```
 
-**Two scripts were carried over from template 5 and lied quietly until they were used.**
+`GEN_TRACE=1` prints, per layer, its declared box, its export size, the position it ended
+up at, and **which branch of the reconcile chain produced it** — `locate`, `rescue`, or the
+bare clip rule. That last column is the one that matters: a layer routed to `clip` whose
+export is smaller than its declared box but whose box does not bleed is the `16:397` case
+below, and nothing else in the toolchain flags it.
+
+**Three scripts were carried over from template 5 and lied quietly until they were used.**
 `fit-text.mjs` and `sweep-text.mjs` still opened a 375-px viewport, so every design px they
 measured came back scaled by 375/596; and `sweep-text.mjs` clicked `.opening__envelope`
 while `shot.mjs` asserted on `.opening` — neither class exists in this template, so the
-sweep could not run at all and the "cover removed" guard was vacuously true. All four are
-fixed. **Anything not exercised while slicing the hero should be assumed to carry the same
-two faults** until it is run once.
+sweep could not run at all and the "cover removed" guard was vacuously true. `shot.mjs`
+also asserted on a hard-coded list of template 5's band classes, nine of which do not exist
+here, so it printed nine false "reveal fired: false" lines and exited 1 on every run —
+it now reads the band list off the DOM. All of them are fixed. **Anything not exercised
+while slicing the hero should be assumed to carry the same faults** until it is run once.
 
 `cover-shot.mjs` shoots `.cover__frame` at the frame's own width and
 `deviceScaleFactor: 1`, so it diffs against the scale-1 render with no resampling — the
@@ -535,6 +554,85 @@ no loaded face reaches its 24px cap height at its 227.5px measure; width-matched
 Infant's caps land ~14px. That gap is the floor for the node until the real face is
 licensed, and it is a recorded deviation rather than a placement error.
 
+## Score the box over what the layer EXPLAINS, not over the layer
+
+The bride's `20:584` is the sharpest case of this the file has. It is a sweet-pea sprig
+291 x 372, and the render shows about 140 x 140 of it — the rest is buried under the
+bouquet. A free search over the whole scene (`place_plate.py`, box `0 2300 596 2680`)
+rated its best position **0.035** better than not drawing it at all, which reads as "this
+layer paints nothing". Dropping it outright scored better than every position tried.
+
+The same script, given a box over just the corner the render actually shows
+(`0 2560 160 2720`), separates them immediately: **14.13 without the layer, 7.41 at
+(0, 2389)**. Same asset, same composite, same scorer — only the box changed.
+
+Two reusable rules fall out:
+
+- **A big layer that is mostly occluded cannot be scored over its own footprint.** The
+  buried 85% is scored identically wherever it goes, and it drowns the 15% that carries
+  all the evidence. `MIN_GAIN`-style gates then read the diluted number and refuse.
+- **"Dropping it scores better" is not evidence it paints nothing** — it is evidence that
+  where it currently sits is wrong. Both statements were true here, and only one of them
+  was actionable.
+
+## One export can be clipped on one axis and grown on the other
+
+`20:584` again: declared 342 x 253, exported 291 x 372. `reconcile()` treats each axis
+independently, which is right, but the *reasons* differ per axis and only reading both
+gets it home:
+
+| axis | declared | export | evidence | answer |
+|---|---|---|---|---|
+| x | 342 | 291 | left column at the plate's max alpha (254), right at 0 | cut at LEFT → x 0 |
+| y | 253 | 372 | grown, and grown DOWNWARD | Figma's own y 2389, not the re-centred 2330 |
+
+The re-centre rule assumed a symmetric blur; that is the third time in this frame Figma
+has grown an export in one direction only (`16:491`, `16:493`, `20:640`, now `20:584`).
+**Treat the re-centre as a guess and the declared top as the better prior**, then confirm
+against the render.
+
+## The bride and groom bands are an exact mirror at +1002
+
+`20:605↔20:608`, `20:594↔20:610`, `19:574↔20:607`, `20:592↔20:632`, `19:572↔20:609` —
+every pair sits exactly 1002px apart. That fixes both band tops (2161 and 3163) without
+measuring a heading, and it gives every hard placement in one band a free check in the
+other: a groom layer belongs at `(mirror-x, bride-y + 1002)`, and a pair that disagrees is
+a measurement to redo.
+
+## A centred Figma line is centred INCLUDING its leading space
+
+`19:546`'s string is `"Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih
+Muhartono Septiana"` — a leading space on both continuation lines, and the longest of the
+three is one of them. Figma centres that line with the space, which puts the render's ink
+**2px right of the box's own centre**. `white-space: pre-line` strips leading whitespace,
+so the block landed 2px left; `pre-wrap` keeps it and the ink matches to the pixel.
+Trailing spaces hang and change nothing, in Figma and in CSS alike.
+
+So: reproduce the design's string EXACTLY, spaces included, and use `pre-wrap` when it has
+them. This is the same family as the newline trap above — the characters in the Figma node
+are part of the layout, not just the copy.
+
+## Colour-keying beats the difference shot when the ink has its own colour
+
+`text-ink.mjs`'s two-shot difference isolates ink on any ground, but its bbox includes
+every pixel of anti-aliasing, and neighbouring nodes bleed into whatever window you give
+it — the bride's name and the parents line overlap by a few rows of descender, and the
+first measurement of each was of the other. Where a node's fill is nowhere else in the
+neighbourhood (the bride's `#aa7a3a` gold and `#8a643c` brown against pale toile), keying
+on the fill in BOTH images and comparing the two boxes is tighter and needs no window
+tuning at all. It is what settled every text node in this band:
+
+| node | face | offset |
+|---|---|---|
+| `20:641` "Syifa Hadju" | Roben Elegante 32/57 | **0** |
+| `19:543` "And" | Roben Elegante 40/71 | **0** |
+| `19:546` parents | Cormorant Infant 20/28.4 | **0** (once `pre-wrap` lands) |
+| `20:596` "Syifa" | Cormorant Infant for Cavilenny | x −1, y +1 |
+
+Note the hero's Roben Elegante wants **+1** and this band's wants **0**. The offset is a
+property of the (face, size, line-height) triple, not of the face alone — the table in
+"The line-box offset is per FACE" is a floor, not a shortcut. Measure per node.
+
 ## The first band is not scroll-gated, and finding that out took a while
 
 Two separate things kept the hero invisible for the first three seconds after the cover
@@ -625,8 +723,8 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | band | delta | band | delta |
 |---|---|---|---|
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
-| **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.884** |
-| bride | — | groom | — |
+| **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
+| **bride** (2161..3163) | **1.402** | groom | — |
 | quote | — | akad | — |
 | resepsi | — | dresscode | — |
 | | | | |
@@ -637,13 +735,20 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
 
+The bismillah's four assets were shipped by an earlier pass as **lossless** webp — 1.4MB
+for the four, against 0.6MB at the q95 `build_refs.py` uses for every other asset. Running
+the generator over the frame re-encoded them to match, which is where 4.884 -> 4.929 comes
+from. The 0.045 is not worth 800KB, and an asset the toolchain cannot reproduce is worse
+than a slightly softer one; if the number ever matters, raise the quality for the whole
+frame in `build_refs.py` rather than for four files by hand.
+
 The countdown was cut by another pass at **5.542** and the bismillah at **20.202**; the
 numbers above are after the rework described in the findings sections. Both bands now carry
 **no opacity or blend override at all** — every layer paints at full strength, stacked
 normally, which is what the design does. The five overrides the earlier pass carried were
 each compensating for a placement error.
 
-The bismillah's 4.884 is **not** comparable to the other bands: all three of its faces are
+The bismillah's 4.929 is **not** comparable to the other bands: all three of its faces are
 substitutes (Perpetua, Activists and an Arabic fallback Figma reached for when Alex Brush
 could not set the Basmala). Its art diffs clean; effectively the whole number is glyph
 shape, and it is the floor until those faces are licensed.

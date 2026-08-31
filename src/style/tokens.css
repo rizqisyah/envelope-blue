@@ -35,7 +35,12 @@
   --font-script-date: "Pinyon Script", cursive; /* countdown "Save The Date" */
   --font-countdown: "Ibarra Real Nova", serif; /* countdown figures + labels + bismillah greeting */
   --font-basmala: "Amiri", serif; /* the bismillah Basmala (Arabic Naskh) */
-  --font-caps: "Cormorant Infant", serif; /* uppercased serif — stands in for Activists */
+  /*
+   * Stands in for two unavailable display faces: Activists (the bismillah's tracked
+   * capitals) and Cavilenny (the bride's call name). Both are width-matched, so each
+   * node carries its own font-size compensation — see the comments beside them.
+   */
+  --font-caps: "Cormorant Infant", serif;
 
   /* design frame reference — cover = Frame 2 (27:9); body = Frame 1 (1:3) */
   --frame-w: 596;

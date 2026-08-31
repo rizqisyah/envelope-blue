@@ -43,16 +43,19 @@ FLAT = json.load(open(f'.figma-tmp/frame{FRAME}-flat.json'))
 
 # Band tops, in design px. A node lands in the last band whose top is <= its y.
 # Derived by eye from the frame render's headings, then refined by gen_band.py.
-# Only the hero/countdown boundary is VERIFIED: 1108 is the top of `26:8`, the ornate
-# countdown frame, and the render's own seam. Everything below it is provisional -- read
-# off heading positions in the frame render, good enough to keep the nodes in roughly the
-# right buckets, and to be re-measured when each band is actually cut.
+# Only the boundaries marked below are VERIFIED. 1108 is the top of `26:8`, the ornate
+# countdown frame, and the render's own seam. The bride and groom scenes are an exact
+# mirror pair at +1002 -- 20:605/20:608, 20:594/20:610, 19:574/20:607, 20:592/20:632 and
+# 19:572/20:609 all pair up -- so the tops the hints derive, 2161 and 3163, are the
+# design's own. Everything else is provisional: read off heading positions in the frame
+# render, good enough to keep the nodes in roughly the right buckets, and to be
+# re-measured when each band is actually cut.
 BANDS = [
     ('hero', 0),          # verified
     ('countdown', 1108),  # verified -- 26:8 "Open (16) 1"
     ('bismillah', 1700),
-    ('bride', 2150),
-    ('groom', 3150),
+    ('bride', 2150),   # derives 2161 -- verified
+    ('groom', 3150),   # derives 3163 -- verified
     ('quote', 4000),
     ('akad', 4800),
     ('resepsi', 5900),

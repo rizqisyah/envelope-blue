@@ -77,16 +77,15 @@ for (let y = 0; y < sheetHeight; y += 400) {
 }
 await sheet.waitForTimeout(1500)
 // Every band below the fold is viewport-gated, so the scroll above is what fires
-// them. Check the deepest few actually opened.
-const dividerRevealed = (await sheet.locator('.divider.is-in').count()) === 1
-const galleryRevealed = (await sheet.locator('.gallery.is-in').count()) === 1
-const akadRevealed = (await sheet.locator('.akad.is-in').count()) === 1
-const resepsiRevealed = (await sheet.locator('.resepsi.is-in').count()) === 1
-const countdownRevealed = (await sheet.locator('.countdown.is-in').count()) === 1
-const giftRevealed = (await sheet.locator('.gift.is-in').count()) === 1
-const rsvpRevealed = (await sheet.locator('.rsvp.is-in').count()) === 1
-const wishRevealed = (await sheet.locator('.wish.is-in').count()) === 1
-const footerRevealed = (await sheet.locator('.footer.is-in').count()) === 1
+// them. Read the band list off the DOM rather than naming them: a hard-coded list is
+// a list of ANOTHER template's bands the moment it is copied, and every entry then
+// reports a band that does not exist as a failed reveal.
+const bands = await sheet.evaluate(() =>
+  [...document.querySelectorAll('.sheet > section.band')].map((el) => ({
+    name: [...el.classList].find((c) => c !== 'band' && c !== 'is-in') || '?',
+    shown: el.classList.contains('is-in'),
+  })),
+)
 await sheet.evaluate(() => window.scrollTo(0, 0))
 await sheet.waitForTimeout(400)
 await sheet.locator('.sheet').screenshot({ path: `${OUT}/web-sheet.png` })
@@ -96,15 +95,6 @@ await browser.close()
 console.log(`invite visible after click: ${opened}`)
 console.log(`cover removed after transition: ${coverGone}`)
 console.log(`hero reveal fired: ${revealed}`)
-console.log(`divider reveal fired on scroll: ${dividerRevealed}`)
-console.log(`gallery reveal fired on scroll: ${galleryRevealed}`)
-console.log(`akad reveal fired on scroll: ${akadRevealed}`)
-console.log(`resepsi reveal fired on scroll: ${resepsiRevealed}`)
-console.log(`countdown reveal fired on scroll: ${countdownRevealed}`)
-console.log(`gift reveal fired on scroll: ${giftRevealed}`)
-console.log(`rsvp reveal fired on scroll: ${rsvpRevealed}`)
-console.log(`wish reveal fired on scroll: ${wishRevealed}`)
-console.log(`footer reveal fired on scroll: ${footerRevealed}`)
+for (const b of bands) console.log(`${b.name} reveal fired on scroll: ${b.shown}`)
 if (errors.length) console.log(errors.join('\n'))
-if (!opened || !revealed || !dividerRevealed || !galleryRevealed || !akadRevealed || !resepsiRevealed || !countdownRevealed || !giftRevealed || !rsvpRevealed || !wishRevealed || !footerRevealed)
-  process.exitCode = 1
+if (!opened || !revealed || bands.some((b) => !b.shown)) process.exitCode = 1

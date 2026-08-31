@@ -117,8 +117,39 @@ TRUST_CLIP = set()
 # 16:397 needs no PIN_A/PIN_B: once its x is right it paints at the default full strength,
 # and the stale 0.2/screen the earlier pass had fitted for it is gone from frame1-alpha.json.
 # Only the pair below needed their paint pinned as well as their position.
-PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0}
-PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984}
+#
+# 20:640 is the third instance of the 16:397 case, in the bride band: it declares x 52.8
+# w 97.4 -- comfortably inside the frame on both sides -- and exports 53 wide, so no
+# reconcile branch fires and it falls through to round(52.8). Its export's LEFT column
+# carries the plate's maximum alpha (255) against 0 on the right, so the ink is cut off
+# flat at the left and the node bleeds past x 0. Locating its own ink crop against the
+# render independently returns x 0. -> 0.
+# Its y comes from the same ink crop, which lands at 2776 -- nine px above where
+# reconcile() re-centred it (2785). Cross-correlating the live band against the render
+# over that flower alone agrees: dy +9 with a clear minimum. Growth is not symmetric.
+#
+# 20:589 is the bride's rose-and-magnolia bouquet. Its export grew 204x199 -> 285x285, so
+# reconcile() re-centred BOTH axes; only the x was ever wrong. Its ink crop locates at
+# ink 22,2483, i.e. layer origin 10,2413 -- and 2413 is Figma's own declared y, unrounded.
+# The re-centre had put it at 104,2369, which paints the bouquet 94px right of home.
+# Pinning it took the band 4.47 -> 3.11. A 1px scan afterwards has a sharp minimum one
+# further left, so the final x is 9: 1.882 / 1.761 / 1.580 / 1.402 / 1.574 / 1.753 at
+# x 6..11, and 1.734 / 1.439 / 1.402 / 1.716 at y 2411..2414. Both axes fall away on
+# either side, which is the corroboration -- an ink crop gets within a pixel, not to it.
+#
+# 20:584 is the sweet-pea sprig hanging below that bouquet, and it is the case that
+# needs BOTH rules at once: its export is clipped on one axis and grown on the other.
+# 291 wide against a declared 342 with the left column at the plate's maximum alpha
+# (254) and the right at 0 -- cut at the LEFT, so x -> 0; and 372 tall against a declared
+# 253, grown downward, so its y is Figma's own 2389 rather than the 2330 the re-centre
+# gives. Neither number is findable by search: a free search over the whole scene rates
+# every position within 0.04 of not drawing it at all, because the sprig is 291x372 and
+# the render only shows the ~140x140 of it that is not buried under the bouquet. Scoring
+# a FIXED box over just that visible corner (place_plate.py, 0 2560 160 2720) separates
+# them at once -- 14.13 without the layer, 7.41 at (0, 2389). Pick the box over what the
+# layer is supposed to explain, not over the layer.
+PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '20:589': 9, '20:584': 0}
+PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389}
 
 # Opacity and blend mode for the layers whose POSITION is pinned above. solve_alpha
 # fitted their alpha against a composite in which they sat hundreds of pixels from home,
@@ -307,8 +338,10 @@ def main():
             found, err = (None, None)
             if c["id"] not in twins:
                 found, err = locate.locate(path, max(0, round(c["x"])), max(0, round(c["y"])))
+            route = "clip"
             if found and found[4] < GOOD_ERR and c["id"] not in TRUST_CLIP:
                 x, y = found[0], found[1]
+                route = f"locate err={found[4]:.1f}"
                 matched += 1
             elif on_frame < ON_FRAME_MIN and c["id"] not in TRUST_CLIP and c["id"] not in twins:
                 # Taken unconditionally, unlike the rescue below: where the reported box
@@ -319,6 +352,7 @@ def main():
                 hit = rescue(path, max(0, round(c["y"])), span=60, step=4)
                 if hit:
                     x, y = hit[0], hit[1]
+                    route = f"rescue err={hit[2]:.1f}"
                     matched += 1
                 else:
                     x = reconcile(c["x"], c["w"], w, FRAME_W)
@@ -343,6 +377,7 @@ def main():
                     and hit[2] < clip_err - 3
                 ):
                     x, y = hit[0], hit[1]
+                    route = f"rescue err={hit[2]:.1f} < clip {clip_err:.1f}"
                     matched += 1
                 else:
                     # A high error here means occluded OR absent -- locate.py cannot tell
@@ -359,6 +394,11 @@ def main():
             # both the reconcile chain and the solver's own search.
             x = PIN_X.get(c["id"], x)
             y = PIN_Y.get(c["id"], y)
+            if os.environ.get("GEN_TRACE"):
+                pin = "".join(k for k, t in (("X", PIN_X), ("Y", PIN_Y)) if c["id"] in t)
+                print(f"   {c['id']:9} z{c['z']:<4} box {c['x']:7.1f},{c['y']:7.1f}"
+                      f" {c['w']:6.1f}x{c['h']:6.1f} export {w:4}x{h:4}"
+                      f" -> {x:4},{y:6}  twin={c['id'] in twins:d} pin={pin or '-':2} {route}")
             rows.append((c["z"], c["id"], a["asset"], x, y - top, w, h,
                          PIN_A.get(c["id"], ALPHA.get(c["id"], 1.0)),
                          PIN_B.get(c["id"], BLEND.get(c["id"], "normal"))))

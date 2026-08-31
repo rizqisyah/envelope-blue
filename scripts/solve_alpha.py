@@ -95,7 +95,7 @@ MODES = ["normal", "screen", "multiply", "lighten", "darken"]
 # it to nothing. Every id pinned in gen_band.py belongs here too. Per design, starts empty.
 # 15:192 -- hand-measured in gen_band.py's PIN_X/PIN_Y. Left solvable, the search
 # refits it 94px away at 0.12 multiply and the lily disappears.
-NO_SOLVE = {'15:192', '16:397', '16:491', '16:493'}
+NO_SOLVE = {'15:192', '16:397', '16:491', '16:493', '20:584', '20:589', '20:640'}
 
 # No closing brace in the pattern: gen_band appends `, a: ...` and `, b: '...'` to any
 # row this script has already solved, and anchoring on `h: N }` silently dropped every
