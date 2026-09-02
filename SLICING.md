@@ -1348,6 +1348,26 @@ Measured after: akad 1.922 → **1.246**, resepsi 2.102 → **1.175**, the sheet
 **1.646**. A ±14 row scan over the akad plate bottoms out at a sharp minimum on 0, so the
 plate is aligned as well as shaped.
 
+## A probe that does not walk the sheet scores nothing
+
+Band art is `loading="lazy"` and every band below the fold is viewport-gated, so a
+screenshot taken without scrolling the page first catches a sheet with almost no artwork
+on it. `sheet-shot.mjs` walks the whole scroll height in 400px steps for exactly this
+reason. A one-off probe script that skips the walk does NOT come back with a slightly
+worse number -- it comes back with the SAME number for every variant, because what it is
+measuring is the empty sheet.
+
+That cost a wrong conclusion here: three different overrides on the closing band all
+scored 24.5, which read as "every one of these is catastrophic" when it meant "none of
+these was rendered". Any probe that reports an identical score for changes that cannot
+possibly be identical is measuring its own harness. Re-run the canonical loop before
+believing it.
+
+With the walk in place the same overrides read: baseline **2.846**, `61:619` at full
+strength 3.247, `52:12` at full strength 3.021, and both sprigs hidden outright 2.840. So
+the solved `a`/`b` on those layers are right, and `52:11` / `52:12` contribute nothing
+either way -- the closing band's edge botanicals are not a blend problem.
+
 ## Known residuals, now that every band is cut
 
 | where | what | worth |
@@ -1358,8 +1378,19 @@ plate is aligned as well as shaped.
 | resepsi | `24:897`, buried scrollwork whose position is not really known | ~0 |
 | resepsi | a pale-blue chrysanthemum at x 30..90, y 5880..5990 that no asset explains | unknown |
 | akad | the left column, x 0..99 — pinned layers `22:837` / `22:846` at scan positions | ~0.2 |
-| closing | edge botanicals around the polaroid — see "a masked export carries the box" | most of what is left |
+| closing | edge botanicals around the polaroid — **no asset explains them**, see below | most of its 2.846 |
 
-The chrysanthemum is the only open QUESTION rather than a known trade: it belongs to a node
+The closing band's edge botanicals are the same shape of question as the chrysanthemum,
+and the search for them is exhausted locally. The render carries a blue peony and orchid at
+x 0..60, y 11830..12010 and again at x 420..560, y 12030..12210 that the built sheet does
+not draw at all. `61:619` / `61:620` ARE that artwork — the exports match it by eye — but
+`locate.py` bottoms out at err 56.1 and 50.6 at their placed positions and worse anywhere
+within its radius, which is its "not visible at that spot" band, and every opacity and
+blend variant scores worse than what is solved. `52:11` / `52:12` are small sprigs that
+change nothing either way. So the next move is not another search: it is re-reading those
+nodes from Figma for `absoluteRenderBounds`, effects and rotation, none of which the
+flatten on disk carries.
+
+The chrysanthemum is the older open QUESTION of the same kind: it belongs to a node
 that renders far from where it is declared, and every band is now cut, so it is either a
 layer this frame draws twice or one whose declared y is a bottom edge nothing tested.
