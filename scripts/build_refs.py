@@ -27,7 +27,7 @@ template's own frame; ../slicing-wedding-template-5/scripts/build_refs.py has a 
 set if the shape of an entry is unclear.
 """
 import json, os, subprocess, sys
-from PIL import Image
+from PIL import Image, ImageChops
 Image.MAX_IMAGE_PIXELS = None
 
 FRAME = os.environ.get('BODY_FRAME', '')
@@ -95,6 +95,46 @@ CSS_SHAPES = {'29:275', '29:276', '29:277', '30:281',
 # against the plate's own 1.0MB. Expect one per event card.
 EMPTY = {'54:35', '54:41'}
 
+# Masked children, as {child id: mask id}. Figma clips a masked export to the mask's BOX
+# and stops there -- the mask's own ALPHA is not applied, so a child under a shaped mask
+# comes back as a full opaque rectangle of the mask's size.
+#
+# That is invisible while the mask is a placeholder the size of its child (the gallery's
+# photo ovals in CSS_SHAPES, where box and shape agree). It is very visible when the mask
+# is a shaped plate that also PAINTS: 54:33 is the fountain garden at the foot of the akad
+# card, masked by 23:851, the card's inner plate, whose bottom edge is scalloped. Clipped
+# to the plate's box the garden paints straight through that scallop and ends on a hard
+# horizontal cut ~67 rows below where the render has it.
+#
+# Both pairs here are the same geometry: a 471x706 plate and a 471x261 child sharing the
+# plate's left and BOTTOM edges. Nothing below assumes that -- the offset comes from the
+# two declared boxes -- but it is why one rule covers an akad node and its resepsi twin.
+MASKED = {'54:33': '23:851', '54:42': '29:241'}
+
+
+def apply_mask(child_png, mask_png, child, mask, scale=2):
+    """Multiply the child's alpha by the mask's, aligned inside the mask's box.
+
+    Do NOT difference the two declared x values. A masked node's declared box is the
+    UNCLIPPED node -- 54:33 declares 620x310 at x -11.95 and exports 471x261 -- and a
+    flipped mask reports its RIGHT edge (29:241 declares x 533 and sits at 62). Both
+    numbers are wrong in the same subtraction, and the akad pair happens to look plausible
+    while the resepsi pair erases the layer outright.
+
+    What IS reliable: the export is clipped to the mask's box, so it starts at the mask's
+    LEFT edge by construction (dx 0), and both nodes' declared Y survives the clip
+    (5618 - 5173 = 445 for akad, 6688 - 6236 = 452 for resepsi -- each matching the
+    position gen_band derives independently). Anything the child hangs below the mask
+    crops out of bounds and comes back transparent, which is what a mask means.
+    """
+    c = Image.open(child_png).convert('RGBA')
+    m = Image.open(mask_png).convert('RGBA')
+    dy = int(round((child['y'] - mask['y']) * scale))
+    window = m.split()[3].crop((0, dy, c.width, dy + c.height))
+    c.putalpha(ImageChops.multiply(c.split()[3], window))
+    return c
+
+
 if not BANDS:
     sys.exit('fill in BANDS first -- see the docstring')
 
@@ -104,6 +144,8 @@ def section(y):
         if y >= top:
             name = n
     return name
+
+FLAT_BY_ID = {f['id']: f for f in FLAT}
 
 zorder, nodes = [], {}
 for f in FLAT:
@@ -129,6 +171,14 @@ for f in FLAT:
     # is left in the score is compression on the toile's high-contrast edges, so quality
     # is the only lever still moving it. Drop to 92 if page weight ever matters more --
     # it beats 88 on both axes.
+    # A masked child is clipped to its mask's box but not to its shape -- see MASKED.
+    # Apply the shape here, so what reaches cwebp is what the design actually paints.
+    if f['id'] in MASKED:
+        mask = FLAT_BY_ID[MASKED[f['id']]]
+        masked_png = f".figma-tmp/masked-{f['id'].replace(':', '-')}.png"
+        apply_mask(src, f".figma-tmp/parts{FRAME}/{mask['id'].replace(':', '-')}.png",
+                   f, mask).save(masked_png)
+        src = masked_png
     subprocess.run(['cwebp', '-quiet', '-q', '95', '-alpha_q', '100', src, '-o', out], check=True)
     nodes[f['id']] = dict(asset=f"{sec}/parts/{f['id'].replace(':', '-')}.webp",
                           figmaName=f['name'], x=f['x'], y=f['y'], w=f['w'], h=f['h'])

@@ -31,9 +31,9 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State: the frame is COMPLETE.** Cover sliced (1.29) and all fourteen body bands sliced
-  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 /
+  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.246 / 1.175 / **0.683** / 2.149 /
   **0.898** / 1.554 / 1.195 / 2.846), covering y 0..12818 — the whole of Frame 1, at a
-  sheet-wide **1.806**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
+  sheet-wide **1.646**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
@@ -1102,12 +1102,12 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.251** |
 | **bride** (2161..3163) | **1.307** | **groom** (3163..4021) | **1.298** |
-| **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
-| **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
+| **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.246** |
+| **resepsi** (5907..7034) | **1.175** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
 | **wishes** (9565..10763) | **1.554** | **rsvp** (10763..11452) | **1.195** |
-| **closing** (11452..12818) | **2.846** | **SHEET** (0..12818) | **1.806** |
+| **closing** (11452..12818) | **2.846** | **SHEET** (0..12818) | **1.646** |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
@@ -1316,6 +1316,38 @@ returns empty (it falls back to "Ahmad & Salma", the design's other mock), so a 
 behind it could never fire, and swapping names in changes what the design SAYS rather than
 what it shows.
 
+## A masked export carries the mask's BOX and not its SHAPE
+
+Figma clips a masked child to the mask's bounding box and stops there — the mask's own
+alpha is never applied — so a child under a SHAPED mask comes back as a full opaque
+rectangle of the mask's size.
+
+That is invisible while the mask is a placeholder the size of its child. The gallery's
+photo ovals are exactly that (`31:289` declares 403.6x504.6 and exports 308x403, its
+oval's box), and they are in `CSS_SHAPES` precisely because the mask has nothing left to
+draw once the clip has happened.
+
+It is very visible when the mask is a shaped plate that also PAINTS. `54:33` is the
+fountain garden at the foot of the akad card, masked by `23:851`, the card's inner plate,
+whose bottom edge is a scallop. Clipped to the plate's box the garden painted straight
+through that scallop and ended on a hard horizontal cut 67 rows below where the render has
+it — the plate's rectangle, drawn over the card's own edge. Its resepsi twin `54:42` did
+the same against `29:241`.
+
+`build_refs.py`'s `MASKED` table now multiplies the child's alpha by the mask's before the
+webp is written. **Do not derive the offset by differencing the two declared x values.** A
+masked node's declared box is the UNCLIPPED node (`54:33` declares 620x310 at x −11.95),
+and a flipped mask reports its RIGHT edge (`29:241` declares x 533 and sits at 62): both
+numbers are wrong in the same subtraction, and it is the kind of wrong that looks plausible
+on one pair and erases the layer outright on the other. What survives the clip is the
+child's own Y — 5618 − 5173 = 445 for akad, 6688 − 6236 = 452 for resepsi, each matching
+the position `gen_band` derives independently — and the fact that the export starts at the
+mask's LEFT edge by construction. So dx is 0 and dy comes from the declared Ys.
+
+Measured after: akad 1.922 → **1.246**, resepsi 2.102 → **1.175**, the sheet 1.806 →
+**1.646**. A ±14 row scan over the akad plate bottoms out at a sharp minimum on 0, so the
+plate is aligned as well as shaped.
+
 ## Known residuals, now that every band is cut
 
 | where | what | worth |
@@ -1326,6 +1358,7 @@ what it shows.
 | resepsi | `24:897`, buried scrollwork whose position is not really known | ~0 |
 | resepsi | a pale-blue chrysanthemum at x 30..90, y 5880..5990 that no asset explains | unknown |
 | akad | the left column, x 0..99 — pinned layers `22:837` / `22:846` at scan positions | ~0.2 |
+| closing | edge botanicals around the polaroid — see "a masked export carries the box" | most of what is left |
 
 The chrysanthemum is the only open QUESTION rather than a known trade: it belongs to a node
 that renders far from where it is declared, and every band is now cut, so it is either a
