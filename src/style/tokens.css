@@ -36,21 +36,26 @@
   --font-countdown: "Ibarra Real Nova", serif; /* countdown figures + labels + bismillah greeting */
   --font-basmala: "Amiri", serif; /* the bismillah Basmala (Arabic Naskh) */
   /*
-   * Stands in for two unavailable display faces: Activists (the bismillah's tracked
-   * capitals) and Cavilenny (the bride's call name). Both are width-matched, so each
-   * node carries its own font-size compensation — see the comments beside them.
+   * The bismillah's tracked capitals and the bride's/groom's call names. Both were one
+   * width-matched Cormorant Infant standing in for two different faces; both are now the
+   * design's own file, self-hosted from src/assets/fonts/ (see the @font-face block in
+   * style.css), so the nodes carry Figma's sizes again and no compensation.
    */
-  --font-caps: "Cormorant Infant", serif;
-  /* The quote band's verse credit. The design's own face, on fontsource — no
-   * substitution and no width compensation, unlike --font-caps above. */
+  --font-caps: "Activists", serif;
+  --font-call: "Cavilenny", cursive;
+  /* The quote band's verse credit. The design's own face, on fontsource. */
   --font-verse: "Cinzel", serif;
   /*
-   * Stands in for Kaleagnetta, the akad/resepsi card headings. Kaleagnetta is a thin
-   * monoline signature script and Sacramento is the closest loaded match by a wide
-   * margin — Roben Elegante and Pinyon Script both carry heavy stroke contrast this
-   * face does not have. Width-matched per word, like --font-caps.
+   * Stands in for Kaleagnetta, the akad/resepsi card headings — the frame's one face
+   * with no file. Kaleagnetta is a thin monoline signature script and Sacramento is the
+   * closest loaded match by a wide margin: Roben Elegante and Pinyon Script both carry
+   * heavy stroke contrast this face does not have. Width-matched per word, so each node
+   * keeps its own size compensation until the real file lands.
    */
   --font-hand: "Sacramento", cursive;
+  /* The closing band's signature. Was Sacramento tracked out 4.9px to reach Comtic
+   * Hiden's measure; now the design's own file, at the design's own 24. */
+  --font-comtic: "Comtic Hiden", cursive;
   /* The wishes band. Both are the design's own faces and both ship from fontsource,
    * so neither needs a width compensation. */
   --font-wish: "Bellefair", serif;

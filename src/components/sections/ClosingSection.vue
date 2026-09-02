@@ -105,27 +105,26 @@ const MESSAGE =
 }
 
 /*
- * 42:3 — Comtic Hiden 24 at 178% line-height, #aa7a3a. Comtic Hiden is a monoline brush
- * script and is not on fontsource, so this is Sacramento again (--font-hand). Unlike the
- * akad and resepsi headings the trade here is not size alone: the render's ink is 286 x 31
- * where Sacramento at 24 gives 180 x 27, which is 38% wider PER UNIT HEIGHT. That is
- * tracking, not a size, so the height is matched with the size (27.6) and the width with
- * a letter-spacing — the mirror of the gallery band's promo caps, which needed the
- * opposite sign.
+ * 42:3 — Comtic Hiden 24 at 178% line-height, #aa7a3a. The design's own face, now
+ * self-hosted, so every number here is Figma's.
+ *
+ * What it replaces is worth keeping in view, because it was the frame's only TRACKING
+ * case: Sacramento at 24 set this line 180 x 27 against the render's 286 x 31, 38% wider
+ * PER UNIT HEIGHT, which no font-size can fix. The stand-in therefore took its height
+ * from the size (27.6) and its width from a 4.9px letter-spacing, with a matching
+ * text-indent to undo the trailing space CSS adds after the last glyph. All of that is
+ * gone with the real file.
  */
 .closing__signature {
   --delay: 320ms;
   z-index: 262;
-  top: calc(344 * var(--px)); /* 42:3 box y 11797 - 1 — measured */
-  left: calc(105.05 * var(--px)); /* 42:3 box x 104.05 + 1 — measured */
+  top: calc(345 * var(--px)); /* 42:3 box y 11797 */
+  left: calc(104.05 * var(--px)); /* 42:3 box x */
   width: calc(387 * var(--px));
-  font-family: var(--font-hand);
+  font-family: var(--font-comtic);
   font-weight: 400;
-  font-size: calc(27.6 * var(--px));
+  font-size: calc(24 * var(--px));
   line-height: calc(42.72 * var(--px)); /* Figma's 178% of 24 */
-  letter-spacing: calc(4.9 * var(--px));
-  /* Trailing letter-spacing widens the line to the right; pull the block back by half. */
-  text-indent: calc(4.9 * var(--px));
   color: #aa7a3a;
 }
 

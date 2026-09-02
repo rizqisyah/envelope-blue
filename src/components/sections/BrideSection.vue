@@ -81,27 +81,24 @@ const handleUrl = computed(
 }
 
 /*
- * 20:596 — Cavilenny 36, #aa7a3a, centred in a 311 box at x 311. Cavilenny is not on
- * fontsource, so this is a SUBSTITUTE: Cormorant Infant, the design's own body serif and
- * the closest loaded face to Cavilenny's high-contrast didone cut. At Figma's own 36 it
- * sets this word 68 wide against the render's 74, so the size is scaled by 74/68 = 1.088
- * -> 39.2. Its ink height then lands 39 against the render's 37, which is the usual
- * width-first trade SLICING.md calls for. Figma declares no line-height, so the box's own
- * 45 stands in for it.
+ * 20:596 — Cavilenny 36, #aa7a3a, centred in a 311 box at x 311. The design's own face,
+ * now self-hosted, so this is Figma's box and Figma's size with nothing fitted on top.
+ * Figma declares no line-height, so the box's own 45 stands in for it.
  *
- * The 1px each way in `top` and `left` is the substitute's own line-box and side-bearing
- * offset, measured by keying on the node's own #aa7a3a against the pale toile: at Figma's
- * own 311,2436 the live ink lands at 430,2443 against the render's 429,2444.
+ * It replaces a Cormorant Infant width-match at 39.2 with a 1px nudge each way in `top`
+ * and `left` — both of them properties of that substitute's line box and side bearings,
+ * not of this node, which is why they go with it. Cavilenny's own metrics put the ink
+ * where Figma's coordinates say.
  */
 .bride__call {
   --delay: 80ms;
   z-index: 102;
-  top: calc(276 * var(--px)); /* 20:596 box y 2436 + 1 — measured, see below */
-  left: calc(310 * var(--px)); /* 20:596 box x 311 - 1 — measured, see below */
+  top: calc(275 * var(--px)); /* 20:596 box y 2436, band-local 275 */
+  left: calc(311 * var(--px));
   width: calc(311 * var(--px));
-  font-family: var(--font-caps);
+  font-family: var(--font-call);
   font-weight: 400;
-  font-size: calc(39.2 * var(--px)); /* 36 x 1.088 — see above */
+  font-size: calc(36 * var(--px));
   line-height: calc(45 * var(--px));
   color: #aa7a3a;
 }

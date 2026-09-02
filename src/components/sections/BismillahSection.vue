@@ -6,10 +6,11 @@
  * src/lib/bands/bismillah.ts (GENERATED, scripts/gen_band.py).
  *
  * Fonts: Figma set Perpetua (greeting), Activists ("journey together") and Alex Brush
- * (Basmala) — none on fontsource. Perpetua → Ibarra Real Nova (same old-style serif
- * bones), Activists → Pinyon Script (the loaded script), and Alex Brush cannot render
- * Arabic at all, so the Basmala is set in Amiri, an Arabic Naskh, instead. Sizes,
- * line-heights and colours are Figma's own; only the faces were swapped.
+ * (Basmala) — none of the three on fontsource. Activists now ships as the design's own
+ * file, self-hosted, so that node carries Figma's size again. The other two are still
+ * substitutes and still carry a compensation: Perpetua → Ibarra Real Nova (same old-style
+ * serif bones), and Alex Brush cannot render Arabic at all, so the Basmala is set in
+ * Amiri, an Arabic Naskh. line-heights and colours are Figma's own throughout.
  */
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/bismillah'
@@ -107,18 +108,14 @@ const GREETING = "Assalamu'alaikum Warahmatullahi Wabarakatuh\nWith grateful hea
 }
 
 /*
- * 19:569 — #679ece. The Figma string is lowercase "journey together" and the face is
- * "Activists", but the RENDER draws wide-spaced CAPITALS: Activists puts cap-height forms
- * on its lowercase, which is the case-pair trap SLICING.md warns about — read the render,
- * not the string. Setting this in a script face (the first pass used Pinyon) reproduces
- * the characters and not the design.
+ * 19:569 — Activists 32/33, #679ece. The design's own face, self-hosted.
  *
- * Activists is a condensed high-contrast didone — 16 tracked capitals in 227.5px at a
- * 24px cap height — and nothing loaded here is that narrow. Cormorant Infant is the
- * closest in colour and contrast, so the WIDTH is matched (SLICING.md's rule: width moves
- * far more than height when a face is swapped) at font-size 23, and the caps land ~21.6
- * against the render's 24. That ~10% short cap height is a recorded deviation, not a
- * placement error, and it is the floor for this node until the real face is licensed.
+ * The Figma string is lowercase "journey together" while the render draws wide-spaced
+ * CAPITALS, which is not a discrepancy: Activists puts cap-height forms on its lowercase.
+ * That is why there is no `text-transform` here — the lowercase string IS the render.
+ * The substitute needed one, along with a width-match down to 23 that left the caps ~10%
+ * short of the render's 24px cap height; with the real file both go away and this is
+ * Figma's 32 as authored.
  */
 .bismillah__script {
   --delay: 220ms;
@@ -128,9 +125,8 @@ const GREETING = "Assalamu'alaikum Warahmatullahi Wabarakatuh\nWith grateful hea
   width: calc(493 * var(--px));
   font-family: var(--font-caps);
   font-weight: 400;
-  font-size: calc(23 * var(--px)); /* width-matched to the render's 227.5 ink — see above */
+  font-size: calc(32 * var(--px));
   line-height: calc(33 * var(--px));
-  text-transform: uppercase;
   color: #679ece;
 }
 </style>

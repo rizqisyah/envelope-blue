@@ -68,16 +68,13 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
 }
 
 /*
- * 20:622 — Cavilenny 36, #aa7a3a, centred in a 311 box at x -34. Cavilenny is not on
- * fontsource, so this is the bride's stand-in, Cormorant Infant — but NOT her size. The
- * width match is per WORD, not per face: Cormorant sets "Syifa" 8.8% narrow against
- * Cavilenny and "El Rumi" only 4.2% narrow, because the two faces' per-glyph widths
- * differ unevenly. Measured here: at the bride's 39.2 this word renders 118 against the
- * render's 113, and at 37.5 it lands 114 with its left edge and baseline exactly on the
- * render's. No `top`/`left` correction is needed at this size, unlike hers.
+ * 20:622 — Cavilenny 36, #aa7a3a, centred in a 311 box at x -34. The bride's face and,
+ * now that it is the design's own file, the bride's size too.
  *
- * Its ink is 27 tall against the render's 29 — the usual width-first trade, and the floor
- * for the node until Cavilenny is licensed.
+ * That pairing is new. The substitute could not share a size with her: a width match is
+ * per WORD, not per face, and Cormorant set "Syifa" 8.8% narrow against Cavilenny but
+ * "El Rumi" only 4.2%, so the two nodes carried 39.2 and 37.5 for the same authored 36.
+ * A real face has no such split — same file, same 36, both words land.
  */
 .groom__call {
   --delay: 80ms;
@@ -85,9 +82,9 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
   top: calc(275 * var(--px)); /* 20:622 box y 3438, band-local 275 */
   left: calc(-34 * var(--px));
   width: calc(311 * var(--px));
-  font-family: var(--font-caps);
+  font-family: var(--font-call);
   font-weight: 400;
-  font-size: calc(37.5 * var(--px)); /* 36 x 1.042 — measured on THIS word, see above */
+  font-size: calc(36 * var(--px));
   line-height: calc(45 * var(--px));
   color: #aa7a3a;
 }

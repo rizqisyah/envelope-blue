@@ -31,17 +31,19 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State: the frame is COMPLETE.** Cover sliced (1.29) and all fourteen body bands sliced
-  (1.710 / 1.822 / 4.929 / 1.402 / 1.478 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 /
-  **0.898** / 1.554 / 1.195 / 2.953), covering y 0..12818 — the whole of Frame 1, at a
-  sheet-wide **1.856**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
+  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.922 / 2.102 / **0.683** / 2.149 /
+  **0.898** / 1.554 / 1.195 / 2.846), covering y 0..12818 — the whole of Frame 1, at a
+  sheet-wide **1.806**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
-- **What is left is polish, not slicing.** The three faces the frame needs and does not
-  have — Cavilenny, Activists and the bismillah's Arabic, Kaleagnetta, Comtic Hiden, and
-  whatever condensed serif sets the gallery band's promo caps — are the whole of the
-  remaining gap on every band above 2. Licensing any of them is worth more than any further
-  measurement. The known residuals are listed at the foot of this file.
+- **What is left is polish, not slicing.** The faces the frame needs and does not have are
+  the whole of the remaining gap on every band above 2, and licensing one is worth more
+  than any further measurement. Activists, Cavilenny and Comtic Hiden have now been found
+  and self-hosted, which took four nodes to an exact match; still missing are Kaleagnetta
+  (akad/resepsi headings), Perpetua and the bismillah's Arabic, and whatever condensed
+  serif sets the gallery band's promo caps. The known residuals are listed at the foot of
+  this file.
 - **Only the bands already cut have their PNG exports on disk.** `.figma-tmp/parts1/` was
   pulled band by band, so the next band's nodes have to come out of Figma first or
   `build_refs.py` reports `!! missing export` and generates a band with zero assets. Pull
@@ -106,21 +108,41 @@ value flashes at the seams while it decodes.
 
 | Figma face | Token | Shipping as |
 |---|---|---|
-| Cavilenny | `--font-caps` | **substituted** — Cormorant Infant at 39.2 for Figma's 36 (bride call name) |
 | Roben Elegante Script | `--font-script`, `--font-display` | **the real file**, self-hosted from `src/assets/fonts/`. Demo cut, personal-use only |
+| Activists | `--font-caps` | **the real file**, self-hosted. `19:569` at Figma's own 32 |
+| Cavilenny | `--font-call` | **the real file**, self-hosted. `20:596` / `20:622` at Figma's own 36. Demo cut, personal-use only |
+| Comtic Hiden | `--font-comtic` | **the real file**, self-hosted. `42:3` at Figma's own 24. Demo cut, personal-use only |
+| Kaleagnetta | `--font-hand` | **substituted** — Sacramento, width-matched per word, akad/resepsi headings |
 | Cormorant Infant | `--font-serif`, `--font-body` | fontsource, as authored |
 | Lancelot | `--font-lancelot` | fontsource, as authored — the hero's eyebrow and hashtag |
 
 The body frame uses **21 faces** in all (`Ibarra Real Nova` 33 nodes, `Roben Elegante` 14,
-`Bellefair` 13, then a long tail). Only the hero's two are wired up. Most of the rest are
-on fontsource; `Kaleagnetta`, `Cavilenny`, `Activists` and `Comtic Hiden` are not, and will
-need the same self-hosted treatment — and the same re-measure — as Roben Elegante. Until
-then `Cavilenny` and `Activists` are both standing in as width-matched Cormorant Infant;
-retiring either means reverting its size compensation as well as its family.
+`Bellefair` 13, then a long tail). Most are on fontsource. Four were not — `Kaleagnetta`,
+`Cavilenny`, `Activists` and `Comtic Hiden` — and three of those now ship as the design's
+own file, self-hosted the way Roben Elegante already was. Only Kaleagnetta is still a
+stand-in, so `--font-hand` is its token alone.
+
+**Retiring a substitute deletes numbers rather than re-measuring them.** Every one of these
+nodes had a compensation fitted to the face that was standing in, and each one goes:
+
+- `19:569` "journey together" lost a `text-transform: uppercase` and a width match at 23.
+  The transform was Cormorant mimicking Activists' cap-height lowercase; the real face
+  needs none, because the design's lowercase string IS the render's capitals.
+- `20:596` / `20:622` lost 39.2 and 37.5 — two sizes for one authored 36, because a width
+  match is per WORD and Cormorant ran 8.8% narrow on "Syifa" against 4.2% on "El Rumi".
+  One real file, one size, both words. Her `top`/`left` 1px nudges went with it: those
+  were the substitute's line box and side bearings, not the node's.
+- `42:3` lost the frame's only TRACKING case — `letter-spacing: 4.9` with a matching
+  `text-indent`, plus a 27.6 size, all of it fitted because Sacramento sets this line 38%
+  narrow PER UNIT HEIGHT and no font-size can reach that.
+
+Measured after the swap, keying each node's own fill against the 1x render: all four ink
+boxes land at **dx 0, dy 0**, with `19:569` and `20:622` exact in width and height as well.
+The bismillah band drops 4.929 → 4.251, bride 1.402 → 1.307, groom 1.478 → 1.298, closing
+2.953 → 2.846, and the sheet 1.856 → 1.806.
 
 Both cover faces are the design's own, so no size compensation is carried anywhere — every
-number in `CoverSection.vue` is Figma's. Retiring a substitute later means re-measuring;
-there is nothing to re-measure yet.
+number in `CoverSection.vue` is Figma's.
 
 ## Still to fill in
 
@@ -1078,14 +1100,14 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | band | delta | band | delta |
 |---|---|---|---|
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
-| **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.929** |
-| **bride** (2161..3163) | **1.402** | **groom** (3163..4021) | **1.478** |
+| **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.251** |
+| **bride** (2161..3163) | **1.307** | **groom** (3163..4021) | **1.298** |
 | **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.922** |
 | **resepsi** (5907..7034) | **2.102** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
 | **wishes** (9565..10763) | **1.554** | **rsvp** (10763..11452) | **1.195** |
-| **closing** (11452..12818) | **2.953** | **SHEET** (0..12818) | **1.856** |
+| **closing** (11452..12818) | **2.846** | **SHEET** (0..12818) | **1.806** |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
@@ -1103,10 +1125,12 @@ numbers above are after the rework described in the findings sections. Both band
 normally, which is what the design does. The five overrides the earlier pass carried were
 each compensating for a placement error.
 
-The bismillah's 4.929 is **not** comparable to the other bands: all three of its faces are
-substitutes (Perpetua, Activists and an Arabic fallback Figma reached for when Alex Brush
-could not set the Basmala). Its art diffs clean; effectively the whole number is glyph
-shape, and it is the floor until those faces are licensed.
+The bismillah's 4.251 is **not** comparable to the other bands: its faces are substitutes
+(Perpetua, and an Arabic fallback Figma reached for when Alex Brush could not set the
+Basmala). Its art diffs clean; effectively the whole number is glyph shape, and it is the
+floor until those faces are licensed. It was 4.929 when Activists was the third of them —
+that face now ships as the design's own file and its node matches the render exactly, which
+is what the 0.678 buys and what the two remaining faces are still costing.
 
 The hero's three text nodes match the render to **0px in both axes** (measured by locating
 their exported glyph ink in both images), and the amplified difference map shows no
@@ -1296,8 +1320,8 @@ what it shows.
 
 | where | what | worth |
 |---|---|---|
-| bismillah | three substitute faces, incl. an Arabic fallback | ~3 of its 4.929 |
-| closing | the blurred botanicals `52:11` / `52:12` / `40:81` | most of its 2.953 |
+| bismillah | two substitute faces (Perpetua, and an Arabic fallback for Alex Brush) | ~2.5 of its 4.251 |
+| closing | the blurred botanicals `52:11` / `52:12` / `40:81` | most of its 2.846 |
 | gallery | the promo caps' condensed face, and photo webp loss | ~0.5 |
 | resepsi | `24:897`, buried scrollwork whose position is not really known | ~0 |
 | resepsi | a pale-blue chrysanthemum at x 30..90, y 5880..5990 that no asset explains | unknown |

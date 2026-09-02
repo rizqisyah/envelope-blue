@@ -33,6 +33,46 @@
 }
 
 /*
+ * Three of the frame's four unavailable faces, now self-hosted the same way. Each one
+ * retires a width-matched substitute AND the size compensation fitted to it — see the
+ * Fonts table in SLICING.md, which is the record of what each was standing in as.
+ *
+ * Activists (19:569, "journey together") is the case-pair trap in the flesh: its
+ * lowercase ARE cap-height forms, so the design's lowercase string draws as the render's
+ * wide capitals with no text-transform at all. The substitute needed one; this does not.
+ *
+ * Kaleagnetta is the one still missing, so the akad and resepsi headings keep Sacramento
+ * and their compensation. --font-hand is its token alone now.
+ *
+ * LICENSE: Cavilenny and Comtic Hiden are demo/personal-use cuts, like Roben Elegante
+ * above. Shipping this template commercially needs the paid families; each is one url()
+ * here and, because these carry the design's own metrics, a re-measure of nothing.
+ */
+@font-face {
+  font-family: "Activists";
+  src: url("./assets/fonts/activists-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cavilenny";
+  src: url("./assets/fonts/cavilenny-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Comtic Hiden";
+  src: url("./assets/fonts/comtic-hiden-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
  * Every band of the body frame is the same shape: sliced art from BandArt.vue, and live
  * copy positioned over it in design px. These rules are global rather than repeated in
  * each band's scoped block — a section's own stylesheet then carries nothing but its
