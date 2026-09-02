@@ -64,6 +64,58 @@
 }
 
 /*
+ * The one-line nodes.
+ *
+ * A Figma node that auto-sizes to its own text reports a box that IS the ink, to within
+ * a pixel: .figma-tmp/slack.mjs measures 0.6 design px of spare width on the median node
+ * below and NEGATIVE spare width on 22:845 / 26:1035 ("Kamis") and the countdown's
+ * "Seconds". Every one of them is a single line in the render.
+ *
+ * That margin does not survive the trip. --px is viewport/596, so at an arbitrary width
+ * each box and each glyph round independently, and a node with half a pixel to spare
+ * loses it. The line then wraps — and because a band's rows are absolutely positioned
+ * 24-30 design px apart with a 24-30 line-height, the second line lands exactly on the
+ * row below. That is the collision: an address dropping "1HB" onto its country line, a
+ * bank number sliding under "Account Owner".
+ *
+ * So they are pinned to one line here rather than widened. Widening moves the design's
+ * own boxes; nowrap keeps them, and the sub-pixel overspill goes where text-align:center
+ * puts it — half on each side, off the same axis the design centred them on.
+ *
+ * Only nodes that are one line in the DESIGN belong here. The wrapping paragraphs
+ * (the ledes, the quote, the closing message) and the pre-line nodes carrying authored
+ * breaks are deliberately absent: they must keep wrapping at their declared width.
+ */
+.akad__stampDay,
+.akad__title,
+.akad__note,
+.akad__time,
+.akad__venue,
+.akad__address,
+.akad__country,
+.akad__maps,
+.resepsi__stampDay,
+.resepsi__title,
+.resepsi__time,
+.resepsi__venue,
+.resepsi__address,
+.resepsi__country,
+.resepsi__maps,
+.countdown__n,
+.countdown__l,
+.gift__title,
+.gift__bank,
+.gift__number,
+.gift__owner-label,
+.gift__owner,
+.wishes__title,
+.gallery__title,
+.quote__verse,
+.rsvp__title {
+  white-space: nowrap;
+}
+
+/*
  * Motion this large is exactly what a vestibular disorder cannot tolerate, so the
  * reduced-motion path is not a shortened version of it — it is no movement at all.
  */
