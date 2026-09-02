@@ -180,7 +180,15 @@ PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '2
          '45:12': 0, '31:417': 0, '31:423': 0, '32:457': 0,
          '31:424': 0, '31:426': 488,
          '40:79': 0, '40:71': 0,
-         '61:619': 0, '61:620': 503, '52:11': 51, '52:12': 250}
+         '61:619': 0, '61:620': 503, '52:11': 51, '52:12': 250,
+         # DELIBERATE DEVIATION, not a measurement. 29:233 is the lace scallop that closes
+         # the dresscode band, and the render puts it at x 4: locate.py scores err 2.34
+         # there, the ref's and the build's leftmost ink agree row for row, and the band is
+         # at a sharp minimum -- 0.683 at 4 against 1.104 at 2 and 1.309 at 0. The 4px
+         # inset on the left is the DESIGN's. Moved to 2 on the owner's call, who wants it
+         # nearer flush; the band's 1.104 is that choice's cost and is no longer usable as
+         # a fidelity signal. Put it back to 4 to restore the measured position.
+         '29:233': 2}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
          '23:882': 4071, '20:762': 4323, '20:763': 4329,
