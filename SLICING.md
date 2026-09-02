@@ -31,9 +31,9 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State: the frame is COMPLETE.** Cover sliced (1.29) and all fourteen body bands sliced
-  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.240 / 1.173 / 1.104 † / 2.149 /
+  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.240 / 1.173 / 1.309 † / 2.149 /
   **0.898** / 1.554 / 1.195 / 2.156), covering y 0..12818 — the whole of Frame 1, at a
-  sheet-wide 1.614 †. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
+  sheet-wide 1.627 †. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
@@ -1103,19 +1103,19 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.251** |
 | **bride** (2161..3163) | **1.307** | **groom** (3163..4021) | **1.298** |
 | **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.240** |
-| **resepsi** (5907..7034) | **1.173** | **dresscode** (7034..7750) | 1.104 † |
+| **resepsi** (5907..7034) | **1.173** | **dresscode** (7034..7750) | 1.309 † |
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
 | **wishes** (9565..10763) | **1.554** | **rsvp** (10763..11452) | **1.195** |
-| **closing** (11452..12818) | **2.156** | **SHEET** (0..12818) | 1.614 † |
+| **closing** (11452..12818) | **2.156** | **SHEET** (0..12818) | 1.627 † |
 
 † **dresscode carries a deliberate deviation and its number is no longer a fidelity
 signal.** `29:233`, the lace scallop that closes the band, is at x 4 in the render —
 `locate.py` scores err 2.34 there, the ref's and the build's leftmost ink agree row for
-row, and the band is at a sharp minimum: 0.683 at 4 against 1.104 at 2 and 1.309 at 0. The
-4px inset on the left is the design's own. It is pinned to 2 on the owner's call, who
-wants it nearer flush with the frame edge; 1.104 is what that costs, and the sheet's 1.614
-carries it. `PIN_X['29:233'] = 4` restores the measured position.
+row, and the band is at a sharp minimum: 0.683 at 4, 1.104 at 2, 1.309 at 0. The 4px inset
+on the left is the design's own. It is pinned flush at 0 on the owner's call, who wants the
+scallop meeting the frame edge; 1.309 is what that costs, and the sheet's 1.627 carries it.
+`PIN_X['29:233'] = 4` restores the measured position.
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.

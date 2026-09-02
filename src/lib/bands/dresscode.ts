@@ -17,5 +17,5 @@ export const LAYERS: BandLayer[] = [
   { z: 27, id: '28:227', src: assets['dresscode/parts/28-227.webp'], x: 0, y: 356, w: 596, h: 441 },
   { z: 164, id: '28:226', src: assets['dresscode/parts/28-226.webp'], x: 94, y: 182, w: 422, h: 422 },
   { z: 168, id: '29:228', src: assets['dresscode/parts/29-228.webp'], x: 0, y: 499, w: 596, h: 217 },
-  { z: 171, id: '29:233', src: assets['dresscode/parts/29-233.webp'], x: 2, y: 620, w: 592, h: 161 },
+  { z: 171, id: '29:233', src: assets['dresscode/parts/29-233.webp'], x: 0, y: 620, w: 592, h: 161 },
 ]
