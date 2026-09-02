@@ -32,8 +32,8 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 
 - **State: the frame is COMPLETE.** Cover sliced (1.29) and all fourteen body bands sliced
   (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.246 / 1.175 / **0.683** / 2.149 /
-  **0.898** / 1.554 / 1.195 / 2.846), covering y 0..12818 — the whole of Frame 1, at a
-  sheet-wide **1.646**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
+  **0.898** / 1.554 / 1.195 / 2.156), covering y 0..12818 — the whole of Frame 1, at a
+  sheet-wide **1.588**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
@@ -1107,7 +1107,7 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
 | **wishes** (9565..10763) | **1.554** | **rsvp** (10763..11452) | **1.195** |
-| **closing** (11452..12818) | **2.846** | **SHEET** (0..12818) | **1.646** |
+| **closing** (11452..12818) | **2.156** | **SHEET** (0..12818) | **1.588** |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
@@ -1348,6 +1348,44 @@ Measured after: akad 1.922 → **1.246**, resepsi 2.102 → **1.175**, the sheet
 **1.646**. A ±14 row scan over the akad plate bottoms out at a sharp minimum on 0, so the
 plate is aligned as well as shaped.
 
+## A rotated node reports its transform ORIGIN, not its render box
+
+The closing band's four botanicals — `52:11`, `52:12`, `61:619`, `61:620` — were the
+frame's last real placement error, and they were held in place by two mistakes propping
+each other up.
+
+**The position.** All four are ROTATED, and a rotated node's reported x is the corner of
+its UNROTATED box at the transform origin, not the left edge of the box it renders into.
+Rotate `52:12`'s 251x251 by its own −159.09° about that origin and the bbox left comes out
+at 483.51 − 234.5 = **249.0**, against the **249.05** Figma's own properties panel shows.
+The dump has no `rotation` field and neither does the MCP read, so nothing in the pipeline
+could see this; `reconcile()`'s "export grew, so re-centre" branch fires (324 > 251) and
+produces a plausible-looking wrong answer.
+
+**The alpha on top of it.** `solve_alpha.py` then fitted each layer where it had been put,
+and from 90–230px off its home the only way to score is to fade out — `52:12` came back at
+0.4/screen, `61:619` at 0.55/screen. That is the same trap `15:192` and `16:491`/`16:493`
+fell into, recorded above, and it is worth stating as a rule: **a solved alpha near zero is
+evidence about the POSITION, not about the design.** It also blinds the recovery, because
+`locate.py` has no ink left to match — err 56 and 140, which read as "occluded" and mean
+"we faded it out ourselves".
+
+**How they were recovered, with no rotation data.** Difference the 1x render against a
+sheet built with the four hidden; what is left is exactly the ink the design draws and the
+build does not. Then Hough-vote it: every (asset ink point → residual point) pair votes for
+one offset, and the winning bin is the placement. `52:12` came back at 250, 11934 —
+Figma's own panel to 1px, derived independently of it. All four then want full strength,
+and every axis is a sharp minimum: ±3 and ±6 on each of x and y scores worse, as does
+restoring either solved alpha. Pinned in `gen_band.py`'s `PIN_X` / `PIN_Y` / `PIN_A` /
+`PIN_B`; the band goes **2.846 → 2.156** and the sheet 1.646 → **1.588**.
+
+The pattern across all four is worth carrying to the next rotated node: **Y was already
+right and only X moved.**
+
+(Checked while doing this: a fresh 1x export of Frame 1 diffs against the stored
+`.figma-tmp/frame1-3-1x.png` at 0.017/255, and 0.000 on every band. The reference render on
+disk is current — if a band disagrees with it, the build is wrong, not the ref.)
+
 ## A probe that does not walk the sheet scores nothing
 
 Band art is `loading="lazy"` and every band below the fold is viewport-gated, so a
@@ -1378,18 +1416,10 @@ either way -- the closing band's edge botanicals are not a blend problem.
 | resepsi | `24:897`, buried scrollwork whose position is not really known | ~0 |
 | resepsi | a pale-blue chrysanthemum at x 30..90, y 5880..5990 that no asset explains | unknown |
 | akad | the left column, x 0..99 — pinned layers `22:837` / `22:846` at scan positions | ~0.2 |
-| closing | edge botanicals around the polaroid — **no asset explains them**, see below | most of its 2.846 |
+| closing | the blurred botanicals — glyph diff and webp loss are most of what is left | ~0.4 of its 2.156 |
 
-The closing band's edge botanicals are the same shape of question as the chrysanthemum,
-and the search for them is exhausted locally. The render carries a blue peony and orchid at
-x 0..60, y 11830..12010 and again at x 420..560, y 12030..12210 that the built sheet does
-not draw at all. `61:619` / `61:620` ARE that artwork — the exports match it by eye — but
-`locate.py` bottoms out at err 56.1 and 50.6 at their placed positions and worse anywhere
-within its radius, which is its "not visible at that spot" band, and every opacity and
-blend variant scores worse than what is solved. `52:11` / `52:12` are small sprigs that
-change nothing either way. So the next move is not another search: it is re-reading those
-nodes from Figma for `absoluteRenderBounds`, effects and rotation, none of which the
-flatten on disk carries.
+The closing band's edge botanicals turned out to be a solved problem rather than an open
+one — see "a rotated node reports its transform origin" below.
 
 The chrysanthemum is the older open QUESTION of the same kind: it belongs to a node
 that renders far from where it is declared, and every band is now cut, so it is either a

@@ -179,7 +179,8 @@ PIN_X = {'15:192': 471, '16:397': 0, '16:493': 396, '16:491': 0, '20:640': 0, '2
          '31:295': 146, '31:301': 255, '31:304': 364, '31:314': 140, '31:315': 457,
          '45:12': 0, '31:417': 0, '31:423': 0, '32:457': 0,
          '31:424': 0, '31:426': 488,
-         '40:79': 0, '40:71': 0}
+         '40:79': 0, '40:71': 0,
+         '61:619': 0, '61:620': 503, '52:11': 51, '52:12': 250}
 PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 2776, '20:584': 2389,
          '20:625': 3321, '20:611': 3391, '20:626': 3415,
          '23:882': 4071, '20:762': 4323, '20:763': 4329,
@@ -190,7 +191,8 @@ PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 
          '29:274': 6004, '54:42': 6688,
          '29:235': 7750, '31:289': 8062, '52:6': 8155, '52:8': 8155,
          '31:295': 8478, '31:301': 8478, '31:304': 8478, '31:314': 8262, '31:315': 8262,
-         '32:457': 9109, '31:424': 9664, '31:426': 9664}
+         '32:457': 9109, '31:424': 9664, '31:426': 9664,
+         '61:619': 11787, '61:620': 11770, '52:11': 12038, '52:12': 11934}
 
 # The gift band is the cleanest demonstration of the right-edge rule in the frame: every
 # LEFT-side node declares its right edge and every RIGHT-side node declares its left one.
@@ -323,8 +325,28 @@ PIN_Y = {'15:192': 600, '16:493': 984, '16:491': 984, '20:589': 2413, '20:640': 
 # At y 984 they paint at full strength, stacked normally, and the band goes 3.20 -> 1.82.
 # 15:192's alpha came from fitting it 94px from home, where the only way to score is to
 # fade out. At its measured position it paints at full strength, stacked normally.
-PIN_A = {'15:192': 1.0, '16:491': 1.0, '16:493': 1.0}
-PIN_B = {'15:192': 'normal', '16:491': 'normal', '16:493': 'normal'}
+#
+# The closing band's four botanicals are the same story a third time, and they are the
+# clearest case of what a solved alpha costs when the position under it is wrong. All four
+# are ROTATED nodes, and a rotated node's reported x is its transform ORIGIN, not the
+# corner of the render bbox -- rotate 52:12's 251x251 by its own -159.09 degrees about that
+# origin and the bbox left comes out at 483.51 - 234.5 = 249.0, against the 249.05 Figma's
+# own panel shows. `locate.py` never found them because the offset is far outside its 160px
+# radius AND because solve_alpha had already faded them to nothing, which leaves no ink to
+# match. Two wrongs holding each other up.
+#
+# Recovered without any rotation data, by voting: difference the render against a sheet
+# built with the four hidden, then Hough-vote every (asset ink point -> residual point)
+# pair for an offset. 52:12 came back at 250, 11934 -- Figma's own panel to 1px, derived
+# independently. All four then want full strength, and every axis is a sharp minimum:
+# +/-3 and +/-6 on each of x and y scores worse, as does restoring either solved alpha.
+# The band goes 2.846 -> 2.156.
+#
+# The pattern across all four: **Y was already right and only X moved.**
+PIN_A = {'15:192': 1.0, '16:491': 1.0, '16:493': 1.0,
+         '61:619': 1.0, '61:620': 1.0, '52:11': 1.0, '52:12': 1.0}
+PIN_B = {'15:192': 'normal', '16:491': 'normal', '16:493': 'normal',
+         '61:619': 'normal', '61:620': 'normal', '52:11': 'normal', '52:12': 'normal'}
 
 # A layer paints in the band its own y lands in, not the band Figma filed it under.
 # Left in the wrong band it renders fine and REVEALS wrong: useReveal gates a band's

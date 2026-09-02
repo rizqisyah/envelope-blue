@@ -14,10 +14,10 @@ export const BAND_HEIGHT = 1366
 
 export const LAYERS: BandLayer[] = [
   { z: 15, id: '40:76', src: assets['closing/parts/40-76.webp'], x: 0, y: 0, w: 596, h: 1366 },
-  { z: 16, id: '52:11', src: assets['closing/parts/52-11.webp'], x: 104, y: 550, w: 324, h: 324 },
-  { z: 17, id: '52:12', src: assets['closing/parts/52-12.webp'], x: 479, y: 406, w: 324, h: 324, a: 0.4, b: 'screen' },
-  { z: 18, id: '61:619', src: assets['closing/parts/61-619.webp'], x: 102, y: 336, w: 102, h: 254, a: 0.55, b: 'screen' },
-  { z: 19, id: '61:620', src: assets['closing/parts/61-620.webp'], x: 502, y: 319, w: 94, h: 254 },
+  { z: 16, id: '52:11', src: assets['closing/parts/52-11.webp'], x: 51, y: 586, w: 324, h: 324 },
+  { z: 17, id: '52:12', src: assets['closing/parts/52-12.webp'], x: 250, y: 482, w: 324, h: 324 },
+  { z: 18, id: '61:619', src: assets['closing/parts/61-619.webp'], x: 0, y: 335, w: 102, h: 254 },
+  { z: 19, id: '61:620', src: assets['closing/parts/61-620.webp'], x: 503, y: 318, w: 94, h: 254 },
   { z: 20, id: '42:4', src: assets['closing/parts/42-4.webp'], x: 20, y: 72, w: 584, h: 480 },
   { z: 255, id: '40:80', src: assets['closing/parts/40-80.webp'], x: 58, y: 685, w: 501, h: 501 },
   { z: 256, id: '40:81', src: assets['closing/parts/40-81.webp'], x: 173, y: 496, w: 271, h: 427 },
