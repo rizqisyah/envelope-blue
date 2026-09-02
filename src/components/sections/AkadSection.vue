@@ -153,24 +153,32 @@ const stamp = computed(() => {
 }
 
 /*
- * 23:856 — Kaleagnetta 48, #4e685c, centred in a 189 box. Kaleagnetta is not on
- * fontsource, so this is Sacramento (see --font-hand). Width-matched per word: the
- * render's ink is 190 wide and Sacramento sets this phrase 232 wide at Figma's own 48,
- * so the size is scaled by 190/232 -> 39.3. Its ink then stands 31 tall against the
- * render's 46 — Kaleagnetta's ascenders are far longer than Sacramento's, and width-first
- * is the trade SLICING.md calls for. That is the floor until Kaleagnetta is licensed.
+ * 23:856 — Kaleagnetta 48, #4e685c, centred in a 189 box. Kaleagnetta has no file, so
+ * this is still a substitute — but Palisade now, not Sacramento (see --font-hand).
+ *
+ * Sacramento was picked from the faces already on fontsource. Measured against the
+ * render's OWN ink — isolated by shooting the sheet with these two headings hidden and
+ * differencing — Kaleagnetta sets this phrase at an ink density of 0.144 and an aspect of
+ * 4.02. Sacramento is 0.185 and 6.21: a third heavier and half again as wide for its
+ * height, which is why its width match left the ink 31 tall against the render's 48.
+ * Palisade, swept out of the 126 local font files, is 0.143 and 4.22 — the same weight of
+ * line and very nearly the same proportion.
+ *
+ * Width-matched the same way: Palisade sets this phrase 3.685 design px wide per px of
+ * font-size, so the render's 193 wants 52.4. Its ink then stands 46 against the render's
+ * 48, where Sacramento stood 31.
  *
  * Figma declares no line-height, so the box's own 66 stands in for it.
  */
 .akad__title {
   --delay: 320ms;
   z-index: 271;
-  top: calc(924 * var(--px)); /* 23:856 box y 5349, band-local 924 */
-  left: calc(203.4 * var(--px));
+  top: calc(926 * var(--px)); /* 23:856 box y 5349 + 2 — Palisade's line box, measured */
+  left: calc(204.4 * var(--px)); /* 23:856 box x 203.4 + 1 — measured */
   width: calc(189 * var(--px));
   font-family: var(--font-hand);
   font-weight: 400;
-  font-size: calc(39.3 * var(--px)); /* 48 x 0.819 — measured on THIS phrase */
+  font-size: calc(52.4 * var(--px)); /* 193 / 3.685 — measured on THIS phrase */
   line-height: calc(66 * var(--px));
   color: #4e685c;
 }

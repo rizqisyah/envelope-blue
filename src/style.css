@@ -41,8 +41,7 @@
  * lowercase ARE cap-height forms, so the design's lowercase string draws as the render's
  * wide capitals with no text-transform at all. The substitute needed one; this does not.
  *
- * Kaleagnetta is the one still missing, so the akad and resepsi headings keep Sacramento
- * and their compensation. --font-hand is its token alone now.
+ * Kaleagnetta is the one still missing; its stand-in is now Palisade, below.
  *
  * LICENSE: Cavilenny and Comtic Hiden are demo/personal-use cuts, like Roben Elegante
  * above. Shipping this template commercially needs the paid families; each is one url()
@@ -67,6 +66,22 @@
 @font-face {
   font-family: "Comtic Hiden";
   src: url("./assets/fonts/comtic-hiden-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+ * Palisade, standing in for Kaleagnetta — the one face of the four this frame needs and
+ * still does not have. It replaces Sacramento, which was chosen from the faces already on
+ * fontsource; measured against the render's own ink over the 126 local font files,
+ * Palisade is a far closer cut. See the akad band for the numbers.
+ *
+ * LICENSE: personal use only, like the three above.
+ */
+@font-face {
+  font-family: "Palisade";
+  src: url("./assets/fonts/palisade-regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

@@ -31,9 +31,9 @@ design space and `--px` is `100cqw / 596`; the numbers do not transfer from temp
 ## Picking this up in a new session
 
 - **State: the frame is COMPLETE.** Cover sliced (1.29) and all fourteen body bands sliced
-  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.246 / 1.175 / **0.683** / 2.149 /
+  (1.710 / 1.822 / 4.251 / 1.307 / 1.298 / 1.817 / 1.240 / 1.173 / **0.683** / 2.149 /
   **0.898** / 1.554 / 1.195 / 2.156), covering y 0..12818 — the whole of Frame 1, at a
-  sheet-wide **1.588**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
+  sheet-wide **1.587**. `npm install` is done; dev server is `npm run dev` on 5179. The countdown and bismillah were cut once by an
   earlier pass at 5.542 and 20.202 and then reworked — the findings sections below are all
   from that rework, and all of them apply to the bands still to come. `npm install` is done;
   dev server is `npm run dev` on 5179.
@@ -112,7 +112,7 @@ value flashes at the seams while it decodes.
 | Activists | `--font-caps` | **the real file**, self-hosted. `19:569` at Figma's own 32 |
 | Cavilenny | `--font-call` | **the real file**, self-hosted. `20:596` / `20:622` at Figma's own 36. Demo cut, personal-use only |
 | Comtic Hiden | `--font-comtic` | **the real file**, self-hosted. `42:3` at Figma's own 24. Demo cut, personal-use only |
-| Kaleagnetta | `--font-hand` | **substituted** — Sacramento, width-matched per word, akad/resepsi headings |
+| Kaleagnetta | `--font-hand` | **substituted** — Palisade, self-hosted, width-matched per word, akad/resepsi headings |
 | Cormorant Infant | `--font-serif`, `--font-body` | fontsource, as authored |
 | Lancelot | `--font-lancelot` | fontsource, as authored — the hero's eyebrow and hashtag |
 
@@ -1102,12 +1102,12 @@ Cover: `.figma-tmp/web-cover-1x.png` (from `cover-shot.mjs`) vs
 | **cover (Frame 2, whole frame)** | **1.29** | **hero** (y 0..1108) | **1.710** |
 | **countdown** (1108..1802) | **1.822** | **bismillah** (1802..2161) | **4.251** |
 | **bride** (2161..3163) | **1.307** | **groom** (3163..4021) | **1.298** |
-| **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.246** |
-| **resepsi** (5907..7034) | **1.175** | **dresscode** (7034..7750) | **0.683** |
+| **quote** (4021..4425) | **1.817** | **akad** (4425..5907) | **1.240** |
+| **resepsi** (5907..7034) | **1.173** | **dresscode** (7034..7750) | **0.683** |
 | | | | |
 | **gallery** (7750..8865) | **2.149** | **gift** (8865..9565) | **0.898** |
 | **wishes** (9565..10763) | **1.554** | **rsvp** (10763..11452) | **1.195** |
-| **closing** (11452..12818) | **2.156** | **SHEET** (0..12818) | **1.588** |
+| **closing** (11452..12818) | **2.156** | **SHEET** (0..12818) | **1.587** |
 
 Every text ink box on the cover matches the render to 1px (headings, both guest lines),
 so what is left in that number is glyph hinting and webp loss, not placement.
@@ -1347,6 +1347,42 @@ mask's LEFT edge by construction. So dx is 0 and dy comes from the declared Ys.
 Measured after: akad 1.922 → **1.246**, resepsi 2.102 → **1.175**, the sheet 1.806 →
 **1.646**. A ±14 row scan over the akad plate bottoms out at a sharp minimum on 0, so the
 plate is aligned as well as shaped.
+
+## Choosing a substitute: measure STROKE WEIGHT, not overlap
+
+Kaleagnetta is the frame's one face with no file, so the akad and resepsi headings stay a
+substitute — but the substitute changed, and how it was chosen is the transferable part.
+
+The old choice, Sacramento, was the best of the faces already on fontsource. Sweeping the
+126 local font files against the render's own ink — isolated by shooting the sheet with
+those two headings hidden and differencing, `text-ink.mjs`'s method — turned up a far
+closer cut: **Palisade**.
+
+**Two obvious metrics both rank it wrong, in opposite directions.** Plain IoU on the glyph
+masks puts every fat brush face on top and Sacramento LAST of 127, because a hairline
+stroke 2px out of place overlaps nothing while a blob overlaps everything. Dilating both
+masks first and scoring F1-within-2px inverts the bias but not the outcome: the fat faces
+still win, now on recall. Both are measuring stroke weight and calling it letterform.
+
+**What works is measuring stroke weight on purpose.** Ink density (lit px over ink-box
+area) plus aspect, at a common width:
+
+| face | density | aspect |
+|---|---|---|
+| Kaleagnetta (the render) | 0.144 | 4.02 |
+| **Palisade** | **0.143** | **4.22** |
+| Sacramento (old stand-in) | 0.185 | 6.21 |
+
+Sacramento is a third heavier and half again as wide for its height, which is exactly why
+its width match left the ink 31 tall against the render's 48. Palisade width-matched leaves
+it at 48 — `23:856`'s ink box now lands at **dx 0, dy 0, dw 0, dh 0** against the render,
+the first time a substituted node in this frame has done that.
+
+Width is still matched per WORD, not per face: Palisade sets "Akad Nikah" at 3.685 design
+px per px of font-size and "Resepsi" at 1.89, so Figma's one authored 48 becomes 52.4 and
+60.8. `103:11` keeps a height deviation — 63 against the render's 52, Palisade's 'p'
+descender running deeper than Kaleagnetta's — which is the usual width-first trade and the
+floor until the real file is licensed.
 
 ## A rotated node reports its transform ORIGIN, not its render box
 

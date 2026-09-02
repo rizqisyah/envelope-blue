@@ -152,12 +152,12 @@ const stamp = computed(() => {
 .resepsi__title {
   --delay: 280ms;
   z-index: 31;
-  top: calc(491 * var(--px)); /* 103:11 box y 6397 + 1 — Sacramento's line box, measured */
-  left: calc(238.4 * var(--px)); /* 103:11 box x 240.4 - 2 — measured */
+  top: calc(494 * var(--px)); /* 103:11 box y 6397 + 4 — Palisade's line box, measured */
+  left: calc(240.4 * var(--px)); /* 103:11 box x */
   width: calc(114 * var(--px));
   font-family: var(--font-hand);
   font-weight: 400;
-  font-size: calc(43.8 * var(--px)); /* 48 x 0.9125 — measured on THIS word */
+  font-size: calc(60.8 * var(--px)); /* 115 / 1.89 — measured on THIS word, see the akad band */
   line-height: calc(66 * var(--px));
   color: #4e685c;
 }

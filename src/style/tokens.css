@@ -52,7 +52,7 @@
    * heavy stroke contrast this face does not have. Width-matched per word, so each node
    * keeps its own size compensation until the real file lands.
    */
-  --font-hand: "Sacramento", cursive;
+  --font-hand: "Palisade", "Sacramento", cursive;
   /* The closing band's signature. Was Sacramento tracked out 4.9px to reach Comtic
    * Hiden's measure; now the design's own file, at the design's own 24. */
   --font-comtic: "Comtic Hiden", cursive;
