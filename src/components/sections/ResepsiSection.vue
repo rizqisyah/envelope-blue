@@ -69,6 +69,7 @@ const stamp = computed(() => {
 
 <template>
   <section
+    v-if="event || isDesign"
     :ref="el"
     class="band resepsi"
     :class="{ 'is-in': shown }"

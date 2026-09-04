@@ -25,6 +25,9 @@ import GiftSection from '../sections/GiftSection.vue'
 import WishesSection from '../sections/WishesSection.vue'
 import RsvpSection from '../sections/RsvpSection.vue'
 import ClosingSection from '../sections/ClosingSection.vue'
+import { useWedding } from '../../composables/useWedding'
+
+const { hasMultipleAcara } = useWedding()
 </script>
 
 <template>
@@ -36,7 +39,7 @@ import ClosingSection from '../sections/ClosingSection.vue'
     <GroomSection />
     <QuoteSection />
     <AkadSection />
-    <ResepsiSection />
+    <ResepsiSection v-if="hasMultipleAcara" />
     <DresscodeSection />
     <GallerySection />
     <GiftSection />

@@ -277,6 +277,13 @@ export function useWedding() {
     }
   })
 
+  const liveAcara = computed(() =>
+    (acara.value as any[]).filter((a) => a?.title || a?.name || a?.event_date),
+  )
+  const hasMultipleAcara = computed(
+    () => liveAcara.value.length === 0 || liveAcara.value.length > 1,
+  )
+
   return {
     slug,
     guestCode,
@@ -287,6 +294,8 @@ export function useWedding() {
     guest,
     pengantin,
     acara,
+    liveAcara,
+    hasMultipleAcara,
     gallery,
     gift,
     wishes,
