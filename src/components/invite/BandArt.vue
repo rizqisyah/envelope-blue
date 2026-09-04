@@ -124,6 +124,7 @@ const stagger = () => Math.min(props.step, MAX_STAGGER / Math.max(1, visible().l
   visibility: hidden;
   opacity: var(--a, 1);
   will-change: transform, opacity;
+  pointer-events: none;
 }
 
 .band-art.is-in {

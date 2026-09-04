@@ -232,7 +232,7 @@ async function send() {
 /* The form block, positioned at the first field plate's origin. */
 .rsvp__form {
   --delay: 320ms;
-  z-index: 247;
+  z-index: 300;
   top: calc(376 * var(--px)); /* field plate y 11139, band-local 376 */
   left: calc(85 * var(--px));
   width: calc(426 * var(--px));
@@ -265,6 +265,11 @@ async function send() {
   line-height: calc(23 * var(--px));
   color: #1e3c72;
   appearance: none;
+  cursor: text;
+}
+
+select.rsvp__field {
+  cursor: pointer;
 }
 
 .rsvp__field + .rsvp__field {
