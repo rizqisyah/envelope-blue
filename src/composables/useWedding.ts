@@ -59,6 +59,82 @@ function applyTheme(themeData: any, weddingData: any) {
  */
 let inflight: Promise<void> | null = null
 
+const slug = ref(resolveSlug())
+const guestCode = ref(typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('to') || '' : '')
+
+async function fetchWeddingData() {
+  if (DESIGN_MODE) return
+  state.value.loading = true
+  state.value.error = null
+  try {
+    const data = await getHome(slug.value, guestCode.value)
+    state.value.data = data
+    if (data?.theme || data?.wedding) {
+      applyTheme(data.theme, data.wedding)
+    }
+    if (data?.wedding?.title) {
+      document.title = `${data.wedding.title} - Undangan Pernikahan`
+    }
+  } catch (err: any) {
+    console.error('Failed to load wedding data:', err)
+    state.value.error = err.message
+  } finally {
+    state.value.loading = false
+  }
+}
+
+// Listen for live preview messages from the admin dashboard ("Mode Imajinasi")
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'QINVI_PREVIEW_UPDATE') {
+      const { wedding: previewWedding, theme: previewTheme, refetch } = event.data
+
+      if (previewWedding) {
+        let resolvedWedding = { ...previewWedding }
+        if (typeof resolvedWedding.theme_override === 'string') {
+          try {
+            resolvedWedding.theme_override = JSON.parse(resolvedWedding.theme_override)
+          } catch (e) {
+            console.error('Failed to parse theme_override:', e)
+          }
+        }
+
+        const existingOverride = state.value.data?.wedding?.theme_override || {}
+        const mergedOverride = {
+          ...existingOverride,
+          ...(resolvedWedding.theme_override || {}),
+        }
+
+        state.value.data = {
+          ...(state.value.data || {}),
+          wedding: {
+            ...(state.value.data?.wedding || {}),
+            ...resolvedWedding,
+            theme_override: mergedOverride,
+          },
+        }
+      }
+
+      if (previewTheme) {
+        state.value.data = {
+          ...(state.value.data || {}),
+          theme: previewTheme,
+        }
+      }
+
+      // Re-apply theme styles dynamically
+      if (state.value.data?.theme || state.value.data?.wedding) {
+        applyTheme(state.value.data.theme, state.value.data.wedding)
+      }
+
+      if (refetch) {
+        inflight = null
+        fetchWeddingData()
+      }
+    }
+  })
+}
+
 /*
  * Wishes posted while in design mode. Kept outside `state` on purpose: seeding
  * state.data to hold them would make `wedding` non-null, and every band would drop
@@ -67,30 +143,6 @@ let inflight: Promise<void> | null = null
 const designWishes = ref<any[]>([])
 
 export function useWedding() {
-  const slug = ref(resolveSlug())
-  const guestCode = ref(new URLSearchParams(window.location.search).get('to') || '')
-
-  async function fetchWeddingData() {
-    if (DESIGN_MODE) return
-    state.value.loading = true
-    state.value.error = null
-    try {
-      const data = await getHome(slug.value, guestCode.value)
-      state.value.data = data
-      if (data?.theme || data?.wedding) {
-        applyTheme(data.theme, data.wedding)
-      }
-      if (data?.wedding?.title) {
-        document.title = `${data.wedding.title} - Undangan Pernikahan`
-      }
-    } catch (err: any) {
-      console.error('Failed to load wedding data:', err)
-      state.value.error = err.message
-    } finally {
-      state.value.loading = false
-    }
-  }
-
   onMounted(() => {
     if (DESIGN_MODE || state.value.data) return
     inflight ??= fetchWeddingData().finally(() => {
@@ -174,34 +226,7 @@ export function useWedding() {
     return isGroomFirst.value ? 'Ahmad & Salma' : 'Salma & Ahmad'
   })
 
-  const quoteText = computed(
-    () =>
-      wedding.value?.theme_override?.quote?.text ||
-      // Matches the copy the design prints on the card, so an unconfigured
-      // render lines up with the design. Frame 1 (20:670) prints its own quotation
-      // marks, so they belong in the string rather than around the element.
-      '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang"',
-  )
-  /*
-   * The hero's hashtag. Not read off `theme_override`: the API sends that as a JSON
-   * STRING as often as an object (see applyTheme), so a dotted read there silently
-   * never matches. Frame 1 prints "#AhmadSALMAnya", so an unconfigured render matches
-   * the design.
-   */
-  const hashtag = computed(() => wedding.value?.hashtag || '#AhmadSALMAnya')
-
-  // Frame 1 (20:669) prints the parentheses too, so they are part of the string; a
-  // configured verse arrives already formatted and is printed verbatim.
-  const quoteVerse = computed(
-    () => wedding.value?.theme_override?.quote?.verse || '(Qs. Ar-Rum: 21)',
-  )
-  const quoteArabic = computed(
-    () =>
-      wedding.value?.theme_override?.quote?.arabic ||
-      'وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةًۗ اِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ',
-  )
-
-  const dresscode = computed(() => {
+  const parsedOverride = computed(() => {
     let ov = wedding.value?.theme_override
     if (typeof ov === 'string') {
       try {
@@ -210,11 +235,45 @@ export function useWedding() {
         ov = {}
       }
     }
+    return ov || {}
+  })
+
+  const quoteText = computed(
+    () =>
+      parsedOverride.value?.quote?.text ||
+      parsedOverride.value?.words?.quote_text ||
+      '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang"',
+  )
+
+  const hashtag = computed(
+    () =>
+      parsedOverride.value?.words?.hashtag ||
+      wedding.value?.hashtag ||
+      '#AhmadSALMAnya',
+  )
+
+  const quoteVerse = computed(
+    () =>
+      parsedOverride.value?.quote?.verse ||
+      parsedOverride.value?.words?.quote_verse ||
+      '(Qs. Ar-Rum: 21)',
+  )
+
+  const quoteArabic = computed(
+    () =>
+      parsedOverride.value?.quote?.arabic ||
+      parsedOverride.value?.words?.quote_arabic ||
+      'وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةًۗ اِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ',
+  )
+
+  const dresscode = computed(() => {
+    const ov = parsedOverride.value
     return {
       note: ov?.dresscode?.note || 'Attire: Formal / Traditional Elegance',
-      colors: Array.isArray(ov?.dresscode?.colors) && ov.dresscode.colors.length === 4
-        ? ov.dresscode.colors
-        : ['#dbc58e', '#9bccdb', '#bde0b5', '#edcbe3'],
+      colors:
+        Array.isArray(ov?.dresscode?.colors) && ov.dresscode.colors.length === 4
+          ? ov.dresscode.colors
+          : ['#dbc58e', '#9bccdb', '#bde0b5', '#edcbe3'],
     }
   })
 
