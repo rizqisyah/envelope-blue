@@ -213,8 +213,15 @@ export function parentLine(p?: {
 } | null): string {
   if (!p) return ''
   const prefix = (p.child_of || '').trim()
-  const parents = [p.father_name, p.mother_name].map((s) => (s || '').trim()).filter(Boolean).join(' ')
+  const father = (p.father_name || '').trim()
+  const mother = (p.mother_name || '').trim()
+  let parents = ''
+  if (father && mother) {
+    parents = father.includes('&') || father.includes('dan') ? `${father} ${mother}` : `${father} & ${mother}`
+  } else {
+    parents = father || mother
+  }
   // `child_of` on real data is often the whole sentence already; don't repeat the parents.
   if (prefix && parents && prefix.includes(parents)) return prefix
-  return [prefix, parents].filter(Boolean).join(' ').trim()
+  return [prefix, parents].filter(Boolean).join('\n').trim()
 }

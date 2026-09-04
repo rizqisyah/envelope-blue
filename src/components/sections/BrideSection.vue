@@ -12,48 +12,59 @@
 import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/bride'
+import { assets } from '../../lib/bandAssets'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
 import instagramGlyph from '../../assets/bride/instagram.webp'
 
-const props = withDefaults(defineProps<{ showAnd?: boolean }>(), {
-  showAnd: true,
+const { el, shown } = useReveal(0.15)
+const { bride, groom, isGroomFirst } = useWedding()
+
+const person = computed(() => (isGroomFirst.value ? groom.value : bride.value))
+
+const callName = computed(() => {
+  if (person.value?.nickname?.trim()) return person.value.nickname.trim()
+  if (person.value?.name?.trim()) return person.value.name.trim().split(' ')[0]
+  return isGroomFirst.value ? 'El Rumi' : 'Syifa'
 })
 
-const { el, shown } = useReveal(0.15)
-const { bride } = useWedding()
+const fullName = computed(() => {
+  if (person.value?.name?.trim()) return person.value.name.trim()
+  return isGroomFirst.value ? 'Ahmad Jalaluddin Rumi' : 'Syifa Hadju'
+})
 
-const bandHeight = computed(() => (props.showAnd ? BAND_HEIGHT : 858))
+const fallbackParents = computed(() =>
+  isGroomFirst.value
+    ? 'Putra pertama dari \n Bapak Solehaiman \n dan Ibu Kasih'
+    : 'Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih Muhartono Septiana',
+)
 
-/*
- * The design prints "Syifa / Syifa Hadju", so an unconfigured render matches the frame.
- */
-const callName = computed(() => bride.value?.nickname?.trim() || 'Syifa')
-const fullName = computed(() => bride.value?.name?.trim() || 'Syifa Hadju')
+const parents = computed(() => parentLine(person.value) || fallbackParents.value)
 
-/*
- * 19:546 — the design authors two breaks in this line, and they have to live in a
- * script constant: written inline in the template Vue folds the source newlines to
- * spaces and `white-space: pre-line` has nothing left to preserve. Live data arrives
- * as one sentence from parentLine() and wraps inside the box instead.
- */
-const PARENTS =
-  'Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih Muhartono Septiana'
-const parents = computed(() => parentLine(bride.value) || PARENTS)
+const handle = computed(() => {
+  if (person.value?.instagram?.trim()) return person.value.instagram.trim()
+  return isGroomFirst.value ? '@elrumiii' : '@Syifahadju'
+})
 
-// `instagram` is a GUESS at the field name -- getHome's pengantin rows are undocumented
-// here and nothing in this repo reads one. The design fallback keeps the band correct
-// either way; check this first if a live handle does not appear.
-const handle = computed(() => (bride.value?.instagram || '@Syifahadju').trim())
 const handleUrl = computed(
   () => `https://instagram.com/${handle.value.replace(/^@/, '')}`,
 )
+
+// Layer 19:572 is the portrait plate in Slot 1 (x: 155, y: 222, w: 342, h: 253).
+// If Groom is first, swap 19:572 src to Groom's portrait (20-609.webp or custom photo).
+const layers = computed(() => {
+  const photoSrc = isGroomFirst.value
+    ? (groom.value?.photo_url || assets['groom/parts/20-609.webp'])
+    : (bride.value?.photo_url || assets['bride/parts/19-572.webp'])
+
+  return LAYERS.map((l) => (l.id === '19:572' ? { ...l, src: photoSrc } : l))
+})
 </script>
 
 <template>
-  <section :ref="el" class="band bride" :class="{ 'is-in': shown }" aria-labelledby="bride-name">
-    <BandArt :layers="LAYERS" :shown="shown" />
+  <section :ref="el" class="band bride" :class="{ 'is-in': shown }" aria-labelledby="person-1-name">
+    <BandArt :layers="layers" :shown="shown" />
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
 
@@ -61,9 +72,9 @@ const handleUrl = computed(
     <p class="bride__call">{{ callName }}</p>
 
     <!-- 20:641 — the full name, the band's heading. -->
-    <h2 id="bride-name" class="bride__full">{{ fullName }}</h2>
+    <h2 id="person-1-name" class="bride__full">{{ fullName }}</h2>
 
-    <!-- 19:546 — three authored lines; the box keeps white-space: pre-line. -->
+    <!-- 19:546 — three authored lines; the box keeps white-space: pre-wrap. -->
     <p class="bride__parents">{{ parents }}</p>
 
     <!--
@@ -76,14 +87,14 @@ const handleUrl = computed(
       <span>{{ handle }}</span>
     </a>
 
-    <!-- 19:543 — the hand-off to the next band. -->
-    <p v-if="props.showAnd" class="bride__and" aria-hidden="true">And</p>
+    <!-- 19:543 — the hand-off to the next band. Always present at bottom of Slot 1. -->
+    <p class="bride__and" aria-hidden="true">And</p>
   </section>
 </template>
 
 <style scoped>
 .bride {
-  height: calc(v-bind(bandHeight) * var(--px));
+  height: calc(v-bind(BAND_HEIGHT) * var(--px));
 }
 
 /*

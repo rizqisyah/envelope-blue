@@ -2,6 +2,10 @@
 /*
  * Frame 1 (1:3) band "groom": y 3163..4021 of the body frame. The mirror of the bride
  * band — same scene, flipped, with the couple's other half in it. Art comes from
+<script setup lang="ts">
+/*
+ * Frame 1 (1:3) band "groom": y 3163..4021 of the body frame. The mirror of the bride
+ * band — same scene, flipped, with the couple's other half in it. Art comes from
  * src/lib/bands/groom.ts (GENERATED, scripts/gen_band.py).
  *
  * The mirror is exact and it is a real mirror, not a copy: every paired export is the
@@ -12,42 +16,57 @@
 import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/groom'
+import { assets } from '../../lib/bandAssets'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
 import instagramGlyph from '../../assets/bride/instagram.webp'
 
-const props = withDefaults(defineProps<{ showAnd?: boolean }>(), {
-  showAnd: false,
+const { el, shown } = useReveal(0.15)
+const { bride, groom, isGroomFirst } = useWedding()
+
+const person = computed(() => (isGroomFirst.value ? bride.value : groom.value))
+
+const callName = computed(() => {
+  if (person.value?.nickname?.trim()) return person.value.nickname.trim()
+  if (person.value?.name?.trim()) return person.value.name.trim().split(' ')[0]
+  return isGroomFirst.value ? 'Syifa' : 'El Rumi'
 })
 
-const { el, shown } = useReveal(0.15)
-const { groom } = useWedding()
+const fullName = computed(() => {
+  if (person.value?.name?.trim()) return person.value.name.trim()
+  return isGroomFirst.value ? 'Syifa Hadju' : 'Ahmad Jalaluddin Rumi'
+})
 
-const bandHeight = computed(() => (props.showAnd ? 1002 : BAND_HEIGHT))
+const fallbackParents = computed(() =>
+  isGroomFirst.value
+    ? 'Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih Muhartono Septiana'
+    : 'Putra pertama dari \n Bapak Solehaiman \n dan Ibu Kasih',
+)
 
-// The design prints "El Rumi / Ahmad Jalaluddin Rumi".
-const callName = computed(() => groom.value?.nickname?.trim() || 'El Rumi')
-const fullName = computed(() => groom.value?.name?.trim() || 'Ahmad Jalaluddin Rumi')
+const parents = computed(() => parentLine(person.value) || fallbackParents.value)
 
-/*
- * 20:616 — the design duplicates the BRIDE's parents line here verbatim, "Putri" and
- * all, rather than writing the groom's. The render is the specification, so the fallback
- * reproduces it; live data replaces it with the groom's own through parentLine().
- * Same leading-space-per-continuation-line shape as 19:546 — see the `pre-wrap` note.
- */
-const PARENTS =
-  'Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih Muhartono Septiana'
-const parents = computed(() => parentLine(groom.value) || PARENTS)
+const handle = computed(() => {
+  if (person.value?.instagram?.trim()) return person.value.instagram.trim()
+  return isGroomFirst.value ? '@Syifahadju' : '@elrumiii'
+})
 
-// `instagram` is a GUESS at the field name — see the same note in BrideSection.
-const handle = computed(() => (groom.value?.instagram || '@elrumiii').trim())
 const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/^@/, '')}`)
+
+// Layer 20:609 is the portrait plate in Slot 2 (x: 91, y: 222, w: 342, h: 253).
+// If Groom is first, swap 20:609 src to Bride's portrait (19-572.webp or custom photo).
+const layers = computed(() => {
+  const photoSrc = isGroomFirst.value
+    ? (bride.value?.photo_url || assets['bride/parts/19-572.webp'])
+    : (groom.value?.photo_url || assets['groom/parts/20-609.webp'])
+
+  return LAYERS.map((l) => (l.id === '20:609' ? { ...l, src: photoSrc } : l))
+})
 </script>
 
 <template>
-  <section :ref="el" class="band groom" :class="{ 'is-in': shown }" aria-labelledby="groom-name">
-    <BandArt :layers="LAYERS" :shown="shown" />
+  <section :ref="el" class="band groom" :class="{ 'is-in': shown }" aria-labelledby="person-2-name">
+    <BandArt :layers="layers" :shown="shown" />
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
 
@@ -55,7 +74,7 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
     <p class="groom__call">{{ callName }}</p>
 
     <!-- 20:614 — the full name, the band's heading. -->
-    <h2 id="groom-name" class="groom__full">{{ fullName }}</h2>
+    <h2 id="person-2-name" class="groom__full">{{ fullName }}</h2>
 
     <!-- 20:616 — three authored lines; the box keeps white-space: pre-wrap. -->
     <p class="groom__parents">{{ parents }}</p>
@@ -65,15 +84,12 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
       <img :src="instagramGlyph" alt="" width="18" height="18" />
       <span>{{ handle }}</span>
     </a>
-
-    <!-- Hand-off to the next band when groom is first -->
-    <p v-if="props.showAnd" class="groom__and" aria-hidden="true">And</p>
   </section>
 </template>
 
 <style scoped>
 .groom {
-  height: calc(v-bind(bandHeight) * var(--px));
+  height: calc(v-bind(BAND_HEIGHT) * var(--px));
 }
 
 /*
@@ -167,18 +183,5 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
   background: #8a643c;
   /* `scale`, not a transform: the band's reveal owns `transform` and would win. */
   scale: 1.04;
-}
-
-.groom__and {
-  --delay: 560ms;
-  z-index: 133;
-  top: calc(770 * var(--px));
-  left: calc(67 * var(--px));
-  width: calc(452 * var(--px));
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: calc(40 * var(--px));
-  line-height: calc(71 * var(--px));
-  color: #aa7a3a;
 }
 </style>
