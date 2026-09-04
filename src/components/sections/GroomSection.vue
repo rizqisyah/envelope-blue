@@ -17,8 +17,14 @@ import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
 import instagramGlyph from '../../assets/bride/instagram.webp'
 
+const props = withDefaults(defineProps<{ showAnd?: boolean }>(), {
+  showAnd: false,
+})
+
 const { el, shown } = useReveal(0.15)
 const { groom } = useWedding()
+
+const bandHeight = computed(() => (props.showAnd ? 1002 : BAND_HEIGHT))
 
 // The design prints "El Rumi / Ahmad Jalaluddin Rumi".
 const callName = computed(() => groom.value?.nickname?.trim() || 'El Rumi')
@@ -59,12 +65,15 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
       <img :src="instagramGlyph" alt="" width="18" height="18" />
       <span>{{ handle }}</span>
     </a>
+
+    <!-- Hand-off to the next band when groom is first -->
+    <p v-if="props.showAnd" class="groom__and" aria-hidden="true">And</p>
   </section>
 </template>
 
 <style scoped>
 .groom {
-  height: calc(v-bind(BAND_HEIGHT) * var(--px));
+  height: calc(v-bind(bandHeight) * var(--px));
 }
 
 /*
@@ -158,5 +167,18 @@ const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/
   background: #8a643c;
   /* `scale`, not a transform: the band's reveal owns `transform` and would win. */
   scale: 1.04;
+}
+
+.groom__and {
+  --delay: 560ms;
+  z-index: 133;
+  top: calc(770 * var(--px));
+  left: calc(67 * var(--px));
+  width: calc(452 * var(--px));
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: calc(40 * var(--px));
+  line-height: calc(71 * var(--px));
+  color: #aa7a3a;
 }
 </style>

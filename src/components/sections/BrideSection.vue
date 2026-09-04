@@ -17,8 +17,14 @@ import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
 import instagramGlyph from '../../assets/bride/instagram.webp'
 
+const props = withDefaults(defineProps<{ showAnd?: boolean }>(), {
+  showAnd: true,
+})
+
 const { el, shown } = useReveal(0.15)
 const { bride } = useWedding()
+
+const bandHeight = computed(() => (props.showAnd ? BAND_HEIGHT : 858))
 
 /*
  * The design prints "Syifa / Syifa Hadju", so an unconfigured render matches the frame.
@@ -70,14 +76,14 @@ const handleUrl = computed(
       <span>{{ handle }}</span>
     </a>
 
-    <!-- 19:543 — the hand-off to the groom band. -->
-    <p class="bride__and" aria-hidden="true">And</p>
+    <!-- 19:543 — the hand-off to the next band. -->
+    <p v-if="props.showAnd" class="bride__and" aria-hidden="true">And</p>
   </section>
 </template>
 
 <style scoped>
 .bride {
-  height: calc(v-bind(BAND_HEIGHT) * var(--px));
+  height: calc(v-bind(bandHeight) * var(--px));
 }
 
 /*

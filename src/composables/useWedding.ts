@@ -161,13 +161,17 @@ export function useWedding() {
   const groom = computed(() => pengantin.value.find((p: any) => p.type === 'groom') || null)
   const bride = computed(() => pengantin.value.find((p: any) => p.type === 'bride') || null)
 
+  const isGroomFirst = computed(() => wedding.value?.order_groom_first !== false)
+
   const coupleNickname = computed(() => {
-    if (wedding.value?.title) return wedding.value.title
     if (groom.value?.name && bride.value?.name) {
-      return `${groom.value.name.split(' ')[0]} & ${bride.value.name.split(' ')[0]}`
+      const gName = groom.value?.nickname?.trim() || groom.value.name.split(' ')[0]
+      const bName = bride.value?.nickname?.trim() || bride.value.name.split(' ')[0]
+      return isGroomFirst.value ? `${gName} & ${bName}` : `${bName} & ${gName}`
     }
+    if (wedding.value?.title) return wedding.value.title
     // Frame 2 prints "Ahmad & Salma", so an unconfigured render matches the design.
-    return 'Ahmad & Salma'
+    return isGroomFirst.value ? 'Ahmad & Salma' : 'Salma & Ahmad'
   })
 
   const quoteText = computed(
@@ -230,6 +234,7 @@ export function useWedding() {
     sendWish,
     groom,
     bride,
+    isGroomFirst,
     coupleNickname,
     hashtag,
     quoteText,

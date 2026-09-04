@@ -25,6 +25,9 @@ import GiftSection from '../sections/GiftSection.vue'
 import WishesSection from '../sections/WishesSection.vue'
 import RsvpSection from '../sections/RsvpSection.vue'
 import ClosingSection from '../sections/ClosingSection.vue'
+import { useWedding } from '../../composables/useWedding'
+
+const { isGroomFirst } = useWedding()
 </script>
 
 <template>
@@ -32,8 +35,14 @@ import ClosingSection from '../sections/ClosingSection.vue'
     <HeroSection />
     <CountdownSection />
     <BismillahSection />
-    <BrideSection />
-    <GroomSection />
+    <template v-if="isGroomFirst">
+      <GroomSection :show-and="true" />
+      <BrideSection :show-and="false" />
+    </template>
+    <template v-else>
+      <BrideSection :show-and="true" />
+      <GroomSection :show-and="false" />
+    </template>
     <QuoteSection />
     <AkadSection />
     <ResepsiSection />
