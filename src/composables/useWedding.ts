@@ -59,11 +59,25 @@ function applyTheme(themeData: any, weddingData: any) {
  */
 let inflight: Promise<void> | null = null
 
+function getGuestCode(): string {
+  if (typeof window === 'undefined') return ''
+  const searchParams = new URLSearchParams(window.location.search)
+  return (
+    searchParams.get('to') ||
+    searchParams.get('k') ||
+    searchParams.get('code') ||
+    searchParams.get('guest') ||
+    ''
+  ).trim()
+}
+
 const slug = ref(resolveSlug())
-const guestCode = ref(typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('to') || '' : '')
+const guestCode = ref(getGuestCode())
 
 async function fetchWeddingData() {
   if (DESIGN_MODE) return
+  slug.value = resolveSlug()
+  guestCode.value = getGuestCode()
   state.value.loading = true
   state.value.error = null
   try {
@@ -144,7 +158,14 @@ const designWishes = ref<any[]>([])
 
 export function useWedding() {
   onMounted(() => {
-    if (DESIGN_MODE || state.value.data) return
+    if (DESIGN_MODE) return
+    const currentCode = getGuestCode()
+    const currentSlug = resolveSlug()
+    if (state.value.data && slug.value === currentSlug && guestCode.value === currentCode) {
+      return
+    }
+    slug.value = currentSlug
+    guestCode.value = currentCode
     inflight ??= fetchWeddingData().finally(() => {
       inflight = null
     })
@@ -153,6 +174,13 @@ export function useWedding() {
   const wedding = computed(() => state.value.data?.wedding ?? null)
   const theme = computed(() => state.value.data?.theme ?? null)
   const guest = computed(() => state.value.data?.guest ?? null)
+  const guestName = computed(() => {
+    if (guest.value?.guest_name) return guest.value.guest_name
+    if (guest.value?.name) return guest.value.name
+    const code = getGuestCode()
+    return code || 'Nama Tamu'
+  })
+  const guestGroup = computed(() => guest.value?.group_name || '')
   /*
    * getHome nests every list under `data.content` -- these were read straight off `data`,
    * so all five were permanently empty. No pixel diff could catch it: an empty list falls
@@ -415,6 +443,8 @@ export function useWedding() {
     wedding,
     theme,
     guest,
+    guestName,
+    guestGroup,
     pengantin,
     acara,
     liveAcara,

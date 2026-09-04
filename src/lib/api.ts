@@ -11,9 +11,7 @@ const DEFAULT_SLUG = import.meta.env.VITE_DEFAULT_SLUG || 'tema-envelop-blue'
  * touches the backend unless live data is enabled.
  */
 export const DESIGN_MODE =
-  !import.meta.env.VITE_LIVE_DATA &&
-  import.meta.env.VITE_DESIGN_MODE !== '0' &&
-  import.meta.env.VITE_DESIGN_MODE !== 'false'
+  import.meta.env.VITE_DESIGN_MODE === '1' || import.meta.env.VITE_DESIGN_MODE === 'true'
 
 export function resolveSlug(): string {
   const searchParams = new URLSearchParams(window.location.search)

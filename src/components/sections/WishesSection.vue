@@ -18,7 +18,7 @@
  * of lines, and the Show more button has to move with them. Laid out at the first card's
  * origin, the design's own two cards and their button land on the render's rows.
  */
-import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/wishes'
 import { useReveal } from '../../composables/useReveal'
@@ -27,7 +27,7 @@ import { formatWishStamp } from '../../lib/format'
 import { DESIGN_MODE } from '../../lib/api'
 
 const { el, shown } = useReveal(0.15)
-const { wishes, sendWish, guest } = useWedding()
+const { wishes, sendWish, guest, guestName } = useWedding()
 
 type Wish = { guest_name?: string; message?: string; created_at?: string | null }
 
@@ -103,16 +103,25 @@ onUnmounted(() => {
   observer = null
 })
 
-const name = ref(guest.value?.guest_name || guest.value?.name || '')
+const name = ref('')
 const message = ref('')
 const sending = ref(false)
 const error = ref('')
 const showSuccessModal = ref(false)
 
+watch(
+  () => guest.value,
+  (g) => {
+    if (g?.guest_name || g?.name) {
+      name.value = String(g.guest_name || g.name)
+    }
+  },
+  { immediate: true },
+)
+
 watchEffect(() => {
-  if (!name.value) {
-    const known = guest.value?.guest_name || guest.value?.name || new URLSearchParams(location.search).get('to')
-    if (known) name.value = String(known)
+  if (!name.value && guestName?.value && guestName.value !== 'Nama Tamu') {
+    name.value = String(guestName.value)
   }
 })
 

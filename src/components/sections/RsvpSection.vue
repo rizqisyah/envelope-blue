@@ -27,10 +27,10 @@ import { useWedding } from '../../composables/useWedding'
 import { DESIGN_MODE, submitRsvp } from '../../lib/api'
 
 const { el, shown } = useReveal(0.15)
-const { slug, guest } = useWedding()
+const { slug, guest, guestName } = useWedding()
 
 const name = ref('')
-const phone = ref('')
+const phone = ref(guest.value?.phone || '')
 const attendance = ref('')
 const guests = ref('')
 const sending = ref(false)
@@ -38,11 +38,23 @@ const error = ref('')
 const done = ref(false)
 const showSuccessModal = ref(false)
 
-/* The `?to=` link or database guest object names the guest, so the field starts filled in for them. */
+/* Sync guest name and phone when guest data finishes loading from API */
+watch(
+  () => guest.value,
+  (g) => {
+    if (g?.guest_name || g?.name) {
+      name.value = String(g.guest_name || g.name)
+    }
+    if (g?.phone && !phone.value) {
+      phone.value = String(g.phone)
+    }
+  },
+  { immediate: true },
+)
+
 watchEffect(() => {
-  if (!name.value) {
-    const known = guest.value?.guest_name || guest.value?.name || new URLSearchParams(location.search).get('to')
-    if (known) name.value = String(known)
+  if (!name.value && guestName.value && guestName.value !== 'Nama Tamu') {
+    name.value = String(guestName.value)
   }
 })
 
