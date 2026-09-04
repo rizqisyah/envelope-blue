@@ -14,23 +14,31 @@
  * and drawn here instead of exported — a border-radius reproduces them exactly where a
  * 68x71 webp only approximates.
  */
+import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/dresscode'
 import { useReveal } from '../../composables/useReveal'
+import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
+const { dresscode } = useWedding()
 
-/*
- * 29:275 / 29:276 / 29:277 / 30:281 — Figma's own fills and x positions, all at y 7115
- * and all 68x71 (an ellipse, not a circle). No API field carries a palette, so these are
- * the design's values full stop.
- */
-const SWATCHES = [
-  { id: '29:275', z: 173, x: 102, fill: '#dbc58e' },
-  { id: '29:276', z: 174, x: 210, fill: '#9bccdb' },
-  { id: '29:277', z: 175, x: 318, fill: '#bde0b5' },
-  { id: '30:281', z: 176, x: 426, fill: '#edcbe3' },
+const BASE_SWATCHES = [
+  { id: '29:275', z: 173, x: 102, defaultFill: '#dbc58e' },
+  { id: '29:276', z: 174, x: 210, defaultFill: '#9bccdb' },
+  { id: '29:277', z: 175, x: 318, defaultFill: '#bde0b5' },
+  { id: '30:281', z: 176, x: 426, defaultFill: '#edcbe3' },
 ]
+
+const swatches = computed(() => {
+  const dynamicColors = dresscode.value?.colors || []
+  return BASE_SWATCHES.map((s, idx) => ({
+    ...s,
+    fill: dynamicColors[idx] || s.defaultFill,
+  }))
+})
+
+const copy = computed(() => dresscode.value?.note || 'Kindly dress in shades of our wedding palette.')
 </script>
 
 <template>
@@ -49,7 +57,7 @@ const SWATCHES = [
 
     <!-- The palette. Decorative: the line below names what it means. -->
     <div
-      v-for="(s, i) in SWATCHES"
+      v-for="(s, i) in swatches"
       :key="s.id"
       class="dresscode__swatch"
       aria-hidden="true"
@@ -62,7 +70,7 @@ const SWATCHES = [
     />
 
     <!-- 29:279 — the instruction. -->
-    <p class="dresscode__copy">Kindly dress in shades of our wedding palette.</p>
+    <p class="dresscode__copy">{{ copy }}</p>
   </section>
 </template>
 

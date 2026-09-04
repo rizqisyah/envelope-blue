@@ -15,8 +15,10 @@
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/bismillah'
 import { useReveal } from '../../composables/useReveal'
+import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
+const { quoteArabic } = useWedding()
 
 /*
  * 19:558 — the design breaks this line itself, and the break has to live in a script
@@ -34,7 +36,7 @@ const GREETING = "Assalamu'alaikum Warahmatullahi Wabarakatuh\nWith grateful hea
     <BandArt :layers="LAYERS" :shown="shown" />
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
-    <p id="basmala" class="bismillah__basmala" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+    <p id="basmala" class="bismillah__basmala" lang="ar" dir="rtl">{{ quoteArabic || 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' }}</p>
 
     <!-- 19:558 — the design folds the line break itself; the box keeps white-space: pre-line. -->
     <p class="bismillah__greeting">{{ GREETING }}</p>

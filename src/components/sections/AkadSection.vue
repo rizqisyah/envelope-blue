@@ -31,7 +31,7 @@ const { acara } = useWedding()
  * template 5's AcaraSection settled on (`name`, `event_date`, `event_time`,
  * `location_name`, `address`, `maps_url`); getHome's rows are undocumented here.
  */
-const event = computed(() => (acara.value as any[]).find((a) => a?.name || a?.event_date) || null)
+const event = computed(() => (acara.value as any[]).find((a) => a?.title || a?.name || a?.event_date) || null)
 
 /*
  * Design copy is printed ONLY when there is no live event. Topping a live event up with
@@ -55,7 +55,7 @@ const card = computed(() => {
   }
   const when = formatEventDate(e.event_date)
   return {
-    title: e.name || 'Akad Nikah',
+    title: e.title || e.name || 'Akad Nikah',
     note: '',
     date: when ? `${when.weekday},\n${when.date}` : '',
     time: formatEventTime(e.event_time) || '',

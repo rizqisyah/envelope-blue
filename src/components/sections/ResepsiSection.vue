@@ -22,7 +22,7 @@ import { formatEventDate, formatEventDateId, formatEventTime } from '../../lib/f
 const { el, shown } = useReveal(0.15)
 const { acara } = useWedding()
 
-const live = computed(() => (acara.value as any[]).filter((a) => a?.name || a?.event_date))
+const live = computed(() => (acara.value as any[]).filter((a) => a?.title || a?.name || a?.event_date))
 
 /*
  * The reception is the SECOND acara entry. All or nothing, never a mix: once the API
@@ -48,7 +48,7 @@ const card = computed(() => {
   const e = event.value
   const when = formatEventDate(e?.event_date)
   return {
-    title: e?.name || 'Resepsi',
+    title: e?.title || e?.name || 'Resepsi',
     date: when ? `${when.weekday},\n${when.date}` : '',
     time: formatEventTime(e?.event_time) || '',
     venue: e?.location_name || '',
