@@ -266,16 +266,37 @@ export function useWedding() {
       'وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةًۗ اِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ',
   )
 
+  const bismillahGreeting = computed(
+    () =>
+      parsedOverride.value?.bismillah_greeting ||
+      parsedOverride.value?.words?.bismillah_greeting ||
+      "Assalamu'alaikum Warahmatullahi Wabarakatuh\nWith grateful hearts, we begin this sacred",
+  )
+
+  const bismillahHighlight = computed(
+    () =>
+      parsedOverride.value?.bismillah_highlight ||
+      parsedOverride.value?.words?.bismillah_highlight ||
+      'journey together',
+  )
+
   const dresscode = computed(() => {
     const ov = parsedOverride.value
+    let colors = Array.isArray(ov?.dresscode?.colors)
+      ? ov.dresscode.colors.filter((c: any) => typeof c === 'string' && c.trim() !== '')
+      : []
+    if (!ov?.dresscode || (!ov.dresscode.colors && colors.length === 0)) {
+      colors = ['#dbc58e', '#9bccdb', '#bde0b5', '#edcbe3']
+    }
+    const enabled = ov?.dresscode?.enabled !== false && ov?.dresscode?.show !== false
     return {
-      note: ov?.dresscode?.note || 'Attire: Formal / Traditional Elegance',
-      colors:
-        Array.isArray(ov?.dresscode?.colors) && ov.dresscode.colors.length === 4
-          ? ov.dresscode.colors
-          : ['#dbc58e', '#9bccdb', '#bde0b5', '#edcbe3'],
+      enabled,
+      note: ov?.dresscode?.note !== undefined ? ov.dresscode.note : 'Attire: Formal / Traditional Elegance',
+      colors,
     }
   })
+
+  const showDresscode = computed(() => dresscode.value.enabled)
 
   const liveAcara = computed(() =>
     (acara.value as any[]).filter((a) => a?.title || a?.name || a?.event_date),
@@ -283,6 +304,108 @@ export function useWedding() {
   const hasMultipleAcara = computed(
     () => liveAcara.value.length === 0 || liveAcara.value.length > 1,
   )
+
+  const videoPrewed = computed(
+    () =>
+      parsedOverride.value?.words?.video_prewed ||
+      parsedOverride.value?.video_prewed ||
+      '',
+  )
+
+  const videoUrl = computed(
+    () =>
+      wedding.value?.video_url ||
+      parsedOverride.value?.words?.video_url ||
+      parsedOverride.value?.words?.video_opening ||
+      parsedOverride.value?.video_opening ||
+      '',
+  )
+
+  const musicUrl = computed(
+    () =>
+      wedding.value?.music_url ||
+      parsedOverride.value?.words?.music_url ||
+      'https://qinvi-worker.kesone01.workers.dev/Music/Brian McKnight - Back At One (Lyrics) (mp3cut.net).mp3',
+  )
+
+  const hasGalleryPhotos = computed(() => {
+    const list = ((gallery.value as any[]) || []).filter(
+      (g) => g?.image_url && String(g.image_url).trim() !== '',
+    )
+    if (list.length > 0) return true
+    if (DESIGN_MODE && !wedding.value) return true
+    return false
+  })
+
+  const hasPrewedVideo = computed(
+    () => !!videoPrewed.value && String(videoPrewed.value).trim() !== '',
+  )
+
+  const hasGallerySection = computed(
+    () => hasGalleryPhotos.value || hasPrewedVideo.value,
+  )
+
+  const hasGiftSection = computed(() => {
+    const list = ((gift.value as any[]) || []).filter(
+      (g) => (g?.bank_name || g?.account_number || g?.account_name),
+    )
+    if (list.length > 0) return true
+    if (DESIGN_MODE && !wedding.value) return true
+    return false
+  })
+
+  const customHeroPhoto = computed(() => {
+    return (
+      parsedOverride.value?.images?.foto_mempelai_setelah_buka ||
+      theme.value?.theme_config?.images?.foto_mempelai_setelah_buka ||
+      wedding.value?.foto_mempelai_setelah_buka ||
+      ''
+    )
+  })
+
+  const customSpousePhoto = computed(() => {
+    return (
+      wedding.value?.image_spouse ||
+      wedding.value?.['image-spouse'] ||
+      content.value?.image_spouse ||
+      parsedOverride.value?.images?.image_spouse ||
+      parsedOverride.value?.images?.foto_pasangan ||
+      theme.value?.theme_config?.images?.image_spouse ||
+      ''
+    )
+  })
+
+  const DEFAULT_CLOSING_MESSAGE =
+    'Thank You !\n\nAnd So, Our Story Begins\nWith hearts full of love, we look forward to celebrating this beautiful beginning with you.\nWith Love,'
+
+  const closingTitle = computed(() => {
+    return (
+      parsedOverride.value?.words?.footer_title ||
+      parsedOverride.value?.words?.closing_title ||
+      parsedOverride.value?.words?.thank_you_title ||
+      ''
+    )
+  })
+
+  const closingMessage = computed(() => {
+    const raw =
+      parsedOverride.value?.words?.footer_message ||
+      parsedOverride.value?.words?.closing_message ||
+      parsedOverride.value?.words?.footer_message_en ||
+      wedding.value?.pesan_penutup ||
+      wedding.value?.closing_message
+    return raw && typeof raw === 'string' && raw.trim() ? raw.trim() : DEFAULT_CLOSING_MESSAGE
+  })
+
+  const closingSignature = computed(() => {
+    return (
+      parsedOverride.value?.words?.closing_signature ||
+      parsedOverride.value?.words?.footer_signature ||
+      coupleNickname.value ||
+      wedding.value?.title ||
+      'Ahmad & Salma'
+    )
+  })
 
   return {
     slug,
@@ -297,7 +420,12 @@ export function useWedding() {
     liveAcara,
     hasMultipleAcara,
     gallery,
+    hasGalleryPhotos,
+    hasPrewedVideo,
+    hasGallerySection,
     gift,
+    hasGift: hasGiftSection,
+    hasGiftSection,
     wishes,
     sendWish,
     groom,
@@ -308,7 +436,18 @@ export function useWedding() {
     quoteText,
     quoteVerse,
     quoteArabic,
+    bismillahGreeting,
+    bismillahHighlight,
     dresscode,
+    showDresscode,
+    videoPrewed,
+    videoUrl,
+    musicUrl,
+    closingTitle,
+    closingMessage,
+    closingSignature,
+    customHeroPhoto,
+    customSpousePhoto,
     refetch: fetchWeddingData,
   }
 }

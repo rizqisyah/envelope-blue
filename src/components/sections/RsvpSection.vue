@@ -19,12 +19,12 @@
  * reason. In design mode it throws and the form reports it, which is the honest thing for
  * a template that is not wired to a wedding yet.
  */
-import { onMounted, ref } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/rsvp'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
-import { submitRsvp } from '../../lib/api'
+import { DESIGN_MODE, submitRsvp } from '../../lib/api'
 
 const { el, shown } = useReveal(0.15)
 const { slug, guest } = useWedding()
@@ -36,11 +36,23 @@ const guests = ref('')
 const sending = ref(false)
 const error = ref('')
 const done = ref(false)
+const showSuccessModal = ref(false)
 
-/* The `?to=` link names the guest, so the field starts filled in for them. */
-onMounted(() => {
-  const known = guest.value?.name || new URLSearchParams(location.search).get('to')
-  if (known) name.value = String(known)
+/* The `?to=` link or database guest object names the guest, so the field starts filled in for them. */
+watchEffect(() => {
+  if (!name.value) {
+    const known = guest.value?.guest_name || guest.value?.name || new URLSearchParams(location.search).get('to')
+    if (known) name.value = String(known)
+  }
+})
+
+/* Reset or initialize guests when attendance changes */
+watch(attendance, (val) => {
+  if (val === 'hadir') {
+    if (!guests.value) guests.value = '1'
+  } else {
+    guests.value = ''
+  }
 })
 
 /*
@@ -61,14 +73,19 @@ async function send() {
   }
   sending.value = true
   try {
-    await submitRsvp(slug.value, {
-      guest_name: name.value.trim(),
-      phone: phone.value.trim(),
-      attendance_status: attendance.value,
-      // The design asks for a count; an absent one means one seat for the guest named.
-      guest_count: attendance.value === 'hadir' ? Number(guests.value) || 1 : 0,
-    })
+    if (DESIGN_MODE) {
+      await new Promise((r) => setTimeout(r, 400))
+    } else {
+      await submitRsvp(slug.value, {
+        guest_name: name.value.trim(),
+        phone: phone.value.trim(),
+        attendance_status: attendance.value,
+        // The design asks for a count; an absent one means one seat for the guest named.
+        guest_count: attendance.value === 'hadir' ? Number(guests.value) || 1 : 0,
+      })
+    }
     done.value = true
+    showSuccessModal.value = true
   } catch (err: any) {
     error.value = err?.message || 'Gagal mengirim. Coba lagi.'
   } finally {
@@ -101,18 +118,53 @@ async function send() {
         <option value="hadir">Ya, saya akan hadir</option>
         <option value="tidak">Maaf, saya berhalangan</option>
       </select>
-      <input
-        v-model="guests"
-        class="rsvp__field"
-        type="number"
-        min="1"
-        placeholder="Number of Guests:"
-      />
+      <Transition name="rsvp-field">
+        <input
+          v-if="attendance === 'hadir'"
+          v-model="guests"
+          class="rsvp__field"
+          type="number"
+          min="1"
+          placeholder="Number of Guests:"
+        />
+      </Transition>
       <button class="rsvp__send" type="submit" :disabled="sending">
         {{ sending ? 'Mengirim…' : done ? 'Terkirim' : 'Send' }}
       </button>
       <p v-if="error" class="rsvp__error" role="alert">{{ error }}</p>
     </form>
+
+    <!-- Success Modal Popup -->
+    <Teleport to="body">
+      <Transition name="rsvp-modal">
+        <div
+          v-if="showSuccessModal"
+          class="rsvp-modal__overlay"
+          role="dialog"
+          aria-modal="true"
+          @click.self="showSuccessModal = false"
+        >
+          <div class="rsvp-modal__card">
+            <div class="rsvp-modal__icon">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 class="rsvp-modal__title">Konfirmasi Diterima!</h3>
+            <p class="rsvp-modal__desc">
+              {{ attendance === 'hadir' ? 'Terima kasih atas konfirmasi kehadiran Anda. Kami sangat menantikan kehadiran Anda di hari bahagia kami.' : 'Terima kasih telah mengonfirmasi. Doa restu Anda sangat berarti bagi kami.' }}
+            </p>
+            <button
+              type="button"
+              class="rsvp-modal__btn"
+              @click="showSuccessModal = false"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
@@ -258,8 +310,120 @@ async function send() {
   color: #a3401f;
 }
 
+/* Transition for Number of Guests field */
+.rsvp-field-enter-active,
+.rsvp-field-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.rsvp-field-enter-from,
+.rsvp-field-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Popup Modal Styles */
+.rsvp-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.rsvp-modal__card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 20px;
+  padding: 32px 24px 24px;
+  text-align: center;
+  box-shadow: 0 20px 40px -15px rgba(30, 60, 114, 0.25);
+  border: 1px solid rgba(170, 122, 58, 0.15);
+  position: relative;
+}
+
+.rsvp-modal__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #eef6f9;
+  color: #455d69;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #b2d3e2;
+}
+
+.rsvp-modal__title {
+  font-family: var(--font-display, serif);
+  font-size: 26px;
+  color: #aa7a3a;
+  margin: 0 0 10px;
+  line-height: 1.2;
+}
+
+.rsvp-modal__desc {
+  font-family: var(--font-wish, serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: #455d69;
+  margin: 0 0 24px;
+}
+
+.rsvp-modal__btn {
+  display: block;
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: #b2d3e2;
+  color: #445c68;
+  font-family: var(--font-wish, serif);
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 200ms ease, transform 150ms ease;
+}
+
+.rsvp-modal__btn:hover {
+  background: #9cc4d6;
+  transform: translateY(-1px);
+}
+
+.rsvp-modal__btn:active {
+  transform: translateY(0);
+}
+
+.rsvp-modal-enter-active,
+.rsvp-modal-leave-active {
+  transition: opacity 250ms ease;
+}
+
+.rsvp-modal-enter-from,
+.rsvp-modal-leave-to {
+  opacity: 0;
+}
+
+.rsvp-modal-enter-active .rsvp-modal__card,
+.rsvp-modal-leave-active .rsvp-modal__card {
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms ease;
+}
+
+.rsvp-modal-enter-from .rsvp-modal__card,
+.rsvp-modal-leave-to .rsvp-modal__card {
+  opacity: 0;
+  transform: scale(0.9) translateY(12px);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .rsvp__send {
+  .rsvp__send,
+  .rsvp-modal__btn {
     transition: none;
   }
 }

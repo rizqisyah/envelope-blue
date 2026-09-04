@@ -8,6 +8,7 @@
  * must be regenerated rather than hand-nudged. Only the three text nodes live here,
  * because they stay live so useWedding() can drive them.
  */
+import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/hero'
 import { useFitText } from '../../composables/useFitText'
@@ -27,15 +28,32 @@ import { useWedding } from '../../composables/useWedding'
  * fade-in instead of after it.
  */
 const { el, shown } = useReveal(0, '0px 0px 100% 0px')
-const { coupleNickname, hashtag } = useWedding()
+const { coupleNickname, hashtag, customHeroPhoto } = useWedding()
 
 // The one box whose content is live and can run long — see the rule on .hero__couple.
 const fitCouple = useFitText()
+
+const skipLayers = computed(() => (customHeroPhoto.value ? ['15:94'] : []))
 </script>
 
 <template>
   <section :ref="el" class="band hero" :class="{ 'is-in': shown }">
-    <BandArt :layers="LAYERS" :shown="shown" />
+    <BandArt :layers="LAYERS" :skip="skipLayers" :shown="shown" />
+
+    <!-- Custom Hero Photo (Gambar 1: foto setelah buka undangan) -->
+    <div
+      v-if="customHeroPhoto"
+      class="hero__photo-wrapper"
+      :class="{ 'is-in': shown }"
+    >
+      <img
+        class="hero__photo"
+        :src="customHeroPhoto"
+        alt="Foto Mempelai"
+        loading="eager"
+        decoding="async"
+      />
+    </div>
 
     <!--
       z-index on each of these is the node's own GLOBAL Figma child order, not a flat
@@ -58,6 +76,52 @@ const fitCouple = useFitText()
  */
 .hero {
   height: calc(v-bind(BAND_HEIGHT) * var(--px));
+}
+
+/*
+ * Custom Hero Photo: masked to the exact frame shape via 15-91.webp
+ * Sitting at z-index: 55 (between 15:91 backing plate and 15:95 frame overlay).
+ */
+.hero__photo-wrapper {
+  position: absolute;
+  z-index: 55;
+  top: calc(409 * var(--px));
+  left: calc(80 * var(--px));
+  width: calc(437 * var(--px));
+  height: calc(688 * var(--px));
+  overflow: hidden;
+  -webkit-clip-path: polygon(24% 1%, 76% 1%, 98.8% 15%, 98.8% 82.5%, 97% 85%, 90% 88.5%, 81% 91.5%, 67% 93.8%, 58.5% 96%, 50% 98.8%, 41.5% 96%, 33% 93.8%, 19% 91.5%, 10% 88.5%, 3% 85%, 1.2% 82.5%, 1.2% 15%);
+  clip-path: polygon(24% 1%, 76% 1%, 98.8% 15%, 98.8% 82.5%, 97% 85%, 90% 88.5%, 81% 91.5%, 67% 93.8%, 58.5% 96%, 50% 98.8%, 41.5% 96%, 33% 93.8%, 19% 91.5%, 10% 88.5%, 3% 85%, 1.2% 82.5%, 1.2% 15%);
+  visibility: hidden;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.hero__photo-wrapper.is-in {
+  visibility: visible;
+  animation: hero-photo-in 2700ms cubic-bezier(0.16, 1, 0.28, 1) backwards;
+  animation-delay: 440ms;
+}
+
+.hero__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  -webkit-clip-path: polygon(24% 1%, 76% 1%, 98.8% 15%, 98.8% 82.5%, 97% 85%, 90% 88.5%, 81% 91.5%, 67% 93.8%, 58.5% 96%, 50% 98.8%, 41.5% 96%, 33% 93.8%, 19% 91.5%, 10% 88.5%, 3% 85%, 1.2% 82.5%, 1.2% 15%);
+  clip-path: polygon(24% 1%, 76% 1%, 98.8% 15%, 98.8% 82.5%, 97% 85%, 90% 88.5%, 81% 91.5%, 67% 93.8%, 58.5% 96%, 50% 98.8%, 41.5% 96%, 33% 93.8%, 19% 91.5%, 10% 88.5%, 3% 85%, 1.2% 82.5%, 1.2% 15%);
+}
+
+@keyframes hero-photo-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(44 * var(--px)), 0) scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /*

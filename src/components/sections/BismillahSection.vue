@@ -18,17 +18,7 @@ import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
-const { quoteArabic } = useWedding()
-
-/*
- * 19:558 — the design breaks this line itself, and the break has to live in a script
- * constant. Written inline in the template it does not survive: Vue's parser folds the
- * source newline to a space, so `white-space: pre-line` has nothing left to preserve and
- * the sentence wraps wherever it happens to fit. That is exactly what the first pass did
- * — and it silently invalidates every width measured off it, because the measurement is
- * then of a wrap point rather than of the design's own line.
- */
-const GREETING = "Assalamu'alaikum Warahmatullahi Wabarakatuh\nWith grateful hearts, we begin this sacred"
+const { quoteArabic, bismillahGreeting, bismillahHighlight } = useWedding()
 </script>
 
 <template>
@@ -39,10 +29,10 @@ const GREETING = "Assalamu'alaikum Warahmatullahi Wabarakatuh\nWith grateful hea
     <p id="basmala" class="bismillah__basmala" lang="ar" dir="rtl">{{ quoteArabic || 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' }}</p>
 
     <!-- 19:558 — the design folds the line break itself; the box keeps white-space: pre-line. -->
-    <p class="bismillah__greeting">{{ GREETING }}</p>
+    <p class="bismillah__greeting">{{ bismillahGreeting }}</p>
 
     <!-- 19:569 — the sentence's last line, set as its own node in the design. -->
-    <p class="bismillah__script">journey together</p>
+    <p class="bismillah__script">{{ bismillahHighlight }}</p>
   </section>
 </template>
 

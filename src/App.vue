@@ -2,6 +2,8 @@
 import { computed, nextTick, onMounted, ref, watchEffect } from 'vue'
 import CoverSection from './components/cover/CoverSection.vue'
 import InviteBody from './components/invite/InviteBody.vue'
+import BottomNav from './components/sections/BottomNav.vue'
+import VideoSection from './components/sections/VideoSection.vue'
 import { usePreloadAssets } from './composables/usePreloadAssets'
 import { useWedding } from './composables/useWedding'
 
@@ -19,8 +21,9 @@ const contentVisible = ref(false)
  * the design instead of whatever wedding the default slug points at.
  */
 const guestName = computed(
-  () => new URLSearchParams(location.search).get('to') || guest.value?.name || 'Nama Tamu',
+  () => guest.value?.guest_name || guest.value?.name || new URLSearchParams(location.search).get('to') || 'Nama Tamu',
 )
+const guestGroup = computed(() => guest.value?.group_name || '')
 const coupleName = coupleNickname
 
 const leftBackgroundStyle = computed(() => {
@@ -98,6 +101,7 @@ watchEffect(() => {
         <CoverSection
           v-if="!isOpen"
           :guest-name="guestName"
+          :guest-group="guestGroup"
           :couple-name="coupleName"
           :ready="coverLoaded"
           @open="openInvitation"
@@ -110,8 +114,11 @@ watchEffect(() => {
         class="invitation-content"
         :class="{ 'is-visible': contentVisible }"
       >
+        <VideoSection />
         <InviteBody />
       </div>
+
+      <BottomNav v-if="isOpen" />
     </div>
   </main>
 </template>

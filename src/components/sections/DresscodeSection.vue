@@ -21,20 +21,13 @@ import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
-const { dresscode } = useWedding()
-
-const BASE_SWATCHES = [
-  { id: '29:275', z: 173, x: 102, defaultFill: '#dbc58e' },
-  { id: '29:276', z: 174, x: 210, defaultFill: '#9bccdb' },
-  { id: '29:277', z: 175, x: 318, defaultFill: '#bde0b5' },
-  { id: '30:281', z: 176, x: 426, defaultFill: '#edcbe3' },
-]
+const { dresscode, showDresscode } = useWedding()
 
 const swatches = computed(() => {
   const dynamicColors = dresscode.value?.colors || []
-  return BASE_SWATCHES.map((s, idx) => ({
-    ...s,
-    fill: dynamicColors[idx] || s.defaultFill,
+  return dynamicColors.map((color: string, idx: number) => ({
+    id: `swatch-${idx}`,
+    fill: color,
   }))
 })
 
@@ -52,25 +45,27 @@ const copy = computed(() => dresscode.value?.note || 'Kindly dress in shades of 
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
 
-    <!-- 29:236 — the heading. -->
-    <h2 id="dresscode-title" class="dresscode__title">Dresscode</h2>
+    <!-- Only the dresscode content (Heading, Swatches, Copy) disappears when deactivated -->
+    <template v-if="showDresscode">
+      <!-- 29:236 — the heading. -->
+      <h2 id="dresscode-title" class="dresscode__title">Dresscode</h2>
 
-    <!-- The palette. Decorative: the line below names what it means. -->
-    <div
-      v-for="(s, i) in swatches"
-      :key="s.id"
-      class="dresscode__swatch"
-      aria-hidden="true"
-      :style="{
-        zIndex: s.z,
-        left: `calc(${s.x} * var(--px))`,
-        background: s.fill,
-        '--delay': `${200 + i * 90}ms`,
-      }"
-    />
+      <!-- The palette. Flex container auto-centers 1, 2, 3, 4, 5+ colors seamlessly -->
+      <div v-if="swatches.length > 0" class="dresscode__palette" aria-hidden="true">
+        <div
+          v-for="(s, i) in swatches"
+          :key="s.id"
+          class="dresscode__swatch"
+          :style="{
+            background: s.fill,
+            '--delay': `${200 + Number(i) * 90}ms`,
+          }"
+        />
+      </div>
 
-    <!-- 29:279 — the instruction. -->
-    <p class="dresscode__copy">{{ copy }}</p>
+      <!-- 29:279 — the instruction. -->
+      <p class="dresscode__copy">{{ copy }}</p>
+    </template>
   </section>
 </template>
 
@@ -96,12 +91,28 @@ const copy = computed(() => dresscode.value?.note || 'Kindly dress in shades of 
   color: #aa7a3a;
 }
 
+/* Palette container auto-centers any number of swatches, matching Figma's 40px gap */
+.dresscode__palette {
+  position: absolute;
+  top: calc(81 * var(--px));
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(40 * var(--px));
+  flex-wrap: wrap;
+  z-index: 175;
+  pointer-events: none;
+}
+
 /* 68 x 71 at y 7115, band-local 81. Ellipses, so 50% both ways rather than a circle. */
 .dresscode__swatch {
-  top: calc(81 * var(--px));
   width: calc(68 * var(--px));
   height: calc(71 * var(--px));
   border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 calc(2 * var(--px)) calc(6 * var(--px)) rgba(0, 0, 0, 0.08);
 }
 
 /* 29:279 — Ibarra Real Nova 20/30, #4e685c. +1 is the face's line box at 20px. */

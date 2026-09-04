@@ -17,17 +17,16 @@ import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/gift'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
+import { DESIGN_MODE } from '../../lib/api'
 
 const { el, shown } = useReveal(0.15)
-const { gift } = useWedding()
+const { gift, wedding } = useWedding()
 
 type Card = { bank: string; number: string; owner: string }
 
 /*
  * The design prints the SAME account twice — its mock data, not a mistake to correct.
- * An unconfigured render therefore matches the frame; live rows replace both.
- * `bank_name` / `account_number` / `account_name` are the field names template 5's gift
- * band settled on; getHome's `rekening` rows are undocumented here.
+ * In standalone design mode without live wedding data, this matches the Figma frame.
  */
 const DESIGN: Card[] = [
   { bank: 'Bank Bca (014)', number: '7402004234', owner: 'Alexander James Whitmore' },
@@ -35,16 +34,38 @@ const DESIGN: Card[] = [
 ]
 
 const cards = computed<Card[]>(() => {
-  const live = (gift.value as any[])
+  const live = ((gift.value as any[]) || [])
     .map((g) => ({
       bank: (g?.bank_name || '').trim(),
       number: (g?.account_number || '').trim(),
       owner: (g?.account_name || '').trim(),
     }))
-    .filter((c) => c.number || c.owner)
-  // Two slots: the arch behind them draws two cards, so a third account has nowhere to
-  // go and falls off the end rather than painting past the last one.
-  return live.length ? live.slice(0, 2) : DESIGN
+    .filter((c) => c.number || c.owner || c.bank)
+  if (live.length) return live
+  if (DESIGN_MODE && !wedding.value) return DESIGN
+  return []
+})
+
+/*
+ * Dynamic band height: allows 1, 2, 3, 4, or more accounts dynamically.
+ * Base height is BAND_HEIGHT (700). Every card beyond 2 expands the section by CARD_GAP.
+ */
+const CARD_GAP = 204
+
+const bandHeight = computed(() => {
+  return BAND_HEIGHT + Math.max(0, cards.value.length - 2) * CARD_GAP
+})
+
+const dynamicLayers = computed(() => {
+  const extraH = Math.max(0, cards.value.length - 2) * CARD_GAP
+  if (extraH === 0) return LAYERS
+  return LAYERS.map((layer) => {
+    // Shift the bottom floral decoration layers as the section expands
+    if (layer.id === '31:422' || layer.id === '31:423') {
+      return { ...layer, y: layer.y + extraH }
+    }
+    return layer
+  })
 })
 
 /*
@@ -66,22 +87,26 @@ async function copy(i: number, text: string) {
 }
 
 /*
- * Both cards are the same six boxes 204px apart — 31:390/397/401/404/408 and
- * 31:432/434/436/437/442 pair up exactly — so the offset drives the layout rather than
- * ten hand-written rules.
+ * Centered layout over the 596-width canvas (center at 298).
+ * A generous 396px width ensures long bank names and owner names never get clipped.
  */
-const CARD_GAP = 204
 const ROWS = [
-  { key: 'bank', z: 195, top: 264, left: 218, width: 160, cls: 'gift__bank' },
-  { key: 'number', z: 196, top: 294, left: 243, width: 110, cls: 'gift__number' },
-  { key: 'ownerLabel', z: 197, top: 323, left: 248.5, width: 107, cls: 'gift__owner-label' },
-  { key: 'owner', z: 198, top: 348, left: 178.5, width: 239, cls: 'gift__owner' },
+  { key: 'bank', z: 195, top: 264, left: 100, width: 396, cls: 'gift__bank' },
+  { key: 'number', z: 196, top: 294, left: 100, width: 396, cls: 'gift__number' },
+  { key: 'ownerLabel', z: 197, top: 323, left: 100, width: 396, cls: 'gift__owner-label' },
+  { key: 'owner', z: 198, top: 348, left: 100, width: 396, cls: 'gift__owner' },
 ] as const
 </script>
 
 <template>
-  <section :ref="el" class="band gift" :class="{ 'is-in': shown }" aria-labelledby="gift-title">
-    <BandArt :layers="LAYERS" :shown="shown" />
+  <section
+    v-if="cards.length > 0"
+    :ref="el"
+    class="band gift"
+    :class="{ 'is-in': shown }"
+    aria-labelledby="gift-title"
+  >
+    <BandArt :layers="dynamicLayers" :shown="shown" />
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
 
@@ -94,31 +119,32 @@ const ROWS = [
       so below.
     </p>
 
+    <!-- Dynamically rendered cards (1, 2, 3, 4, or more) -->
     <template v-for="(card, i) in cards" :key="i">
       <p
         v-for="row in ROWS"
         :key="row.key"
         :class="row.cls"
         :style="{
-          zIndex: row.z + i,
+          zIndex: row.z + i * 10,
           top: `calc(${row.top + i * CARD_GAP} * var(--px))`,
           left: `calc(${row.left} * var(--px))`,
           width: `calc(${row.width} * var(--px))`,
-          '--delay': `${300 + i * 260 + ROWS.indexOf(row) * 60}ms`,
+          '--delay': `${300 + i * 200 + ROWS.indexOf(row) * 50}ms`,
         }"
       >
         {{ row.key === 'ownerLabel' ? 'Account Owner' : card[row.key as keyof Card] }}
       </p>
 
-      <!-- The plate the dump never emitted, plus 31:408 / 31:442 on top of it. -->
+      <!-- The Copy pill button -->
       <button
         type="button"
         class="gift__copy"
         aria-live="polite"
         :style="{
-          zIndex: 199 + i,
+          zIndex: 199 + i * 10,
           top: `calc(${385 + i * CARD_GAP} * var(--px))`,
-          '--delay': `${300 + i * 260 + 300}ms`,
+          '--delay': `${300 + i * 200 + 250}ms`,
         }"
         @click="copy(i, card.number)"
       >
@@ -130,7 +156,8 @@ const ROWS = [
 
 <style scoped>
 .gift {
-  height: calc(v-bind(BAND_HEIGHT) * var(--px));
+  height: calc(v-bind(bandHeight) * var(--px));
+  transition: height 300ms ease;
 }
 
 /* 31:415 — Roben Elegante Script 32, #aa7a3a. Box's own 57 for line-height. */
@@ -184,6 +211,7 @@ const ROWS = [
   font-weight: 600;
   font-size: calc(20 * var(--px));
   line-height: calc(30 * var(--px));
+  text-align: center;
   color: #623c2a;
 }
 
@@ -193,6 +221,7 @@ const ROWS = [
   font-weight: 400;
   font-size: calc(16 * var(--px));
   line-height: calc(20 * var(--px));
+  text-align: center;
   color: #4e685c;
 }
 

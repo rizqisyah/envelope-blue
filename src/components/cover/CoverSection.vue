@@ -3,7 +3,7 @@ import { COVER_LAYERS } from '../../lib/coverLayers'
 import { useFitText } from '../../composables/useFitText'
 
 // `ready` gates the reveal on the layers being decoded — see App.vue.
-defineProps<{ guestName: string; coupleName: string; ready: boolean }>()
+defineProps<{ guestName: string; guestGroup?: string; coupleName: string; ready: boolean }>()
 defineEmits<{ open: [] }>()
 
 /*
@@ -43,9 +43,10 @@ const fitCouple = useFitText()
       <p class="cover__eyebrow">The Wedding Of</p>
       <h1 :ref="fitCouple" class="cover__couple">{{ coupleName }}</h1>
 
-      <!-- 28:223 / 32:460 — the two lines of Frame 7, placed directly. -->
+      <!-- 28:223 / 32:460 — the lines of Frame 7, placed directly. -->
       <p class="cover__dear">kepada Yth.</p>
       <p class="cover__guest">{{ guestName }}</p>
+      <p v-if="guestGroup" class="cover__group">{{ guestGroup }}</p>
 
       <!--
         The design prints no "click to open" label at all, so the whole card is the hit
@@ -137,7 +138,8 @@ const fitCouple = useFitText()
 .cover__eyebrow,
 .cover__couple,
 .cover__dear,
-.cover__guest {
+.cover__guest,
+.cover__group {
   animation: rise 2400ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0ms) backwards;
 }
 
@@ -209,6 +211,22 @@ const fitCouple = useFitText()
   font-size: calc(28 * var(--px));
   line-height: calc(62 * var(--px));
   color: var(--ink-blue);
+}
+
+.cover__group {
+  --delay: 1750ms;
+  z-index: 7;
+  top: calc(940 * var(--px));
+  left: calc(112 * var(--px));
+  width: calc(373 * var(--px));
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: calc(16 * var(--px));
+  letter-spacing: calc(1.5 * var(--px));
+  text-transform: uppercase;
+  line-height: calc(24 * var(--px));
+  color: var(--ink-blue);
+  opacity: 0.85;
 }
 
 /*

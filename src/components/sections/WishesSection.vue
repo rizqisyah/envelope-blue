@@ -18,7 +18,7 @@
  * of lines, and the Show more button has to move with them. Laid out at the first card's
  * origin, the design's own two cards and their button land on the render's rows.
  */
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/wishes'
 import { useReveal } from '../../composables/useReveal'
@@ -33,9 +33,7 @@ type Wish = { guest_name?: string; message?: string; created_at?: string | null 
 
 /*
  * Frame 1 prints the same card twice — its mock data, reproduced so an unconfigured
- * render matches. A third is added so the design fallback's "Show more" reveals
- * something: the button is part of the design's layout, and one that does nothing is
- * worse than no button.
+ * render matches.
  */
 const DESIGN_MESSAGE =
   'Wishing you a lifetime filled with endless love, gentle laughter, and countless beautiful moments together. Happy Wedding!'
@@ -62,16 +60,61 @@ const list = computed<Wish[]>(() => {
   return DESIGN_MODE ? [...live, ...DESIGN] : live
 })
 
-// The design shows two and hides the rest behind the button.
-const PAGE = 2
-const shownCount = ref(PAGE)
+// Unlimited Scroll (Infinite scroll)
+const PAGE_SIZE = 4
+const shownCount = ref(4)
+const listContainer = ref<HTMLElement | null>(null)
+const sentinelEl = ref<HTMLElement | null>(null)
 const visible = computed(() => list.value.slice(0, shownCount.value))
 const hasMore = computed(() => shownCount.value < list.value.length)
 
-const name = ref(guest.value?.name || '')
+function loadMore() {
+  if (hasMore.value) {
+    shownCount.value = Math.min(shownCount.value + PAGE_SIZE, list.value.length)
+  }
+}
+
+function onScroll(e: Event) {
+  const target = e.target as HTMLElement
+  if (!target) return
+  if (target.scrollTop + target.clientHeight >= target.scrollHeight - 30) {
+    loadMore()
+  }
+}
+
+let observer: IntersectionObserver | null = null
+
+onMounted(() => {
+  if (typeof IntersectionObserver !== 'undefined' && sentinelEl.value) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          loadMore()
+        }
+      },
+      { root: listContainer.value, rootMargin: '60px' },
+    )
+    observer.observe(sentinelEl.value)
+  }
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+  observer = null
+})
+
+const name = ref(guest.value?.guest_name || guest.value?.name || '')
 const message = ref('')
 const sending = ref(false)
 const error = ref('')
+const showSuccessModal = ref(false)
+
+watchEffect(() => {
+  if (!name.value) {
+    const known = guest.value?.guest_name || guest.value?.name || new URLSearchParams(location.search).get('to')
+    if (known) name.value = String(known)
+  }
+})
 
 async function send() {
   error.value = ''
@@ -86,6 +129,8 @@ async function send() {
       message: message.value.trim(),
     })
     message.value = ''
+    showSuccessModal.value = true
+    shownCount.value = Math.max(shownCount.value, 4)
   } catch (err: any) {
     error.value = err?.message || 'Gagal mengirim ucapan. Coba lagi.'
   } finally {
@@ -118,22 +163,61 @@ async function send() {
       <p v-if="error" class="wishes__error" role="alert">{{ error }}</p>
     </form>
 
-    <!-- 33:510..33:517 — the guest book, plus 33:524's button at its foot. -->
-    <div class="wishes__list">
+    <!-- 33:510..33:517 — the guest book with unlimited scroll -->
+    <div
+      ref="listContainer"
+      class="wishes__list"
+      @scroll.passive="onScroll"
+    >
       <article v-for="(w, i) in visible" :key="i" class="wishes__card">
         <p class="wishes__from">{{ w.guest_name || 'Tamu' }}</p>
         <p class="wishes__when">{{ formatWishStamp(w.created_at) }}</p>
         <p class="wishes__body">{{ w.message }}</p>
       </article>
-      <button
-        v-if="hasMore"
-        class="wishes__more"
-        type="button"
-        @click="shownCount = list.length"
-      >
-        Show more
-      </button>
+
+      <!-- Infinite scroll trigger sentinel -->
+      <div ref="sentinelEl" class="wishes__sentinel"></div>
+
+      <!-- Subtle hint or end indicator -->
+      <div v-if="hasMore" class="wishes__scroll-hint" @click="loadMore">
+        <span>↓ Gulir untuk ucapan lainnya</span>
+      </div>
+      <p v-else-if="list.length > 2" class="wishes__end">
+        Semua ucapan telah ditampilkan
+      </p>
     </div>
+
+    <!-- Success Modal Popup -->
+    <Teleport to="body">
+      <Transition name="wish-modal">
+        <div
+          v-if="showSuccessModal"
+          class="wish-modal__overlay"
+          role="dialog"
+          aria-modal="true"
+          @click.self="showSuccessModal = false"
+        >
+          <div class="wish-modal__card">
+            <div class="wish-modal__icon">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 class="wish-modal__title">Doa & Ucapan Terkirim!</h3>
+            <p class="wish-modal__desc">
+              Terima kasih banyak atas doa restu dan ucapan hangat yang telah Anda berikan untuk kami berdua.
+            </p>
+            <button
+              type="button"
+              class="wish-modal__btn"
+              @click="showSuccessModal = false"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
@@ -267,7 +351,64 @@ async function send() {
   top: calc(431 * var(--px)); /* 33:510 box y 9996, band-local 431 */
   left: calc(85 * var(--px));
   width: calc(426 * var(--px));
+  max-height: calc(720 * var(--px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: calc(6 * var(--px));
   text-align: left;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(170, 122, 58, 0.4) transparent;
+}
+
+.wishes__list::-webkit-scrollbar {
+  width: 5px;
+}
+.wishes__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.wishes__list::-webkit-scrollbar-thumb {
+  background: rgba(170, 122, 58, 0.35);
+  border-radius: 4px;
+}
+.wishes__list::-webkit-scrollbar-thumb:hover {
+  background: rgba(170, 122, 58, 0.6);
+}
+
+.wishes__sentinel {
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
+.wishes__scroll-hint {
+  margin-top: calc(20 * var(--px));
+  padding: calc(10 * var(--px)) 0;
+  text-align: center;
+  cursor: pointer;
+}
+.wishes__scroll-hint span {
+  font-family: var(--font-wish);
+  font-size: calc(15 * var(--px));
+  color: #7b97a4;
+  background: rgba(178, 211, 226, 0.25);
+  padding: calc(6 * var(--px)) calc(16 * var(--px));
+  border-radius: 999px;
+  display: inline-block;
+  animation: wish-hint-bounce 2s infinite ease-in-out;
+}
+@keyframes wish-hint-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+.wishes__end {
+  margin-top: calc(20 * var(--px));
+  margin-bottom: calc(10 * var(--px));
+  text-align: center;
+  font-family: var(--font-wish);
+  font-size: calc(14 * var(--px));
+  color: #8c9da6;
+  font-style: italic;
 }
 
 .wishes__card + .wishes__card,
@@ -324,9 +465,109 @@ async function send() {
   color: #455d69;
 }
 
+/* Popup Modal Styles */
+.wish-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.wish-modal__card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 20px;
+  padding: 32px 24px 24px;
+  text-align: center;
+  box-shadow: 0 20px 40px -15px rgba(30, 60, 114, 0.25);
+  border: 1px solid rgba(170, 122, 58, 0.15);
+  position: relative;
+}
+
+.wish-modal__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #eef6f9;
+  color: #455d69;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #b2d3e2;
+}
+
+.wish-modal__title {
+  font-family: var(--font-display, serif);
+  font-size: 26px;
+  color: #aa7a3a;
+  margin: 0 0 10px;
+  line-height: 1.2;
+}
+
+.wish-modal__desc {
+  font-family: var(--font-wish, serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: #455d69;
+  margin: 0 0 24px;
+}
+
+.wish-modal__btn {
+  display: block;
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: #b2d3e2;
+  color: #445c68;
+  font-family: var(--font-wish, serif);
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 200ms ease, transform 150ms ease;
+}
+
+.wish-modal__btn:hover {
+  background: #9cc4d6;
+  transform: translateY(-1px);
+}
+
+.wish-modal__btn:active {
+  transform: translateY(0);
+}
+
+.wish-modal-enter-active,
+.wish-modal-leave-active {
+  transition: opacity 250ms ease;
+}
+
+.wish-modal-enter-from,
+.wish-modal-leave-to {
+  opacity: 0;
+}
+
+.wish-modal-enter-active .wish-modal__card,
+.wish-modal-leave-active .wish-modal__card {
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms ease;
+}
+
+.wish-modal-enter-from .wish-modal__card,
+.wish-modal-leave-to .wish-modal__card {
+  opacity: 0;
+  transform: scale(0.9) translateY(12px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wishes__send,
-  .wishes__more {
+  .wishes__more,
+  .wish-modal__btn {
     transition: none;
   }
 }
