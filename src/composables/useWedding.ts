@@ -29,10 +29,23 @@ function applyTheme(themeData: any, weddingData: any) {
   const colors = { ...(cfg?.colors || {}), ...(override?.colors || {}) }
   const fonts = { ...(cfg?.fonts || {}), ...(override?.fonts || {}) }
 
-  if (colors.primary) root.style.setProperty('--maroon-title', colors.primary)
-  if (colors.secondary) root.style.setProperty('--maroon-text', colors.secondary)
+  if (colors.primary) {
+    root.style.setProperty('--maroon-title', colors.primary)
+    root.style.setProperty('--ink-deep-blue', colors.primary)
+  }
+  if (colors.secondary) {
+    root.style.setProperty('--maroon-text', colors.secondary)
+    root.style.setProperty('--ink-blue', colors.secondary)
+  }
   if (colors.accent) root.style.setProperty('--gold', colors.accent)
-  if (colors.bg_body) root.style.setProperty('--bg-body', colors.bg_body)
+  if (colors.bg_body) {
+    root.style.setProperty('--bg-body', colors.bg_body)
+    root.style.setProperty('--paper', colors.bg_body)
+    root.style.setProperty('--water', colors.bg_body)
+  }
+  if (colors.sheet) root.style.setProperty('--sheet', colors.sheet)
+  if (colors.ink_deep_blue) root.style.setProperty('--ink-deep-blue', colors.ink_deep_blue)
+  if (colors.ink_blue) root.style.setProperty('--ink-blue', colors.ink_blue)
 
   if (fonts.script) root.style.setProperty('--font-script', fonts.script)
   if (fonts.hand) root.style.setProperty('--font-hand', fonts.hand)
@@ -184,6 +197,23 @@ export function useWedding() {
       'وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةًۗ اِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ',
   )
 
+  const dresscode = computed(() => {
+    let ov = wedding.value?.theme_override
+    if (typeof ov === 'string') {
+      try {
+        ov = JSON.parse(ov)
+      } catch {
+        ov = {}
+      }
+    }
+    return {
+      note: ov?.dresscode?.note || 'Attire: Formal / Traditional Elegance',
+      colors: Array.isArray(ov?.dresscode?.colors) && ov.dresscode.colors.length === 4
+        ? ov.dresscode.colors
+        : ['#dbc58e', '#9bccdb', '#bde0b5', '#edcbe3'],
+    }
+  })
+
   return {
     slug,
     guestCode,
@@ -205,6 +235,7 @@ export function useWedding() {
     quoteText,
     quoteVerse,
     quoteArabic,
+    dresscode,
     refetch: fetchWeddingData,
   }
 }
