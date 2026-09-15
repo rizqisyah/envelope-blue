@@ -86,27 +86,22 @@ const stamp = computed(() => {
     <!-- 103:11 — the card's heading. -->
     <h2 id="resepsi-title" class="resepsi__title">{{ card.title }}</h2>
 
-    <!-- 103:14 — weekday and date on two authored lines. -->
-    <p class="resepsi__date">{{ card.date }}</p>
-
-    <!-- 103:15 — the time range. -->
-    <p class="resepsi__time">{{ card.time }}</p>
-
-    <!-- 103:20 / 103:22 / 103:24 — venue, street, country. -->
-    <p class="resepsi__venue">{{ card.venue }}</p>
-    <p class="resepsi__address">{{ card.address }}</p>
-    <p class="resepsi__country">{{ card.country }}</p>
-
-    <!-- 103:26 — the same 1px rule as the akad band's; see AkadSection for the numbers. -->
-    <a
-      v-if="card.maps"
-      class="resepsi__maps"
-      :href="card.maps"
-      target="_blank"
-      rel="noopener noreferrer"
-      >View Maps</a
-    >
-    <p v-else class="resepsi__maps">View Maps</p>
+    <div class="resepsi__details">
+      <p class="resepsi__date">{{ card.date }}</p>
+      <p class="resepsi__time">{{ card.time }}</p>
+      <p class="resepsi__venue">{{ card.venue }}</p>
+      <p class="resepsi__address">{{ card.address }}</p>
+      <p v-if="card.country" class="resepsi__country">{{ card.country }}</p>
+      <a
+        v-if="card.maps"
+        class="resepsi__maps"
+        :href="card.maps"
+        target="_blank"
+        rel="noopener noreferrer"
+        >View Maps</a
+      >
+      <p v-else class="resepsi__maps">View Maps</p>
+    </div>
   </section>
 </template>
 
@@ -221,6 +216,7 @@ const stamp = computed(() => {
   font-weight: 400;
   font-size: calc(16 * var(--px));
   line-height: calc(24 * var(--px));
+  text-align: center;
   color: #623c2a;
 }
 
@@ -259,5 +255,60 @@ const stamp = computed(() => {
 a.resepsi__maps:hover,
 a.resepsi__maps:focus-visible {
   color: #2f4238;
+}
+
+.resepsi__details {
+  --delay: 380ms;
+  z-index: 32;
+  top: calc(597 * var(--px));
+  left: calc(164.6 * var(--px));
+  width: calc(267 * var(--px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #4e685c;
+}
+
+.resepsi__details > * {
+  position: static;
+  width: 100%;
+  font-family: var(--font-countdown);
+}
+
+.resepsi__date {
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
+  white-space: pre-line;
+}
+
+.resepsi__time {
+  margin-top: calc(4 * var(--px));
+  font-weight: 700;
+  font-size: calc(20 * var(--px));
+  line-height: calc(26.6 * var(--px));
+}
+
+.resepsi__venue {
+  margin-top: calc(8 * var(--px));
+  font-weight: 600;
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
+  color: #623c2a;
+}
+
+.resepsi__address,
+.resepsi__country {
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  color: #623c2a;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.resepsi__maps {
+  margin-top: calc(5 * var(--px));
+  font-weight: 700;
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
 }
 </style>

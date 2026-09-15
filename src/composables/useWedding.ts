@@ -403,6 +403,33 @@ export function useWedding() {
     )
   })
 
+  const fotoMempelaiTransform = computed(() => {
+    const t = parsedOverride.value?.foto_mempelai_transform
+    return {
+      scale: typeof t?.scale === 'number' ? t.scale : 1,
+      x: typeof t?.x === 'number' ? t.x : 50,
+      y: typeof t?.y === 'number' ? t.y : 50,
+    }
+  })
+
+  const brideTransform = computed(() => {
+    const t = parsedOverride.value?.foto_wanita_transform
+    return {
+      scale: typeof t?.scale === 'number' ? t.scale : 1,
+      x: typeof t?.x === 'number' ? t.x : 50,
+      y: typeof t?.y === 'number' ? t.y : 50,
+    }
+  })
+
+  const groomTransform = computed(() => {
+    const t = parsedOverride.value?.foto_pria_transform
+    return {
+      scale: typeof t?.scale === 'number' ? t.scale : 1,
+      x: typeof t?.x === 'number' ? t.x : 50,
+      y: typeof t?.y === 'number' ? t.y : 50,
+    }
+  })
+
   const DEFAULT_CLOSING_MESSAGE =
     'Thank You !\n\nAnd So, Our Story Begins\nWith hearts full of love, we look forward to celebrating this beautiful beginning with you.\nWith Love,'
 
@@ -478,6 +505,9 @@ export function useWedding() {
     closingSignature,
     customHeroPhoto,
     customSpousePhoto,
+    fotoMempelaiTransform,
+    brideTransform,
+    groomTransform,
     refetch: fetchWeddingData,
   }
 }

@@ -91,30 +91,22 @@ const stamp = computed(() => {
     <!-- 99:6 — design-only note; empty once a live event replaces the card. -->
     <p class="akad__note">{{ card.note }}</p>
 
-    <!-- 23:860 — weekday and date on two authored lines. -->
-    <p class="akad__date">{{ card.date }}</p>
-
-    <!-- 23:863 — the time range. -->
-    <p class="akad__time">{{ card.time }}</p>
-
-    <!-- 23:869 / 23:872 / 23:875 — venue, street, country. -->
-    <p class="akad__venue">{{ card.venue }}</p>
-    <p class="akad__address">{{ card.address }}</p>
-    <p class="akad__country">{{ card.country }}</p>
-
-    <!--
-      23:879 — underlined in the render, so it reads as a link whether or not the API
-      sends one. With no url it stays a label rather than a dead anchor.
-    -->
-    <a
-      v-if="card.maps"
-      class="akad__maps"
-      :href="card.maps"
-      target="_blank"
-      rel="noopener noreferrer"
-      >View Maps</a
-    >
-    <p v-else class="akad__maps">View Maps</p>
+    <div class="akad__details">
+      <p class="akad__date">{{ card.date }}</p>
+      <p class="akad__time">{{ card.time }}</p>
+      <p class="akad__venue">{{ card.venue }}</p>
+      <p class="akad__address">{{ card.address }}</p>
+      <p v-if="card.country" class="akad__country">{{ card.country }}</p>
+      <a
+        v-if="card.maps"
+        class="akad__maps"
+        :href="card.maps"
+        target="_blank"
+        rel="noopener noreferrer"
+        >View Maps</a
+      >
+      <p v-else class="akad__maps">View Maps</p>
+    </div>
   </section>
 </template>
 
@@ -259,6 +251,7 @@ const stamp = computed(() => {
   font-weight: 400;
   font-size: calc(16 * var(--px));
   line-height: calc(24 * var(--px));
+  text-align: center;
   color: #623c2a;
 }
 
@@ -303,5 +296,62 @@ const stamp = computed(() => {
 a.akad__maps:hover,
 a.akad__maps:focus-visible {
   color: #2f4238;
+}
+
+.akad__details {
+  --delay: 480ms;
+  z-index: 273;
+  top: calc(1031 * var(--px));
+  left: calc(164.6 * var(--px));
+  width: calc(267 * var(--px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #4e685c;
+}
+
+.akad__details > * {
+  position: static;
+  width: 100%;
+  font-family: var(--font-countdown);
+}
+
+.akad__date {
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
+  white-space: pre-line;
+}
+
+.akad__time {
+  margin-top: calc(4 * var(--px));
+  font-weight: 700;
+  font-size: calc(20 * var(--px));
+  line-height: calc(26.6 * var(--px));
+}
+
+.akad__venue {
+  margin-top: calc(8 * var(--px));
+  font-weight: 600;
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
+  text-align: center;
+  color: #623c2a;
+}
+
+.akad__address,
+.akad__country {
+  font-size: calc(16 * var(--px));
+  line-height: calc(24 * var(--px));
+  color: #623c2a;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+
+.akad__maps {
+  margin-top: calc(5 * var(--px));
+  font-weight: 700;
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
 }
 </style>

@@ -16,11 +16,9 @@
 import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/groom'
-import { assets } from '../../lib/bandAssets'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
-import instagramGlyph from '../../assets/bride/instagram.webp'
 
 const { el, shown } = useReveal(0.15)
 const { bride, groom, isGroomFirst } = useWedding()
@@ -38,6 +36,33 @@ const fullName = computed(() => {
   return isGroomFirst.value ? 'Syifa Hadju' : 'Ahmad Jalaluddin Rumi'
 })
 
+const fullNameLines = computed(() => {
+  const words = fullName.value.split(/\s+/)
+  if (words.length < 3 || fullName.value.length <= 20) return [fullName.value]
+  let best = 1
+  let distance = Infinity
+  for (let i = 1; i < words.length; i++) {
+    const next = Math.abs(words.slice(0, i).join(' ').length - words.slice(i).join(' ').length)
+    if (next < distance) {
+      distance = next
+      best = i
+    }
+  }
+  return [words.slice(0, best).join(' '), words.slice(best).join(' ')]
+})
+
+const fullNameStyle = computed(() => {
+  const scale = fullNameLines.value.length > 1 ? 0.82 : 1
+  return {
+    fontSize: `calc(${Math.round(32 * scale)} * var(--px))`,
+    lineHeight: `calc(${Math.round(57 * scale)} * var(--px))`,
+  }
+})
+
+const detailsOffset = computed(() =>
+  fullNameLines.value.length > 1 ? Math.round(57 * 0.82 * 2 - 57) : 0,
+)
+
 const fallbackParents = computed(() =>
   isGroomFirst.value
     ? 'Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih Muhartono Septiana'
@@ -45,28 +70,11 @@ const fallbackParents = computed(() =>
 )
 
 const parents = computed(() => parentLine(person.value) || fallbackParents.value)
-
-const handle = computed(() => {
-  if (person.value?.instagram?.trim()) return person.value.instagram.trim()
-  return isGroomFirst.value ? '@Syifahadju' : '@elrumiii'
-})
-
-const handleUrl = computed(() => `https://instagram.com/${handle.value.replace(/^@/, '')}`)
-
-// Layer 20:609 is the portrait plate in Slot 2 (x: 91, y: 222, w: 342, h: 253).
-// If Groom is first, swap 20:609 src to Bride's portrait (19-572.webp or custom photo).
-const layers = computed(() => {
-  const photoSrc = isGroomFirst.value
-    ? (bride.value?.photo_url || assets['bride/parts/19-572.webp'])
-    : (groom.value?.photo_url || assets['groom/parts/20-609.webp'])
-
-  return LAYERS.map((l) => (l.id === '20:609' ? { ...l, src: photoSrc } : l))
-})
 </script>
 
 <template>
   <section :ref="el" class="band groom" :class="{ 'is-in': shown }" aria-labelledby="person-2-name">
-    <BandArt :layers="layers" :shown="shown" />
+    <BandArt :layers="LAYERS" :shown="shown" />
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
 
@@ -74,16 +82,13 @@ const layers = computed(() => {
     <p class="groom__call">{{ callName }}</p>
 
     <!-- 20:614 — the full name, the band's heading. -->
-    <h2 id="person-2-name" class="groom__full">{{ fullName }}</h2>
+    <h2 id="person-2-name" class="groom__full" :style="fullNameStyle">
+      <span v-for="line in fullNameLines" :key="line">{{ line }}</span>
+    </h2>
 
     <!-- 20:616 — three authored lines; the box keeps white-space: pre-wrap. -->
-    <p class="groom__parents">{{ parents }}</p>
+    <p class="groom__parents" :style="{ top: `calc(${559 + detailsOffset} * var(--px))` }">{{ parents }}</p>
 
-    <!-- 20:618 — the pill, redrawn as a real link. Same treatment as the bride's. -->
-    <a class="groom__handle" :href="handleUrl" target="_blank" rel="noopener noreferrer">
-      <img :src="instagramGlyph" alt="" width="18" height="18" />
-      <span>{{ handle }}</span>
-    </a>
   </section>
 </template>
 
@@ -129,7 +134,10 @@ const layers = computed(() => {
   font-weight: 400;
   font-size: calc(32 * var(--px));
   line-height: calc(57 * var(--px));
-  color: #aa7a3a;
+}
+
+.groom__full span {
+  display: block;
 }
 
 /* 20:616 — Cormorant Infant 20/28.4, #8a643c. `pre-wrap` for the leading spaces. */

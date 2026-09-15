@@ -12,16 +12,20 @@
 import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/bride'
-import { assets } from '../../lib/bandAssets'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
-import instagramGlyph from '../../assets/bride/instagram.webp'
 
 const { el, shown } = useReveal(0.15)
-const { bride, groom, isGroomFirst } = useWedding()
+const { bride, groom, isGroomFirst, groomTransform } = useWedding()
 
 const person = computed(() => (isGroomFirst.value ? groom.value : bride.value))
+
+const groomPhotoStyle = computed(() => ({
+  objectPosition: `${groomTransform.value.x}% ${groomTransform.value.y}%`,
+  transformOrigin: `${groomTransform.value.x}% ${groomTransform.value.y}%`,
+  transform: `scale(${groomTransform.value.scale})`,
+}))
 
 const callName = computed(() => {
   if (person.value?.nickname?.trim()) return person.value.nickname.trim()
@@ -34,6 +38,33 @@ const fullName = computed(() => {
   return isGroomFirst.value ? 'Ahmad Jalaluddin Rumi' : 'Syifa Hadju'
 })
 
+const fullNameLines = computed(() => {
+  const words = fullName.value.split(/\s+/)
+  if (words.length < 3 || fullName.value.length <= 20) return [fullName.value]
+  let best = 1
+  let distance = Infinity
+  for (let i = 1; i < words.length; i++) {
+    const next = Math.abs(words.slice(0, i).join(' ').length - words.slice(i).join(' ').length)
+    if (next < distance) {
+      distance = next
+      best = i
+    }
+  }
+  return [words.slice(0, best).join(' '), words.slice(best).join(' ')]
+})
+
+const fullNameStyle = computed(() => {
+  const scale = fullNameLines.value.length > 1 ? 0.82 : 1
+  return {
+    fontSize: `calc(${Math.round(32 * scale)} * var(--px))`,
+    lineHeight: `calc(${Math.round(57 * scale)} * var(--px))`,
+  }
+})
+
+const detailsOffset = computed(() =>
+  fullNameLines.value.length > 1 ? Math.round(57 * 0.82 * 2 - 57) : 0,
+)
+
 const fallbackParents = computed(() =>
   isGroomFirst.value
     ? 'Putra pertama dari \n Bapak Solehaiman \n dan Ibu Kasih'
@@ -42,29 +73,28 @@ const fallbackParents = computed(() =>
 
 const parents = computed(() => parentLine(person.value) || fallbackParents.value)
 
-const handle = computed(() => {
-  if (person.value?.instagram?.trim()) return person.value.instagram.trim()
-  return isGroomFirst.value ? '@elrumiii' : '@Syifahadju'
-})
-
-const handleUrl = computed(
-  () => `https://instagram.com/${handle.value.replace(/^@/, '')}`,
-)
-
-// Layer 19:572 is the portrait plate in Slot 1 (x: 155, y: 222, w: 342, h: 253).
-// If Groom is first, swap 19:572 src to Groom's portrait (20-609.webp or custom photo).
-const layers = computed(() => {
-  const photoSrc = isGroomFirst.value
-    ? (groom.value?.photo_url || assets['groom/parts/20-609.webp'])
-    : (bride.value?.photo_url || assets['bride/parts/19-572.webp'])
-
-  return LAYERS.map((l) => (l.id === '19:572' ? { ...l, src: photoSrc } : l))
-})
+// Layer 20:623 is the groom portrait (x: 244, y: 881, w: 352, h: 503).
+const hasGroomPhoto = computed(() => Boolean(groom.value?.photo_url))
 </script>
 
 <template>
   <section :ref="el" class="band bride" :class="{ 'is-in': shown }" aria-labelledby="person-1-name">
-    <BandArt :layers="layers" :shown="shown" />
+    <BandArt :layers="LAYERS" :skip="hasGroomPhoto ? ['20:623'] : []" :shown="shown" />
+
+    <div
+      v-if="hasGroomPhoto"
+      class="band-art band__portrait"
+      :class="{ 'is-in': shown }"
+      :style="{
+        zIndex: String(108),
+        left: 'calc(244 * var(--px))',
+        top: 'calc(881 * var(--px))',
+        width: 'calc(352 * var(--px))',
+        height: 'calc(503 * var(--px))',
+      }"
+    >
+      <img :src="groom.photo_url" alt="" :style="groomPhotoStyle" />
+    </div>
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
 
@@ -72,20 +102,12 @@ const layers = computed(() => {
     <p class="bride__call">{{ callName }}</p>
 
     <!-- 20:641 — the full name, the band's heading. -->
-    <h2 id="person-1-name" class="bride__full">{{ fullName }}</h2>
+    <h2 id="person-1-name" class="bride__full" :style="fullNameStyle">
+      <span v-for="line in fullNameLines" :key="line">{{ line }}</span>
+    </h2>
 
     <!-- 19:546 — three authored lines; the box keeps white-space: pre-wrap. -->
-    <p class="bride__parents">{{ parents }}</p>
-
-    <!--
-      19:549 — a rounded gold plate with a Font Awesome Brands glyph and the handle.
-      Redrawn as a real link: the design's plate is chrome that has to work, and the
-      glyph is Figma's own export rather than a guess at the Instagram mark.
-    -->
-    <a class="bride__handle" :href="handleUrl" target="_blank" rel="noopener noreferrer">
-      <img :src="instagramGlyph" alt="" width="18" height="18" />
-      <span>{{ handle }}</span>
-    </a>
+    <p class="bride__parents" :style="{ top: `calc(${554 + detailsOffset} * var(--px))` }">{{ parents }}</p>
 
     <!-- 19:543 — the hand-off to the next band. Always present at bottom of Slot 1. -->
     <p class="bride__and" aria-hidden="true">And</p>
@@ -131,7 +153,10 @@ const layers = computed(() => {
   font-weight: 400;
   font-size: calc(32 * var(--px));
   line-height: calc(57 * var(--px));
-  color: #aa7a3a;
+}
+
+.bride__full span {
+  display: block;
 }
 
 /*
@@ -210,5 +235,22 @@ const layers = computed(() => {
   font-size: calc(40 * var(--px));
   line-height: calc(71 * var(--px));
   color: #aa7a3a;
+}
+
+.band__portrait {
+  position: absolute;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.band__portrait img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.band__portrait.is-in {
+  visibility: visible;
 }
 </style>

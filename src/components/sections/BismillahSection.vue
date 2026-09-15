@@ -12,18 +12,48 @@
  * serif bones), and Alex Brush cannot render Arabic at all, so the Basmala is set in
  * Amiri, an Arabic Naskh. line-heights and colours are Figma's own throughout.
  */
+import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
 import { BAND_HEIGHT, LAYERS } from '../../lib/bands/bismillah'
+import { assets } from '../../lib/bandAssets'
 import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
-const { quoteArabic, bismillahGreeting, bismillahHighlight } = useWedding()
+const { quoteArabic, bismillahGreeting, bismillahHighlight, bride, brideTransform } = useWedding()
+
+const layers = computed(() =>
+  LAYERS.map((layer) =>
+    layer.id === '19:571' ? { ...layer, src: bride.value?.photo_url || assets['bismillah/parts/19-571.webp'] } : layer,
+  ),
+)
+
+const hasBridePhoto = computed(() => Boolean(bride.value?.photo_url))
+const bridePhotoStyle = computed(() => ({
+  objectPosition: `${brideTransform.value.x}% ${brideTransform.value.y}%`,
+  transformOrigin: `${brideTransform.value.x}% ${brideTransform.value.y}%`,
+  transform: `scale(${brideTransform.value.scale})`,
+}))
 </script>
 
 <template>
   <section :ref="el" class="band bismillah" :class="{ 'is-in': shown }" aria-labelledby="basmala">
-    <BandArt :layers="LAYERS" :shown="shown" />
+    <BandArt :layers="layers" :skip="hasBridePhoto ? ['19:571'] : []" :shown="shown" />
+
+    <div
+      v-if="hasBridePhoto"
+      class="band-art band__portrait"
+      :class="{ 'is-in': shown }"
+      :style="{
+        zIndex: String(107),
+        left: 'calc(0 * var(--px))',
+        top: 'calc(238 * var(--px))',
+        width: 'calc(344 * var(--px))',
+        height: 'calc(503 * var(--px))',
+      }"
+    >
+      <img :src="bride.photo_url" alt="" :style="bridePhotoStyle" />
+    </div>
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
     <p id="basmala" class="bismillah__basmala" lang="ar" dir="rtl">{{ quoteArabic || 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' }}</p>
@@ -39,6 +69,23 @@ const { quoteArabic, bismillahGreeting, bismillahHighlight } = useWedding()
 <style scoped>
 .bismillah {
   height: calc(v-bind(BAND_HEIGHT) * var(--px));
+}
+
+.band__portrait {
+  position: absolute;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.band__portrait img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.band__portrait.is-in {
+  visibility: visible;
 }
 
 /*
