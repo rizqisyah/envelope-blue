@@ -64,7 +64,7 @@ const skipLayers = computed(() => (customHeroPhoto.value ? ['15:94'] : []))
     -->
     <p class="hero__eyebrow">The Wedding Of</p>
     <h1 :ref="fitCouple" class="hero__couple">{{ coupleNickname }}</h1>
-    <p class="hero__hashtag">{{ hashtag }}</p>
+    <p v-if="hashtag" class="hero__hashtag">{{ hashtag }}</p>
   </section>
 </template>
 

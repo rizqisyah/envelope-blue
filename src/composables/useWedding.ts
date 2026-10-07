@@ -273,12 +273,13 @@ export function useWedding() {
       '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang"',
   )
 
-  const hashtag = computed(
-    () =>
-      parsedOverride.value?.words?.hashtag ||
-      wedding.value?.hashtag ||
-      '#AhmadSALMAnya',
-  )
+  // The design's own hashtag only prints when no wedding loaded (the design render); a
+  // real wedding without one gets no hashtag line rather than the demo couple's.
+  const hashtag = computed(() => {
+    const own = String(parsedOverride.value?.words?.hashtag || wedding.value?.hashtag || '').trim()
+    if (own) return own
+    return wedding.value || state.value.loading ? '' : '#AhmadSALMAnya'
+  })
 
   const quoteVerse = computed(
     () =>
