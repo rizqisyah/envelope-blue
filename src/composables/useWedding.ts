@@ -305,7 +305,7 @@ export function useWedding() {
     () =>
       parsedOverride.value?.bismillah_highlight ||
       parsedOverride.value?.words?.bismillah_highlight ||
-      'journey together',
+      'JOURNEY TOGETHER',
   )
 
   const dresscode = computed(() => {

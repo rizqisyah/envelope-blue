@@ -20,8 +20,7 @@ import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
-const { quoteArabic, bismillahGreeting, bismillahHighlight, bride, groom, isGroomFirst, brideTransform, groomTransform } =
-  useWedding()
+const { bismillahGreeting, bismillahHighlight, bride, groom, isGroomFirst, brideTransform, groomTransform } = useWedding()
 
 // 19:571 sits right above the FIRST person's name (BrideSection), so it follows the order.
 const firstPhoto = computed<string>(() => (isGroomFirst.value ? groom.value?.photo_url : bride.value?.photo_url) || '')
@@ -61,13 +60,14 @@ const firstPhotoStyle = computed(() => ({
     </div>
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
-    <p id="basmala" class="bismillah__basmala" lang="ar" dir="rtl">{{ quoteArabic || 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' }}</p>
+    <!-- Always the Basmala: the verse's Arabic (quote_arabic) is not this band's text. -->
+    <p id="basmala" class="bismillah__basmala" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ</p>
 
     <!-- 19:558 — the design folds the line break itself; the box keeps white-space: pre-line. -->
     <p class="bismillah__greeting">{{ bismillahGreeting }}</p>
 
     <!-- 19:569 — the sentence's last line, set as its own node in the design. -->
-    <p class="bismillah__script">{{ bismillahHighlight }}</p>
+    <p v-if="bismillahHighlight" class="bismillah__script">{{ bismillahHighlight }}</p>
   </section>
 </template>
 

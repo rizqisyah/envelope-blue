@@ -52,11 +52,11 @@ const DESIGN: Wish[] = [
  * — `sendWish` answers locally rather than calling the API — so a plain
  * `live.length ? live : DESIGN` empties the guest book the moment someone tries the form.
  * Keep the design's cards underneath instead. On live data the API's list is the whole
- * truth and the design's mock guests must never appear beneath it.
+ * truth: the design's mock guests must never appear, not even when it is empty (that
+ * shows the empty state instead).
  */
 const list = computed<Wish[]>(() => {
   const live = (wishes.value as Wish[]).filter((w) => w?.guest_name || w?.message)
-  if (!live.length) return DESIGN
   return DESIGN_MODE ? [...live, ...DESIGN] : live
 })
 
@@ -178,6 +178,10 @@ async function send() {
       class="wishes__list"
       @scroll.passive="onScroll"
     >
+      <p v-if="list.length === 0" class="wishes__empty">
+        Belum ada ucapan.<br />Jadilah yang pertama mengirimkan doa &amp; ucapan untuk kedua mempelai.
+      </p>
+
       <article v-for="(w, i) in visible" :key="i" class="wishes__card">
         <p class="wishes__from">{{ w.guest_name || 'Tamu' }}</p>
         <p class="wishes__when">{{ formatWishStamp(w.created_at) }}</p>
@@ -408,6 +412,17 @@ async function send() {
 @keyframes wish-hint-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(3px); }
+}
+
+.wishes__empty {
+  margin: calc(40 * var(--px)) auto 0;
+  max-width: calc(360 * var(--px));
+  text-align: center;
+  font-family: var(--font-wish);
+  font-size: calc(20 * var(--px));
+  line-height: calc(30 * var(--px));
+  font-style: italic;
+  color: #455d69;
 }
 
 .wishes__end {
