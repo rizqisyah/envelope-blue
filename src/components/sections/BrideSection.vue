@@ -17,14 +17,18 @@ import { useWedding } from '../../composables/useWedding'
 import { parentLine } from '../../lib/format'
 
 const { el, shown } = useReveal(0.15)
-const { bride, groom, isGroomFirst, groomTransform } = useWedding()
+const { bride, groom, isGroomFirst, brideTransform, groomTransform } = useWedding()
 
 const person = computed(() => (isGroomFirst.value ? groom.value : bride.value))
 
-const groomPhotoStyle = computed(() => ({
-  objectPosition: `${groomTransform.value.x}% ${groomTransform.value.y}%`,
-  transformOrigin: `${groomTransform.value.x}% ${groomTransform.value.y}%`,
-  transform: `scale(${groomTransform.value.scale})`,
+// 20:623 sits right above the SECOND person's name (GroomSection), so it follows the order.
+const secondPhoto = computed<string>(() => (isGroomFirst.value ? bride.value?.photo_url : groom.value?.photo_url) || '')
+const secondTransform = computed(() => (isGroomFirst.value ? brideTransform.value : groomTransform.value))
+
+const secondPhotoStyle = computed(() => ({
+  objectPosition: `${secondTransform.value.x}% ${secondTransform.value.y}%`,
+  transformOrigin: `${secondTransform.value.x}% ${secondTransform.value.y}%`,
+  transform: `scale(${secondTransform.value.scale})`,
 }))
 
 const callName = computed(() => {
@@ -73,16 +77,16 @@ const fallbackParents = computed(() =>
 
 const parents = computed(() => parentLine(person.value) || fallbackParents.value)
 
-// Layer 20:623 is the groom portrait (x: 244, y: 881, w: 352, h: 503).
-const hasGroomPhoto = computed(() => Boolean(groom.value?.photo_url))
+// Layer 20:623 is the second person's portrait (x: 244, y: 881, w: 352, h: 503).
+const hasSecondPhoto = computed(() => Boolean(secondPhoto.value))
 </script>
 
 <template>
   <section :ref="el" class="band bride" :class="{ 'is-in': shown }" aria-labelledby="person-1-name">
-    <BandArt :layers="LAYERS" :skip="hasGroomPhoto ? ['20:623'] : []" :shown="shown" />
+    <BandArt :layers="LAYERS" :skip="hasSecondPhoto ? ['20:623'] : []" :shown="shown" />
 
     <div
-      v-if="hasGroomPhoto"
+      v-if="hasSecondPhoto"
       class="band-art band__portrait"
       :class="{ 'is-in': shown }"
       :style="{
@@ -93,7 +97,7 @@ const hasGroomPhoto = computed(() => Boolean(groom.value?.photo_url))
         height: 'calc(503 * var(--px))',
       }"
     >
-      <img :src="groom.photo_url" alt="" :style="groomPhotoStyle" />
+      <img :src="secondPhoto" alt="" :style="secondPhotoStyle" />
     </div>
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->

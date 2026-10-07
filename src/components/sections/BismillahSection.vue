@@ -20,28 +20,33 @@ import { useReveal } from '../../composables/useReveal'
 import { useWedding } from '../../composables/useWedding'
 
 const { el, shown } = useReveal(0.15)
-const { quoteArabic, bismillahGreeting, bismillahHighlight, bride, brideTransform } = useWedding()
+const { quoteArabic, bismillahGreeting, bismillahHighlight, bride, groom, isGroomFirst, brideTransform, groomTransform } =
+  useWedding()
+
+// 19:571 sits right above the FIRST person's name (BrideSection), so it follows the order.
+const firstPhoto = computed<string>(() => (isGroomFirst.value ? groom.value?.photo_url : bride.value?.photo_url) || '')
+const firstTransform = computed(() => (isGroomFirst.value ? groomTransform.value : brideTransform.value))
 
 const layers = computed(() =>
   LAYERS.map((layer) =>
-    layer.id === '19:571' ? { ...layer, src: bride.value?.photo_url || assets['bismillah/parts/19-571.webp'] } : layer,
+    layer.id === '19:571' ? { ...layer, src: firstPhoto.value || assets['bismillah/parts/19-571.webp'] } : layer,
   ),
 )
 
-const hasBridePhoto = computed(() => Boolean(bride.value?.photo_url))
-const bridePhotoStyle = computed(() => ({
-  objectPosition: `${brideTransform.value.x}% ${brideTransform.value.y}%`,
-  transformOrigin: `${brideTransform.value.x}% ${brideTransform.value.y}%`,
-  transform: `scale(${brideTransform.value.scale})`,
+const hasFirstPhoto = computed(() => Boolean(firstPhoto.value))
+const firstPhotoStyle = computed(() => ({
+  objectPosition: `${firstTransform.value.x}% ${firstTransform.value.y}%`,
+  transformOrigin: `${firstTransform.value.x}% ${firstTransform.value.y}%`,
+  transform: `scale(${firstTransform.value.scale})`,
 }))
 </script>
 
 <template>
   <section :ref="el" class="band bismillah" :class="{ 'is-in': shown }" aria-labelledby="basmala">
-    <BandArt :layers="layers" :skip="hasBridePhoto ? ['19:571'] : []" :shown="shown" />
+    <BandArt :layers="layers" :skip="hasFirstPhoto ? ['19:571'] : []" :shown="shown" />
 
     <div
-      v-if="hasBridePhoto"
+      v-if="hasFirstPhoto"
       class="band-art band__portrait"
       :class="{ 'is-in': shown }"
       :style="{
@@ -52,7 +57,7 @@ const bridePhotoStyle = computed(() => ({
         height: 'calc(503 * var(--px))',
       }"
     >
-      <img :src="bride.photo_url" alt="" :style="bridePhotoStyle" />
+      <img :src="firstPhoto" alt="" :style="firstPhotoStyle" />
     </div>
 
     <!-- z-index is each node's GLOBAL Figma child order (see HeroSection for the rule). -->
