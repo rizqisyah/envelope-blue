@@ -7,7 +7,7 @@ import VideoSection from './components/sections/VideoSection.vue'
 import { usePreloadAssets } from './composables/usePreloadAssets'
 import { useWedding } from './composables/useWedding'
 
-const { guestName, guestGroup, wedding, coupleNickname, quoteText, quoteVerse } = useWedding()
+const { guestName, guestGroup, wedding, coupleNickname, quoteText, quoteVerse, error, errorCode } = useWedding()
 const { coverLoaded, preloadCover, preloadInviteBody } = usePreloadAssets()
 
 const isOpen = ref(false)
@@ -17,6 +17,14 @@ const isLocked = ref(true)
 const contentVisible = ref(false)
 
 const coupleName = coupleNickname
+
+/*
+ * Only an enforced refusal (device lock / wrong theme) blocks the page. Any other load error
+ * keeps showing the design's own content, as it always has.
+ */
+const blockedTitle = computed(() =>
+  errorCode.value === 'DEVICE_LOCKED' ? 'Perangkat Terkunci' : 'Tidak Ditemukan',
+)
 
 const leftBackgroundStyle = computed(() => {
   const img = wedding.value?.image_bg1 || wedding.value?.image_cover || ''
@@ -88,10 +96,18 @@ watchEffect(() => {
       </div>
     </div>
 
-    <div class="desktop-right-column" :class="{ 'is-locked': isLocked }">
+    <div class="desktop-right-column" :class="{ 'is-locked': isLocked || errorCode }">
+      <div v-if="errorCode" class="restricted-overlay">
+        <div class="restricted-box">
+          <div class="restricted-icon">🔒</div>
+          <h2 class="restricted-title">{{ blockedTitle }}</h2>
+          <p class="restricted-message">{{ error }}</p>
+        </div>
+      </div>
+
       <Transition name="splash">
         <CoverSection
-          v-if="!isOpen"
+          v-if="!errorCode && !isOpen"
           :guest-name="guestName"
           :guest-group="guestGroup"
           :couple-name="coupleName"
@@ -101,6 +117,7 @@ watchEffect(() => {
       </Transition>
 
       <div
+        v-if="!errorCode"
         v-show="isOpen"
         id="invite"
         class="invitation-content"
@@ -110,7 +127,7 @@ watchEffect(() => {
         <InviteBody />
       </div>
 
-      <BottomNav v-if="isOpen" />
+      <BottomNav v-if="isOpen && !errorCode" />
     </div>
   </main>
 </template>
@@ -180,6 +197,75 @@ watchEffect(() => {
     transform: none;
     filter: none;
   }
+}
+
+/* Refused access (device lock / wrong theme) */
+.restricted-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background: var(--paper);
+  padding: 24px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.restricted-box {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(61, 120, 162, 0.2);
+  border-radius: 24px;
+  padding: 40px 24px;
+  max-width: 320px;
+  box-shadow: 0 8px 32px rgba(61, 120, 162, 0.1);
+  animation: restrict-fade-in 0.6s ease-out forwards;
+}
+
+@keyframes restrict-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.restricted-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: lock-bounce 2s ease-in-out infinite alternate;
+}
+
+@keyframes lock-bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.restricted-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--ink-deep-blue);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.restricted-message {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink-blue);
+  line-height: 1.6;
+  margin: 0;
 }
 
 @media (min-width: 768px) {

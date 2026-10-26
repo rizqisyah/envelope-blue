@@ -48,14 +48,24 @@ async function request(path: string, options: RequestInit = {}): Promise<any> {
 
   if (!res.ok || (payload && payload.success === false)) {
     const message = (payload && payload.message) || `Request failed (${res.status})`
-    throw new Error(message)
+    // `code` lets callers tell a device lock (DEVICE_LOCKED) from any other failure
+    throw Object.assign(new Error(message), { code: payload?.code as string | undefined })
   }
 
   return payload
 }
 
+/*
+ * This build's own theme code, from the folder it is built for ('/TemaEnvelopBlue/'). The backend
+ * refuses a wedding that belongs to another theme, so a slug cannot open under the wrong theme.
+ */
+const THEME_CODE = import.meta.env.BASE_URL.split('/').filter(Boolean).pop() || ''
+
 export async function getHome(slug: string, to = ''): Promise<any> {
-  const query = to ? `?to=${encodeURIComponent(to)}` : ''
+  const params = new URLSearchParams()
+  if (to) params.set('to', to)
+  if (THEME_CODE) params.set('theme', THEME_CODE)
+  const query = params.size ? `?${params}` : ''
   const payload = await request(`/v1/service/menu/getHome/${encodeURIComponent(slug)}${query}`)
   return payload?.data ?? null
 }

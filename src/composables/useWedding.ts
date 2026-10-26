@@ -6,10 +6,13 @@ import { resolveSlug, getHome, submitUcapan, DESIGN_MODE } from '../lib/api'
 const state = ref<{
   loading: boolean
   error: string | null
+  // Set with `error` when the server refuses this device (the link is locked to other devices)
+  errorCode: string | null
   data: any | null
 }>({
   loading: true,
   error: null,
+  errorCode: null,
   data: null,
 })
 
@@ -80,6 +83,7 @@ async function fetchWeddingData() {
   guestCode.value = getGuestCode()
   state.value.loading = true
   state.value.error = null
+  state.value.errorCode = null
   try {
     const data = await getHome(slug.value, guestCode.value)
     state.value.data = data
@@ -92,6 +96,11 @@ async function fetchWeddingData() {
   } catch (err: any) {
     console.error('Failed to load wedding data:', err)
     state.value.error = err.message
+    if (err?.code === 'DEVICE_LOCKED' || err?.code === 'THEME_MISMATCH') {
+      state.value.error =
+        err.code === 'THEME_MISMATCH' ? 'Undangan ini tidak tersedia pada tampilan ini.' : err.message
+      state.value.errorCode = err.code
+    }
   } finally {
     state.value.loading = false
   }
@@ -468,6 +477,7 @@ export function useWedding() {
     guestCode,
     loading: computed(() => state.value.loading),
     error: computed(() => state.value.error),
+    errorCode: computed(() => state.value.errorCode),
     wedding,
     theme,
     guest,
