@@ -38,7 +38,7 @@ const copy = computed(() => dresscode.value?.note || 'Kindly dress in shades of 
   <section
     :ref="el"
     class="band dresscode"
-    :class="{ 'is-in': shown }"
+    :class="{ 'is-in': shown, 'dresscode--no-colors': swatches.length === 0 }"
     aria-labelledby="dresscode-title"
   >
     <BandArt :layers="LAYERS" :shown="shown" />
@@ -127,5 +127,14 @@ const copy = computed(() => dresscode.value?.note || 'Kindly dress in shades of 
   font-size: calc(20 * var(--px));
   line-height: calc(30 * var(--px));
   color: #4e685c;
+}
+
+/*
+ * No colours picked: the palette row is gone, so lift the copy into its place — the same
+ * 24px gap under the heading that the palette had — instead of leaving an empty band.
+ */
+.dresscode--no-colors .dresscode__copy {
+  --delay: 200ms;
+  top: calc(81 * var(--px));
 }
 </style>

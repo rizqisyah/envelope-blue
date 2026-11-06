@@ -44,7 +44,7 @@ const fitCouple = useFitText()
       <h1 :ref="fitCouple" class="cover__couple">{{ coupleName }}</h1>
 
       <!-- 28:223 / 32:460 — the lines of Frame 7, placed directly. -->
-      <p class="cover__dear">kepada Yth.</p>
+      <p class="cover__dear">Dear</p>
       <p class="cover__guest">{{ guestName }}</p>
       <p v-if="guestGroup" class="cover__group">{{ guestGroup }}</p>
 
@@ -55,7 +55,7 @@ const fitCouple = useFitText()
         visible text to point at.
       -->
       <button type="button" class="cover__hit" @click="$emit('open')">
-        <span class="sr-only">Buka undangan</span>
+        <span class="sr-only">Open invitation</span>
       </button>
     </div>
   </section>

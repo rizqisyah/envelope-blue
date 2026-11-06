@@ -148,7 +148,7 @@ const ROWS = [
         }"
         @click="copy(i, card.number)"
       >
-        {{ copied === i ? 'Tersalin' : 'Copy' }}
+        {{ copied === i ? 'Copied' : 'Copy' }}
       </button>
     </template>
   </section>

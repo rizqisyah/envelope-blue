@@ -30,7 +30,7 @@ function onEnded() {
 </script>
 
 <template>
-  <section v-if="src" class="video" aria-label="Video pernikahan">
+  <section v-if="src" class="video" aria-label="Wedding video">
     <iframe
       v-if="youtubeId"
       class="video__player"

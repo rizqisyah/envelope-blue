@@ -83,8 +83,8 @@ const thumbs = computed(() =>
 
 // 31:307 / 31:308 — 48x57 at y 8246, band-local 496.
 const BUTTONS = [
-  { id: '31:307', x: 128, z: 186, chev: chevronLeft, chevX: 12, dir: -1, label: 'Foto sebelumnya' },
-  { id: '31:308', x: 436, z: 187, chev: chevronRight, chevX: 21, dir: 1, label: 'Foto berikutnya' },
+  { id: '31:307', x: 128, z: 186, chev: chevronLeft, chevX: 12, dir: -1, label: 'Previous photo' },
+  { id: '31:308', x: 436, z: 187, chev: chevronRight, chevX: 21, dir: 1, label: 'Next photo' },
 ]
 
 // --- Auto-Slide (Auto Geser) for Thumbnails & Photos ---
@@ -277,7 +277,7 @@ const skipLayers = computed(() => {
         class="gallery__oval"
         role="button"
         tabindex="0"
-        :aria-label="`Perbesar foto ${active + 1}`"
+        :aria-label="`Enlarge photo ${active + 1}`"
         @click="openZoom()"
         @touchstart.passive="onTouchStart"
         @touchend="onTouchEnd"
@@ -287,11 +287,11 @@ const skipLayers = computed(() => {
         <img
           v-if="photos[active]"
           :src="photos[active].src"
-          :alt="photos[active].caption || 'Foto pasangan'"
+          :alt="photos[active].caption || 'Couple photo'"
           loading="lazy"
           decoding="async"
         />
-        <span class="gallery__zoom-hint" aria-hidden="true" title="Klik untuk memperbesar">
+        <span class="gallery__zoom-hint" aria-hidden="true" title="Click to enlarge">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -324,7 +324,7 @@ const skipLayers = computed(() => {
         type="button"
         class="gallery__thumb"
         :style="{ left: `calc(${t.x} * var(--px))` }"
-        :aria-label="`Lihat foto ${t.at + 1}`"
+        :aria-label="`View photo ${t.at + 1}`"
         @click="active = t.at; startAutoSlide()"
       >
         <img
@@ -382,7 +382,7 @@ const skipLayers = computed(() => {
           <button
             type="button"
             class="gallery__lb-btn gallery__lb-close"
-            aria-label="Tutup foto"
+            aria-label="Close photo"
             @click="closeZoom"
           >
             ✕
@@ -390,7 +390,7 @@ const skipLayers = computed(() => {
           <button
             type="button"
             class="gallery__lb-btn gallery__lb-prev"
-            aria-label="Foto sebelumnya"
+            aria-label="Previous photo"
             @click="step(-1)"
           >
             ‹
@@ -399,7 +399,7 @@ const skipLayers = computed(() => {
             <img
               v-if="photos[active]"
               :src="photos[active].src"
-              :alt="photos[active].caption || `Foto galeri ${active + 1}`"
+              :alt="photos[active].caption || `Gallery photo ${active + 1}`"
               class="gallery__lb-img"
             />
             <p v-if="photos[active]?.caption" class="gallery__lb-caption">
@@ -409,7 +409,7 @@ const skipLayers = computed(() => {
           <button
             type="button"
             class="gallery__lb-btn gallery__lb-next"
-            aria-label="Foto berikutnya"
+            aria-label="Next photo"
             @click="step(1)"
           >
             ›

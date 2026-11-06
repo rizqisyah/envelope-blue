@@ -58,12 +58,12 @@ const card = computed(() => {
   }
 })
 
-// 29:273 / 29:272 — the cartouche, in Indonesian, exactly as the akad band's.
+// 29:273 / 29:272 — the cartouche, exactly as the akad band's.
 const stamp = computed(() => {
   const id = formatEventDateId(event.value?.event_date)
   return id
     ? { weekday: id.weekday, date: `${id.day}\n${id.monthYear}` }
-    : { weekday: 'Kamis', date: '27\nDesember 2026' }
+    : { weekday: 'Thursday', date: '27\nDecember 2026' }
 })
 </script>
 

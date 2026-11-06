@@ -41,8 +41,8 @@ const DESIGN: Wish[] = [
   { guest_name: 'Satrio & Istri', message: DESIGN_MESSAGE, created_at: '2025-06-09 09:00:00' },
   { guest_name: 'Satrio & Istri', message: DESIGN_MESSAGE, created_at: '2025-06-09 09:00:00' },
   {
-    guest_name: 'Rian & Keluarga',
-    message: 'Selamat menempuh hidup baru, semoga sakinah mawaddah warahmah.',
+    guest_name: 'Rian & Family',
+    message: 'Congratulations on your new journey together. May your marriage be filled with peace, love and mercy.',
     created_at: '2025-06-09 09:00:00',
   },
 ]
@@ -120,7 +120,7 @@ watch(
 )
 
 watchEffect(() => {
-  if (!name.value && guestName?.value && guestName.value !== 'Nama Tamu') {
+  if (!name.value && guestName?.value && guestName.value !== 'Guest Name') {
     name.value = String(guestName.value)
   }
 })
@@ -128,20 +128,20 @@ watchEffect(() => {
 async function send() {
   error.value = ''
   if (!message.value.trim()) {
-    error.value = 'Ucapannya masih kosong.'
+    error.value = 'Please write your wish first.'
     return
   }
   sending.value = true
   try {
     await sendWish({
-      guest_name: name.value.trim() || 'Tamu',
+      guest_name: name.value.trim() || 'Guest',
       message: message.value.trim(),
     })
     message.value = ''
     showSuccessModal.value = true
     shownCount.value = Math.max(shownCount.value, 4)
   } catch (err: any) {
-    error.value = err?.message || 'Gagal mengirim ucapan. Coba lagi.'
+    error.value = err?.message || 'Failed to send your wish. Please try again.'
   } finally {
     sending.value = false
   }
@@ -167,7 +167,7 @@ async function send() {
       <input v-model="name" class="wishes__name" type="text" placeholder="Name" />
       <textarea v-model="message" class="wishes__message" placeholder="Give your wish" />
       <button class="wishes__send" type="submit" :disabled="sending">
-        {{ sending ? 'Mengirim…' : 'Send' }}
+        {{ sending ? 'Sending…' : 'Send' }}
       </button>
       <p v-if="error" class="wishes__error" role="alert">{{ error }}</p>
     </form>
@@ -179,11 +179,11 @@ async function send() {
       @scroll.passive="onScroll"
     >
       <p v-if="list.length === 0" class="wishes__empty">
-        Belum ada ucapan.<br />Jadilah yang pertama mengirimkan doa &amp; ucapan untuk kedua mempelai.
+        No wishes yet.<br />Be the first to send your prayers &amp; wishes to the couple.
       </p>
 
       <article v-for="(w, i) in visible" :key="i" class="wishes__card">
-        <p class="wishes__from">{{ w.guest_name || 'Tamu' }}</p>
+        <p class="wishes__from">{{ w.guest_name || 'Guest' }}</p>
         <p class="wishes__when">{{ formatWishStamp(w.created_at) }}</p>
         <p class="wishes__body">{{ w.message }}</p>
       </article>
@@ -193,10 +193,10 @@ async function send() {
 
       <!-- Subtle hint or end indicator -->
       <div v-if="hasMore" class="wishes__scroll-hint" @click="loadMore">
-        <span>↓ Gulir untuk ucapan lainnya</span>
+        <span>↓ Scroll for more wishes</span>
       </div>
       <p v-else-if="list.length > 2" class="wishes__end">
-        Semua ucapan telah ditampilkan
+        All wishes have been shown
       </p>
     </div>
 
@@ -216,16 +216,16 @@ async function send() {
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 class="wish-modal__title">Doa & Ucapan Terkirim!</h3>
+            <h3 class="wish-modal__title">Wish Sent!</h3>
             <p class="wish-modal__desc">
-              Terima kasih banyak atas doa restu dan ucapan hangat yang telah Anda berikan untuk kami berdua.
+              Thank you so much for your prayers and warm wishes for the two of us.
             </p>
             <button
               type="button"
               class="wish-modal__btn"
               @click="showSuccessModal = false"
             >
-              Tutup
+              Close
             </button>
           </div>
         </div>

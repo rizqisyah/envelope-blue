@@ -71,8 +71,8 @@ const detailsOffset = computed(() =>
 
 const fallbackParents = computed(() =>
   isGroomFirst.value
-    ? 'Putra pertama dari \n Bapak Solehaiman \n dan Ibu Kasih'
-    : 'Putri pertama dari \n Bapak Hari Solehaiman \n dan Ibu Kasih Muhartono Septiana',
+    ? 'First son of \n Mr. Solehaiman \n and Mrs. Kasih'
+    : 'First daughter of \n Mr. Hari Solehaiman \n and Mrs. Kasih Muhartono Septiana',
 )
 
 const parents = computed(() => parentLine(person.value) || fallbackParents.value)

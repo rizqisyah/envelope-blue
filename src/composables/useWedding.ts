@@ -91,14 +91,14 @@ async function fetchWeddingData() {
       applyTheme(data.theme, data.wedding)
     }
     if (data?.wedding?.title) {
-      document.title = `${data.wedding.title} - Undangan Pernikahan`
+      document.title = `${data.wedding.title} - Wedding Invitation`
     }
   } catch (err: any) {
     console.error('Failed to load wedding data:', err)
     state.value.error = err.message
     if (err?.code === 'DEVICE_LOCKED' || err?.code === 'THEME_MISMATCH') {
       state.value.error =
-        err.code === 'THEME_MISMATCH' ? 'Undangan ini tidak tersedia pada tampilan ini.' : err.message
+        err.code === 'THEME_MISMATCH' ? 'This invitation is not available in this theme.' : err.message
       state.value.errorCode = err.code
     }
   } finally {
@@ -187,7 +187,7 @@ export function useWedding() {
     if (guest.value?.guest_name) return guest.value.guest_name
     if (guest.value?.name) return guest.value.name
     const code = getGuestCode()
-    return code || 'Nama Tamu'
+    return code || 'Guest Name'
   })
   const guestGroup = computed(() => guest.value?.group_name || '')
   /*
@@ -279,7 +279,7 @@ export function useWedding() {
     () =>
       parsedOverride.value?.quote?.text ||
       parsedOverride.value?.words?.quote_text ||
-      '"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang"',
+      '"And among His signs is that He created for you spouses from among yourselves so that you may find tranquility in them, and He placed between you affection and mercy."',
   )
 
   // The design's own hashtag only prints when no wedding loaded (the design render); a

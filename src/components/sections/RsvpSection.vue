@@ -53,7 +53,7 @@ watch(
 )
 
 watchEffect(() => {
-  if (!name.value && guestName.value && guestName.value !== 'Nama Tamu') {
+  if (!name.value && guestName.value && guestName.value !== 'Guest Name') {
     name.value = String(guestName.value)
   }
 })
@@ -76,11 +76,11 @@ watch(attendance, (val) => {
 async function send() {
   error.value = ''
   if (!name.value.trim()) {
-    error.value = 'Nama masih kosong.'
+    error.value = 'Please enter your name.'
     return
   }
   if (!attendance.value) {
-    error.value = 'Pilih kehadiran dulu.'
+    error.value = 'Please let us know if you will attend.'
     return
   }
   sending.value = true
@@ -99,7 +99,7 @@ async function send() {
     done.value = true
     showSuccessModal.value = true
   } catch (err: any) {
-    error.value = err?.message || 'Gagal mengirim. Coba lagi.'
+    error.value = err?.message || 'Failed to send. Please try again.'
   } finally {
     sending.value = false
   }
@@ -119,16 +119,16 @@ async function send() {
     <h2 id="rsvp-title" class="rsvp__title">Rsvp</h2>
 
     <!-- 40:10 — two authored lines. -->
-    <p class="rsvp__lede">Mohon konfirmasi kehadiran Anda<br />melalui formulir reservasi di bawah:</p>
+    <p class="rsvp__lede">Kindly confirm your attendance<br />using the reservation form below:</p>
 
     <!-- 40:16 / 40:28 / 40:39 / 40:41 / 40:36 — the form; its plates are reconstructed. -->
     <form class="rsvp__form" @submit.prevent="send">
-      <input v-model="name" class="rsvp__field" type="text" placeholder="Nama" />
-      <input v-model="phone" class="rsvp__field" type="tel" placeholder="No Hp" />
+      <input v-model="name" class="rsvp__field" type="text" placeholder="Name" />
+      <input v-model="phone" class="rsvp__field" type="tel" placeholder="Phone Number" />
       <select v-model="attendance" class="rsvp__field" :class="{ 'is-empty': !attendance }">
         <option value="" disabled>Will you be joining us?</option>
-        <option value="hadir">Ya, saya akan hadir</option>
-        <option value="tidak">Maaf, saya berhalangan</option>
+        <option value="hadir">Yes, I will attend</option>
+        <option value="tidak">Sorry, I can't make it</option>
       </select>
       <Transition name="rsvp-field">
         <input
@@ -141,7 +141,7 @@ async function send() {
         />
       </Transition>
       <button class="rsvp__send" type="submit" :disabled="sending">
-        {{ sending ? 'Mengirim…' : done ? 'Terkirim' : 'Send' }}
+        {{ sending ? 'Sending…' : done ? 'Sent' : 'Send' }}
       </button>
       <p v-if="error" class="rsvp__error" role="alert">{{ error }}</p>
     </form>
@@ -162,16 +162,16 @@ async function send() {
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 class="rsvp-modal__title">Konfirmasi Diterima!</h3>
+            <h3 class="rsvp-modal__title">RSVP Received!</h3>
             <p class="rsvp-modal__desc">
-              {{ attendance === 'hadir' ? 'Terima kasih atas konfirmasi kehadiran Anda. Kami sangat menantikan kehadiran Anda di hari bahagia kami.' : 'Terima kasih telah mengonfirmasi. Doa restu Anda sangat berarti bagi kami.' }}
+              {{ attendance === 'hadir' ? 'Thank you for confirming your attendance. We truly look forward to celebrating our special day with you.' : 'Thank you for letting us know. Your prayers and blessings mean a lot to us.' }}
             </p>
             <button
               type="button"
               class="rsvp-modal__btn"
               @click="showSuccessModal = false"
             >
-              Tutup
+              Close
             </button>
           </div>
         </div>

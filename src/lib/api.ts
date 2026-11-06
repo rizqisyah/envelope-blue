@@ -72,7 +72,7 @@ export async function getHome(slug: string, to = ''): Promise<any> {
 
 export async function submitRsvp(slug: string, body: any): Promise<any> {
   if (DESIGN_MODE) {
-    throw new Error('Design mode: undangan ini belum terhubung ke server.')
+    throw new Error('Design mode: this invitation is not connected to the server yet.')
   }
   return request(`/v1/service/menu/hadir2/${encodeURIComponent(slug)}`, {
     method: 'POST',
@@ -82,7 +82,7 @@ export async function submitRsvp(slug: string, body: any): Promise<any> {
 
 export async function submitUcapan(slug: string, body: any): Promise<any> {
   if (DESIGN_MODE) {
-    throw new Error('Design mode: undangan ini belum terhubung ke server.')
+    throw new Error('Design mode: this invitation is not connected to the server yet.')
   }
   return request(`/v1/service/menu/ucapan/${encodeURIComponent(slug)}`, {
     method: 'POST',

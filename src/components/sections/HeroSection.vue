@@ -49,7 +49,7 @@ const skipLayers = computed(() => (customHeroPhoto.value ? ['15:94'] : []))
       <img
         class="hero__photo"
         :src="customHeroPhoto"
-        alt="Foto Mempelai"
+        alt="Couple photo"
         loading="eager"
         decoding="async"
       />

@@ -40,23 +40,21 @@ export function formatEventDate(raw?: string | null): EventDate | null {
 export type EventDateId = { weekday: string; day: string; monthYear: string }
 
 /*
- * The same date in Indonesian, split the way the ornate date cartouche sets it:
+ * The same date split the way the ornate date cartouche sets it:
  *
- *   Kamis            <- weekday, in the script face
+ *   Thursday         <- weekday, in the script face
  *   27               <- day alone
- *   Desember 2026    <- month and year
+ *   December 2026    <- month and year
  *
- * The event CARD above prints the same date in English (formatEventDate). That is the
- * design's own inconsistency -- Frame 1 sets the cartouche in Indonesian and the card in
- * English -- and both are reproduced rather than reconciled.
+ * English, like the event card and the rest of this theme.
  */
 export function formatEventDateId(raw?: string | null): EventDateId | null {
   const d = raw ? localDate(raw) : null
   if (!d) return null
   return {
-    weekday: d.toLocaleDateString('id-ID', { weekday: 'long' }),
-    day: d.toLocaleDateString('id-ID', { day: 'numeric' }),
-    monthYear: d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
+    weekday: d.toLocaleDateString('en-GB', { weekday: 'long' }),
+    day: d.toLocaleDateString('en-GB', { day: 'numeric' }),
+    monthYear: d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
   }
 }
 
@@ -132,16 +130,13 @@ export function formatWishStamp(value?: string | Date | null): string {
   return `${day} ${month} ${at.getFullYear()}, ${time}`
 }
 
-/*
- * "2 hari lalu" — the wish list's timestamps. The design prints Indonesian relative
- * time, and unlike the dates above it does not switch to English.
- */
+/* "2 days ago" — relative wish timestamps. */
 const AGO: [seconds: number, unit: string][] = [
-  [60, 'menit'],
-  [3600, 'jam'],
-  [86400, 'hari'],
-  [2592000, 'bulan'],
-  [31536000, 'tahun'],
+  [60, 'minute'],
+  [3600, 'hour'],
+  [86400, 'day'],
+  [2592000, 'month'],
+  [31536000, 'year'],
 ]
 
 export function relativeTime(value?: string | Date | null, now: number = Date.now()): string {
@@ -159,15 +154,18 @@ export function relativeTime(value?: string | Date | null, now: number = Date.no
   if (Number.isNaN(at.getTime())) return ''
 
   // Under a minute, and also anything in the future: a guest's clock skewed ahead of
-  // the server would otherwise read "-3 menit lalu".
+  // the server would otherwise read "-3 minutes ago".
   const secs = Math.floor((now - at.getTime()) / 1000)
-  if (secs < 60) return 'baru saja'
+  if (secs < 60) return 'just now'
 
   for (let i = AGO.length - 1; i >= 0; i--) {
     const [step, unit] = AGO[i]
-    if (secs >= step) return `${Math.floor(secs / step)} ${unit} lalu`
+    if (secs >= step) {
+      const n = Math.floor(secs / step)
+      return `${n} ${unit}${n === 1 ? '' : 's'} ago`
+    }
   }
-  return 'baru saja'
+  return 'just now'
 }
 
 /*

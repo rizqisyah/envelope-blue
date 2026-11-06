@@ -23,7 +23,7 @@ const coupleName = coupleNickname
  * keeps showing the design's own content, as it always has.
  */
 const blockedTitle = computed(() =>
-  errorCode.value === 'DEVICE_LOCKED' ? 'Perangkat Terkunci' : 'Tidak Ditemukan',
+  errorCode.value === 'DEVICE_LOCKED' ? 'Device Locked' : 'Not Found',
 )
 
 const leftBackgroundStyle = computed(() => {

@@ -11,10 +11,9 @@
  * begins. Nine of its twenty-four layers are position-pinned — see the block above
  * PIN_Y in scripts/gen_band.py for what the chain got wrong and why.
  *
- * The design prints the CARTOUCHE date in Indonesian ("Kamis / 27 / Desember 2026") and
- * the CARD date in English ("Saturday, / 06 September 2025"), and they are not even the
- * same day. That is the design's own inconsistency in its mock copy; both are reproduced,
- * and live data drives both from the same acara entry.
+ * The CARTOUCHE ("Thursday / 27 / December 2026") and the CARD ("Saturday, / 06 September
+ * 2025") show different mock days in the design; live data drives both from the same
+ * acara entry, in English.
  */
 import { computed } from 'vue'
 import BandArt from '../invite/BandArt.vue'
@@ -66,12 +65,12 @@ const card = computed(() => {
   }
 })
 
-// 22:845 / 22:844 — the cartouche, in Indonesian and on its own three lines.
+// 22:845 / 22:844 — the cartouche, on its own three lines.
 const stamp = computed(() => {
   const id = formatEventDateId(event.value?.event_date)
   return id
     ? { weekday: id.weekday, date: `${id.day}\n${id.monthYear}` }
-    : { weekday: 'Kamis', date: '27\nDesember 2026' }
+    : { weekday: 'Thursday', date: '27\nDecember 2026' }
 })
 </script>
 

@@ -75,7 +75,7 @@ const parsedClosing = computed(() => {
       <img
         class="closing__photo"
         :src="customSpousePhoto"
-        alt="Foto Pasangan"
+        alt="Couple photo"
         loading="lazy"
         decoding="async"
       />
